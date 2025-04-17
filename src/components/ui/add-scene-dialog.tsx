@@ -16,6 +16,7 @@ import {
   createSectionTitleLayout,
 } from "@/lib/scenes-layout";
 import { Scene } from "@/types/scenes";
+import { rgbaColorToString } from "@/lib/colors";
 
 interface AddSceneDialogProps {
   onAddScene: (scene: Scene) => void;
@@ -115,8 +116,10 @@ export default function AddSceneDialog({
                   height: `${textComponent.height}px`,
                   fontSize: `${textComponent.fontSize}px`,
                   fontFamily: textComponent.fontFamily,
-                  color: textComponent.color,
-                  backgroundColor: textComponent.backgroundColor,
+                  color: rgbaColorToString(textComponent.color),
+                  backgroundColor: rgbaColorToString(
+                    textComponent.backgroundColor
+                  ),
                   textAlign: textComponent.textAlign,
                   fontWeight: textComponent.fontWeight,
                   fontStyle: textComponent.fontStyle,

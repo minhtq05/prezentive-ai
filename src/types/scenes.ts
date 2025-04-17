@@ -1,3 +1,5 @@
+import { RgbaColor } from "react-colorful";
+
 // Sample data structure for scenes
 export type Scene = {
   id: string;
@@ -23,8 +25,8 @@ export type SceneText = SceneBaseObject & {
   text: string;
   fontSize: number;
   fontFamily: string;
-  color: string;
-  backgroundColor: string;
+  color: RgbaColor;
+  backgroundColor: RgbaColor;
   textAlign: "left" | "center" | "right";
   textAlignVertical: "top" | "center" | "bottom";
   fontWeight: "normal" | "bold" | "bolder" | "lighter";
@@ -39,6 +41,13 @@ export type SceneMedia = SceneBaseObject & {
   src: string;
   alt: string;
   fit: "cover" | "contain" | "fill";
+};
+
+export type Color = {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
 };
 
 export type SceneComponent = SceneText | SceneMedia;

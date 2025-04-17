@@ -43,8 +43,8 @@ export default function Sidebar() {
           onClick={() => selectScene(null)}
         >
           <div className="flex justify-between items-center">
-            <span className="font-medium">All</span>
-            <span className="text-xs opacity-70">{} frames</span>
+            <span className="font-medium">Preview</span>
+            <span className="text-xs opacity-70">{totalDuration} frames</span>
           </div>
         </div>
         {scenes.map((scene) => (

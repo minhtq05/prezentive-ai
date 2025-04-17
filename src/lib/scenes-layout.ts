@@ -41,9 +41,10 @@ const createSceneText = (
   left, // x position
   width,
   height,
-  fontFamily: "Inter, sans-serif",
-  color: "#000000",
-  backgroundColor: "transparent",
+  // fontFamily: "Inter, sans-serif",
+  fontFamily: "serif",
+  color: { r: 0, g: 0, b: 0, a: 1 }, // black
+  backgroundColor: { r: 255, g: 255, b: 255, a: 0 }, // transparent
   textAlign,
   textAlignVertical,
   fontWeight: "normal",

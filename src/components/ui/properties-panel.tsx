@@ -5,6 +5,20 @@ import useScenesStore from "@/store/scenes-store";
 import useOverlayStore from "@/store/overlay-store";
 import { Button } from "./button";
 import { Separator } from "./separator";
+import { RgbaColor, RgbaColorPicker } from "react-colorful";
+import { cn } from "@/lib/utils";
+import { Input } from "./input";
+import { Textarea } from "./textarea";
+import ColorPicker from "./color-picker";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TextVerticalAlignmentOption {
   value: "top" | "center" | "bottom";
@@ -43,16 +57,17 @@ export default function PropertiesPanel() {
   }
 
   const textObject = overlayObject as SceneText;
+  const inputClasses =
+    "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
   return (
     <div className="h-full overflow-y-auto p-4">
       <h3 className="font-medium mb-4">Text Properties</h3>
-
       <div className="space-y-6">
         {/* Text Content */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Text Content</label>
-          <textarea
+          <Textarea
             className="w-full min-h-[100px] p-2 border rounded-sm bg-background"
             value={textObject.text}
             onChange={(e) => {
@@ -70,9 +85,8 @@ export default function PropertiesPanel() {
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-muted-foreground">Font Size</label>
-              <input
+              <Input
                 type="number"
-                className="w-full p-2 border rounded-sm bg-background"
                 value={textObject.fontSize}
                 onChange={(e) => {
                   updateOverlayProperty("fontSize", Number(e.target.value));
@@ -83,37 +97,101 @@ export default function PropertiesPanel() {
               <label className="text-xs text-muted-foreground">
                 Font Family
               </label>
-              <select
-                className="w-full p-2 border rounded-sm bg-background"
+              <Select
                 value={textObject.fontFamily}
-                onChange={(e) => {
-                  updateOverlayProperty("fontFamily", e.target.value);
-                }}
+                onValueChange={(value) =>
+                  updateOverlayProperty("fontFamily", value)
+                }
               >
-                <option value="sans-serif">Sans Serif</option>
-                <option value="serif">Serif</option>
-                <option value="monospace">Monospace</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Font Family" />
+                </SelectTrigger>
+                <SelectGroup>
+                  <SelectContent>
+                    <SelectItem value="sans-serif">Sans Serif</SelectItem>
+                    <SelectItem value="serif">Serif</SelectItem>
+                    <SelectItem value="monospace">Monospace</SelectItem>
+                  </SelectContent>
+                </SelectGroup>
+              </Select>
             </div>
           </div>
 
           <div>
             <label className="text-xs text-muted-foreground">Color</label>
-            <div className="flex gap-2 items-center">
-              <input
-                type="color"
-                className="w-8 h-8 rounded-sm"
+            <div className="grid grid-cols-5 gap-2 items-center">
+              {/* RGBA color input */}
+              <ColorPicker
                 value={textObject.color}
+                onChange={(newColor: RgbaColor) => {
+                  // Convert hex to rgba
+
+                  updateOverlayProperty("color", newColor);
+                }}
+                className="w-full h-9"
+              />
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.color.r}
                 onChange={(e) => {
-                  updateOverlayProperty("color", e.target.value);
+                  updateOverlayProperty("color", {
+                    ...textObject.color,
+                    r: parseInt(e.target.value),
+                  });
                 }}
               />
-              <input
-                type="text"
-                className="flex-1 p-2 border rounded-sm bg-background"
-                value={textObject.color}
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.color.g}
                 onChange={(e) => {
-                  updateOverlayProperty("color", e.target.value);
+                  updateOverlayProperty("color", {
+                    ...textObject.color,
+                    g: parseInt(e.target.value),
+                  });
+                }}
+              />
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.color.b}
+                onChange={(e) => {
+                  updateOverlayProperty("color", {
+                    ...textObject.color,
+                    b: parseInt(e.target.value),
+                  });
+                }}
+              />
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.color.a}
+                onChange={(e) => {
+                  updateOverlayProperty("color", {
+                    ...textObject.color,
+                    a: parseInt(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -123,21 +201,78 @@ export default function PropertiesPanel() {
             <label className="text-xs text-muted-foreground">
               Background Color
             </label>
-            <div className="flex gap-2 items-center">
-              <input
-                type="color"
-                className="w-8 h-8 rounded-sm"
+            <div className="grid grid-cols-5 gap-2 items-center">
+              {/* RGBA color input */}
+              <ColorPicker
                 value={textObject.backgroundColor}
+                onChange={(newColor: RgbaColor) => {
+                  // Convert hex to rgba
+                  updateOverlayProperty("backgroundColor", newColor);
+                }}
+                className="w-full h-9"
+              />
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.backgroundColor.r}
                 onChange={(e) => {
-                  updateOverlayProperty("backgroundColor", e.target.value);
+                  updateOverlayProperty("backgroundColor", {
+                    ...textObject.backgroundColor,
+                    r: parseInt(e.target.value),
+                  });
                 }}
               />
-              <input
-                type="text"
-                className="flex-1 p-2 border rounded-sm bg-background"
-                value={textObject.backgroundColor}
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.backgroundColor.g}
                 onChange={(e) => {
-                  updateOverlayProperty("backgroundColor", e.target.value);
+                  updateOverlayProperty("backgroundColor", {
+                    ...textObject.backgroundColor,
+                    g: parseInt(e.target.value),
+                  });
+                }}
+              />
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.backgroundColor.b}
+                onChange={(e) => {
+                  updateOverlayProperty("backgroundColor", {
+                    ...textObject.backgroundColor,
+                    b: parseInt(e.target.value),
+                  });
+                }}
+              />
+              <Input
+                type="number"
+                min="0"
+                max="255"
+                className={cn(
+                  "flex-1 p-2 border rounded-sm bg-background",
+                  inputClasses
+                )}
+                value={textObject.backgroundColor.a}
+                onChange={(e) => {
+                  updateOverlayProperty("backgroundColor", {
+                    ...textObject.backgroundColor,
+                    a: parseInt(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -244,70 +379,96 @@ export default function PropertiesPanel() {
               <label className="text-xs text-muted-foreground">
                 Font Weight
               </label>
-              <select
-                className="w-full p-2 border rounded-sm bg-background mt-1"
+              <Select
+                // className="w-full p-2 border rounded-sm bg-background mt-1"
+                required
                 value={textObject.fontWeight}
-                onChange={(e) =>
-                  updateOverlayProperty("fontWeight", e.target.value as any)
-                }
+                onValueChange={(
+                  value: "normal" | "bold" | "bolder" | "lighter"
+                ) => updateOverlayProperty("fontWeight", value)}
               >
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-                <option value="bolder">Bolder</option>
-                <option value="lighter">Lighter</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Font Weight" />
+                </SelectTrigger>
+                <SelectGroup>
+                  <SelectContent>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="bold">Bold</SelectItem>
+                    <SelectItem value="bolder">Bolder</SelectItem>
+                    <SelectItem value="lighter">Lighter</SelectItem>
+                  </SelectContent>
+                </SelectGroup>
+              </Select>
             </div>
 
             <div>
               <label className="text-xs text-muted-foreground">
                 Font Style
               </label>
-              <select
-                className="w-full p-2 border rounded-sm bg-background mt-1"
+              <Select
                 value={textObject.fontStyle}
-                onChange={(e) =>
-                  updateOverlayProperty("fontStyle", e.target.value as any)
+                onValueChange={(value: "normal" | "italic" | "oblique") =>
+                  updateOverlayProperty("fontStyle", value)
                 }
               >
-                <option value="normal">Normal</option>
-                <option value="italic">Italic</option>
-                <option value="oblique">Oblique</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Font Style" />
+                </SelectTrigger>
+                <SelectGroup>
+                  <SelectContent>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="italic">Italic</SelectItem>
+                    <SelectItem value="oblique">Oblique</SelectItem>
+                  </SelectContent>
+                </SelectGroup>
+              </Select>
             </div>
 
             <div>
               <label className="text-xs text-muted-foreground">
                 Text Decoration
               </label>
-              <select
-                className="w-full p-2 border rounded-sm bg-background mt-1"
+              <Select
                 value={textObject.textDecoration}
-                onChange={(e) =>
-                  updateOverlayProperty("textDecoration", e.target.value as any)
+                onValueChange={(value: "none" | "underline" | "line-through") =>
+                  updateOverlayProperty("textDecoration", value)
                 }
               >
-                <option value="none">None</option>
-                <option value="underline">Underline</option>
-                <option value="line-through">Line Through</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Text Decoration" />
+                </SelectTrigger>
+                <SelectGroup>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="underline">Underline</SelectItem>
+                    <SelectItem value="line-through">Line Through</SelectItem>
+                  </SelectContent>
+                </SelectGroup>
+              </Select>
             </div>
 
             <div>
               <label className="text-xs text-muted-foreground">
                 Text Transform
               </label>
-              <select
-                className="w-full p-2 border rounded-sm bg-background mt-1"
+              <Select
                 value={textObject.textTransform}
-                onChange={(e) =>
-                  updateOverlayProperty("textTransform", e.target.value as any)
-                }
+                onValueChange={(
+                  value: "none" | "uppercase" | "lowercase" | "capitalize"
+                ) => updateOverlayProperty("textTransform", value)}
               >
-                <option value="none">None</option>
-                <option value="uppercase">UPPERCASE</option>
-                <option value="lowercase">lowercase</option>
-                <option value="capitalize">Capitalize</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Text Transform" />
+                </SelectTrigger>
+                <SelectGroup>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="uppercase">UPPERCASE</SelectItem>
+                    <SelectItem value="lowercase">lowercase</SelectItem>
+                    <SelectItem value="capitalize">Capitalize</SelectItem>
+                  </SelectContent>
+                </SelectGroup>
+              </Select>
             </div>
           </div>
         </div>

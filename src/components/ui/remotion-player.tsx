@@ -4,6 +4,7 @@ import { Player } from "@remotion/player";
 import { useMemo } from "react";
 import { AbsoluteFill, Series } from "remotion";
 import ObjectOverlay from "./object-overlay";
+import { rgbaColorToString } from "@/lib/colors";
 
 function RemotionComponent({
   previewMode,
@@ -44,8 +45,10 @@ function RemotionComponent({
                         height: `${textComponent.height}px`,
                         fontSize: `${textComponent.fontSize}px`,
                         fontFamily: textComponent.fontFamily,
-                        color: textComponent.color,
-                        backgroundColor: textComponent.backgroundColor,
+                        color: rgbaColorToString(textComponent.color),
+                        backgroundColor: rgbaColorToString(
+                          textComponent.backgroundColor
+                        ),
                         textAlign: textComponent.textAlign,
                         fontWeight: textComponent.fontWeight,
                         fontStyle: textComponent.fontStyle,
@@ -65,6 +68,7 @@ function RemotionComponent({
                             : textComponent.textAlign === "right"
                             ? "flex-end"
                             : "center",
+                        userSelect: "none",
                       }}
                       // contentEditable={!previewMode}
                       onClick={(e) => {
