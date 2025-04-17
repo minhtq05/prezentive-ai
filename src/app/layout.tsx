@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PresentAI",
-  description: "Presentations with Generative AI",
+  title: "LectureAI",
+  description: "Educational Lectures with Generative AI",
 };
 
 export default function RootLayout({

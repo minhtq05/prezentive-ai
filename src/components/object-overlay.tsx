@@ -101,7 +101,7 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
         edgeDraggable={false}
         startDragRotate={0}
         throttleDragRotate={0}
-        zoom={2}
+        zoom={1.5}
         // dragging handler
         onDrag={(e: OnDrag) => {
           // Apply transform during drag for smooth visual feedback

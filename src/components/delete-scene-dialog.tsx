@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./dialog";
-import { Button } from "./button";
+} from "./ui/dialog";
+import { Button } from "./ui/button";
 
 interface DeleteSceneDialogProps {
   sceneTitle: string;

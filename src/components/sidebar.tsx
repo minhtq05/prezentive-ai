@@ -2,10 +2,10 @@
 
 import useScenesStore from "@/store/scenes-store";
 import { cn } from "@/lib/utils";
-import { Button } from "./button";
-import { Separator } from "./separator";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 import DeleteSceneDialog from "./delete-scene-dialog";
-import AddSceneDialog from "./add-scene-dialog";
+import AddSceneDialog from "@/components/add-scene-dialog";
 import { useMemo } from "react";
 
 export default function Sidebar() {

@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { RgbaColor, RgbaColorPicker } from "react-colorful";
 import { cn } from "@/lib/utils";
-import { Button } from "./button";
-import { Input } from "./input";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { rgbaColorToString, rgbaStringToColor } from "@/lib/colors";
 
 interface ColorPickerProps {

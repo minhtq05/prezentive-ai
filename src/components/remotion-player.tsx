@@ -78,9 +78,10 @@ function RemotionComponent({
                         }
                       }}
                     >
-                      {textComponent.text || (
-                        <p className="text-zinc-500">Enter text here...</p>
-                      )}
+                      {textComponent.text ||
+                        (!previewMode && (
+                          <p className="text-zinc-500">Enter text here...</p>
+                        ))}
                     </div>
                   );
                 }

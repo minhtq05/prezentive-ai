@@ -3,13 +3,13 @@
 import { SceneText } from "@/types/scenes";
 import useScenesStore from "@/store/scenes-store";
 import useOverlayStore from "@/store/overlay-store";
-import { Button } from "./button";
-import { Separator } from "./separator";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 import { RgbaColor, RgbaColorPicker } from "react-colorful";
 import { cn } from "@/lib/utils";
-import { Input } from "./input";
-import { Textarea } from "./textarea";
-import ColorPicker from "./color-picker";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import ColorPicker from "@/components/color-picker";
 import {
   Select,
   SelectContent,
