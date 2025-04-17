@@ -2,7 +2,7 @@ import useScenesStore from "@/store/scenes-store";
 import { Scene } from "@/types/scenes";
 import { Player } from "@remotion/player";
 import { useMemo } from "react";
-import { AbsoluteFill, Series } from "remotion";
+import { AbsoluteFill, Series, Img, OffthreadVideo } from "remotion";
 import ObjectOverlay from "./object-overlay";
 import { rgbaColorToString } from "@/lib/colors";
 
@@ -27,7 +27,7 @@ function RemotionComponent({
           >
             <AbsoluteFill>
               {scene.components.map((component) => {
-                // Currently only handling SceneText components
+                // Handle SceneText components
                 if (component.type === "scene-text") {
                   const textComponent = component;
                   return (
@@ -85,7 +85,72 @@ function RemotionComponent({
                     </div>
                   );
                 }
-                // Could add handling for SceneMedia components here in the future
+                // Handle SceneMedia components
+                else if (component.type === "scene-media") {
+                  const mediaComponent = component;
+                  return (
+                    <div
+                      key={mediaComponent.id}
+                      style={{
+                        visibility:
+                          visibleOverlayId === mediaComponent.id
+                            ? "hidden"
+                            : "visible",
+                        position: "absolute",
+                        top: `${mediaComponent.top}px`,
+                        left: `${mediaComponent.left}px`,
+                        width: `${mediaComponent.width}px`,
+                        height: `${mediaComponent.height}px`,
+                        overflow: "hidden",
+                        userSelect: "none",
+                        borderRadius: "4px",
+                      }}
+                      onClick={(e) => {
+                        if (!previewMode) {
+                          e.stopPropagation();
+                          handleSelectObject(component.id);
+                        }
+                      }}
+                    >
+                      {mediaComponent.mediaType === "image" && (
+                        <Img
+                          src={mediaComponent.src}
+                          alt={mediaComponent.alt}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: mediaComponent.fit,
+                            userSelect: "none",
+                            pointerEvents: "none",
+                          }}
+                        />
+                      )}
+                      {mediaComponent.mediaType === "video" && (
+                        <OffthreadVideo
+                          src={mediaComponent.src}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: mediaComponent.fit,
+                            userSelect: "none",
+                            pointerEvents: "none",
+                          }}
+                          muted
+                        />
+                      )}
+                      {mediaComponent.mediaType === "audio" && (
+                        <div className="flex items-center justify-center w-full h-full bg-black/10">
+                          <div className="text-center">
+                            <p>Audio</p>
+                            <p className="text-xs text-muted-foreground">
+                              {mediaComponent.alt || "Audio file"}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
                 return null;
               })}
             </AbsoluteFill>

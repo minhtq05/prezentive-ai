@@ -1,9 +1,10 @@
-import { Scene, SceneComponent, SceneText } from "@/types/scenes";
+import { Scene, SceneComponent, SceneText, SceneMedia } from "@/types/scenes";
 import { create } from "zustand";
 import { v4 as uuid } from "uuid";
 import {
   createSectionTitleLayout,
   createTitleAndContentLayout,
+  createTitleAndTwoImagesLayout,
   createTitleLayout,
 } from "@/lib/scenes-layout";
 import useOverlayStore from "./overlay-store";
@@ -17,10 +18,6 @@ export interface ScenesStore {
   selectScene: (id: string | null) => void;
   selectObject: (id: string | null) => void;
   getSelectedObject: () => SceneComponent | null;
-  updateSelectedText: <K extends keyof SceneText>(
-    property: K,
-    value: SceneText[K]
-  ) => void;
   commitOverlayChanges: () => void;
 }
 
@@ -29,6 +26,7 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
     createTitleLayout(),
     createTitleAndContentLayout(),
     createSectionTitleLayout(),
+    createTitleAndTwoImagesLayout(),
   ],
   selectedSceneId: null,
   selectedObjectId: null,
@@ -70,7 +68,7 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
     // Show overlay for the new selected object
     if (id) {
       const selectedObject = get().getSelectedObject();
-      if (selectedObject && selectedObject.type === "scene-text") {
+      if (selectedObject) {
         useOverlayStore.getState().showOverlay(selectedObject as SceneText);
       }
     } else {
@@ -88,42 +86,6 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
         (component) => component.id === state.selectedObjectId
       ) || null
     );
-  },
-  updateSelectedText: (property, value) => {
-    set((state) => {
-      if (!state.selectedSceneId || !state.selectedObjectId) return state;
-
-      const selectedSceneIndex = state.scenes.findIndex(
-        (scene) => scene.id === state.selectedSceneId
-      );
-
-      if (selectedSceneIndex === -1) return state;
-
-      const selectedScene = state.scenes[selectedSceneIndex];
-      const componentIndex = selectedScene.components.findIndex(
-        (component) => component.id === state.selectedObjectId
-      );
-
-      if (componentIndex === -1) return state;
-
-      // Create a new array of scenes with the updated component
-      const updatedScenes = [...state.scenes];
-      const updatedComponents = [...selectedScene.components];
-      updatedComponents[componentIndex] = {
-        ...updatedComponents[componentIndex],
-        [property]: value,
-      };
-
-      updatedScenes[selectedSceneIndex] = {
-        ...selectedScene,
-        components: updatedComponents,
-      };
-
-      return {
-        ...state,
-        scenes: updatedScenes,
-      };
-    });
   },
   commitOverlayChanges: () => {
     const { visibleOverlayId, getOverlayData } = useOverlayStore.getState();
@@ -157,12 +119,13 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
     // Create a new array of scenes with the updated component from overlay
     set((state) => {
       const updatedScenes = [...state.scenes];
-      const updatedComponents = [...selectedScene.components];
+      const updatedComponents = [
+        ...selectedScene.components.slice(0, componentIndex),
+        ...selectedScene.components.slice(componentIndex + 1),
+      ];
 
-      // Update the component with all overlay properties
-      updatedComponents[componentIndex] = {
-        ...overlayData,
-      };
+      // Add the updated component with all overlay properties on top of the existing components for rendering
+      updatedComponents.push(overlayData);
 
       updatedScenes[selectedSceneIndex] = {
         ...selectedScene,

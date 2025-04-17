@@ -1,16 +1,16 @@
-import { SceneComponent, SceneText } from "@/types/scenes";
+import { SceneComponent, SceneMedia, SceneText } from "@/types/scenes";
 import { create } from "zustand";
 
 export interface OverlayStore {
   visibleOverlayId: string | null;
-  overlayObject: SceneText | null;
-  showOverlay: (object: SceneText) => void;
+  overlayObject: SceneText | SceneMedia | null;
+  showOverlay: (object: SceneText | SceneMedia) => void;
   hideOverlay: () => void;
-  updateOverlayProperty: <K extends keyof SceneText>(
+  updateOverlayProperty: <T extends SceneComponent, K extends keyof T>(
     property: K,
-    value: SceneText[K]
+    value: T[K]
   ) => void;
-  getOverlayData: () => SceneText | null;
+  getOverlayData: () => SceneText | SceneMedia | null;
 }
 
 const useOverlayStore = create<OverlayStore>((set, get) => ({
@@ -33,13 +33,23 @@ const useOverlayStore = create<OverlayStore>((set, get) => ({
     set((state) => {
       if (!state.overlayObject) return state;
 
-      return {
-        ...state,
-        overlayObject: {
-          ...state.overlayObject,
-          [property]: value,
-        },
-      };
+      if (state.overlayObject.type === "scene-text") {
+        return {
+          ...state,
+          overlayObject: {
+            ...state.overlayObject,
+            [property]: value,
+          } as SceneText,
+        };
+      } else if (state.overlayObject.type === "scene-media") {
+        return {
+          ...state,
+          overlayObject: {
+            ...state.overlayObject,
+            [property]: value,
+          } as SceneMedia,
+        };
+      } else return state;
     }),
 
   getOverlayData: () => {
