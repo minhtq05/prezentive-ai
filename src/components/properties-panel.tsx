@@ -1,6 +1,6 @@
 "use client";
 
-import { SceneMedia, SceneText } from "@/types/scenes";
+import { SceneAnimation, SceneMedia, SceneText } from "@/types/scenes";
 import useScenesStore from "@/store/scenes-store";
 import useOverlayStore from "@/store/overlay-store";
 import { Button } from "./ui/button";
@@ -38,6 +38,13 @@ interface TextStyleOption {
   value: string;
   label: string;
 }
+
+const animationsNames: { [key in SceneAnimation]: string } = {
+  "zoom-in": "Zoom In",
+  "zoom-out": "Zoom Out",
+  "scale-in": "Scale In",
+  "scale-out": "Scale Out",
+};
 
 export default function PropertiesPanel() {
   const selectedObjectId = useScenesStore((state) => state.selectedObjectId);
@@ -568,7 +575,9 @@ export default function PropertiesPanel() {
               <p className="text-xs text-muted-foreground">
                 Current animations:{" "}
                 {textObject.animations.length
-                  ? textObject.animations.join(", ")
+                  ? textObject.animations
+                      .map((animation) => animationsNames[animation])
+                      .join(", ")
                   : "None"}
               </p>
               <Button variant="outline" size="sm" className="w-full mt-2">

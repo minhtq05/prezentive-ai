@@ -9,6 +9,8 @@ export type Scene = {
   components: SceneComponent[];
 };
 
+export type SceneAnimation = "zoom-in" | "zoom-out" | "scale-in" | "scale-out";
+
 export type SceneBaseObject = {
   id: string;
   from: number;
@@ -17,7 +19,7 @@ export type SceneBaseObject = {
   left: number;
   width: number;
   height: number;
-  animations: string[];
+  animations: SceneAnimation[];
 };
 
 export type SceneText = SceneBaseObject & {

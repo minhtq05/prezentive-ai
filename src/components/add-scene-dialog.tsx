@@ -14,6 +14,8 @@ import {
   createTitleLayout,
   createTitleAndContentLayout,
   createSectionTitleLayout,
+  createTitleAndTwoImagesLayout,
+  createTitleAndVideoLayout,
 } from "@/lib/scenes-layout";
 import { Scene } from "@/types/scenes";
 import { rgbaColorToString } from "@/lib/colors";
@@ -42,6 +44,12 @@ export default function AddSceneDialog({
         break;
       case "sectionTitle":
         scene = createSectionTitleLayout();
+        break;
+      case "titleAndTwoImages":
+        scene = createTitleAndTwoImagesLayout();
+        break;
+      case "titleAndVideo":
+        scene = createTitleAndVideoLayout();
         break;
       default:
         setOpen(false);
@@ -168,6 +176,16 @@ export default function AddSceneDialog({
     return renderSceneTemplate(sectionTitleScene);
   };
 
+  const renderTitleAndTwoImagesTemplate = () => {
+    const titleAndTwoImagesScene = createTitleAndTwoImagesLayout();
+    return renderSceneTemplate(titleAndTwoImagesScene);
+  };
+
+  const renderTitleAndVideoTemplate = () => {
+    const titleAndVideoScene = createTitleAndVideoLayout();
+    return renderSceneTemplate(titleAndVideoScene);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -187,6 +205,16 @@ export default function AddSceneDialog({
             "sectionTitle",
             "Section Title",
             renderSectionTitleTemplate
+          )}
+          {renderTemplatePreview(
+            "titleAndTwoImages",
+            "Compare Images",
+            renderTitleAndTwoImagesTemplate
+          )}
+          {renderTemplatePreview(
+            "titleAndVideo",
+            "Video Slide",
+            renderTitleAndVideoTemplate
           )}
         </div>
 

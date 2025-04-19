@@ -51,7 +51,7 @@ const createSceneText = (
   fontStyle: "normal",
   textDecoration: "none",
   textTransform: "none",
-  animations: [],
+  animations: ["zoom-in", "scale-out"],
 });
 
 // Helper to create media components
@@ -79,7 +79,7 @@ const createSceneMedia = (
   left, // x position
   width,
   height,
-  animations: [],
+  animations: ["zoom-in", "scale-out"],
 });
 
 // 1. Title Layout - Title and Subtitle
@@ -197,7 +197,7 @@ export const createSectionTitleLayout = (
 // 4. Title and Two Images Layout - Heading with left and right images
 export const createTitleAndTwoImagesLayout = (
   headingText: string = "Compare and Contrast",
-  leftImageSrc: string = "https://yt3.googleusercontent.com/MopgmVAFV9BqlzOJ-UINtmutvEPcNe5IbKMmP_4vZZo3vnJXcZGtybUBsXaEVxkmxKyGqX9R=s900-c-k-c0x00ffffff-no-rj", // OpenAI Logo
+  leftImageSrc: string = "https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/openai-new-logo_f252fc.png?quality=90&strip=all&crop=7.8125%2C0%2C84.375%2C100&w=2400", // OpenAI Logo
   rightImageSrc: string = "https://9meters.com/wp-content/uploads/claude-logo.webp" // Claude Logo
 ): Scene => {
   const scene = createBaseScene("Title and Two Images");
@@ -251,12 +251,52 @@ export const createTitleAndTwoImagesLayout = (
   return scene;
 };
 
+// 5. Title and Video Layout - Heading with a featured video
+export const createTitleAndVideoLayout = (
+  headingText: string = "Video Presentation",
+  // videoSrc: string = "https://files.vidstack.io/sprite-fight/720p.mp4" // Sample video
+  videoSrc: string = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" // Sample video
+): Scene => {
+  const scene = createBaseScene("Title and Video");
+
+  // Heading at the top
+  const headingComponent = createSceneText(
+    headingText,
+    FONT_SIZES.heading,
+    0,
+    0,
+    100, // y position - top of slide
+    320, // x position - centered
+    1280, // width
+    100, // height
+    "center"
+  );
+
+  // Video component centered below the heading
+  const videoComponent = createSceneMedia(
+    videoSrc,
+    "video",
+    0,
+    0,
+    240, // y position - below heading
+    320, // x position - centered
+    1280, // width
+    600, // height
+    "Featured video", // alt text
+    "contain" // fit
+  );
+
+  scene.components.push(headingComponent, videoComponent);
+  return scene;
+};
+
 // Export a collection of all available layouts
 export const sceneLayouts = {
   title: createTitleLayout,
   titleAndContent: createTitleAndContentLayout,
   sectionTitle: createSectionTitleLayout,
   titleAndTwoImages: createTitleAndTwoImagesLayout,
+  titleAndVideo: createTitleAndVideoLayout,
 };
 
 export default sceneLayouts;
