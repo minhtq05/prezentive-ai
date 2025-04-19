@@ -17,8 +17,13 @@ import {
   createTitleAndTwoImagesLayout,
   createTitleAndVideoLayout,
 } from "@/lib/scenes-layout";
-import { Scene } from "@/types/scenes";
+import { Scene, SceneMedia } from "@/types/scenes";
 import { rgbaColorToString } from "@/lib/colors";
+import {
+  Image as ImageIcon,
+  Video as VideoIcon,
+  Music as MusicIcon,
+} from "lucide-react";
 
 interface AddSceneDialogProps {
   onAddScene: (scene: Scene) => void;
@@ -152,8 +157,37 @@ export default function AddSceneDialog({
                 {textComponent.text}
               </div>
             );
+          } else if (component.type === "scene-media") {
+            const mediaComponent = component as SceneMedia;
+            return (
+              <div
+                key={mediaComponent.id}
+                style={{
+                  position: "absolute",
+                  top: `${mediaComponent.top}px`,
+                  left: `${mediaComponent.left}px`,
+                  width: `${mediaComponent.width}px`,
+                  height: `${mediaComponent.height}px`,
+                  backgroundColor: "rgba(240, 240, 240, 0.5)",
+                  border: "1px dashed #aaa",
+                  borderRadius: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {mediaComponent.mediaType === "image" && (
+                  <ImageIcon size={48} color="#666" />
+                )}
+                {mediaComponent.mediaType === "video" && (
+                  <VideoIcon size={48} color="#666" />
+                )}
+                {mediaComponent.mediaType === "audio" && (
+                  <MusicIcon size={48} color="#666" />
+                )}
+              </div>
+            );
           }
-          // Could add handling for SceneMedia components here in the future
           return null;
         })}
       </div>
