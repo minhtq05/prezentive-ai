@@ -5,6 +5,7 @@ import {
   createSectionTitleLayout,
   createTitleAndContentLayout,
   createTitleAndTwoImagesLayout,
+  createTitleAndVideoLayout,
   createTitleLayout,
 } from "@/lib/scenes-layout";
 import useOverlayStore from "./overlay-store";
@@ -19,6 +20,7 @@ export interface ScenesStore {
   selectObject: (id: string | null) => void;
   getSelectedObject: () => SceneComponent | null;
   commitOverlayChanges: () => void;
+  deleteSelectedComponent: () => void;
 }
 
 const useScenesStore = create<ScenesStore>((set, get) => ({
@@ -27,6 +29,7 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
     createTitleAndContentLayout(),
     createSectionTitleLayout(),
     createTitleAndTwoImagesLayout(),
+    createTitleAndVideoLayout(),
   ],
   selectedSceneId: null,
   selectedObjectId: null,
@@ -137,6 +140,45 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
         scenes: updatedScenes,
       };
     });
+  },
+  deleteSelectedComponent: () => {
+    const state = get();
+    const { selectedSceneId, selectedObjectId } = state;
+
+    // If no scene or object is selected, do nothing
+    if (!selectedSceneId || !selectedObjectId) return;
+
+    // Find the scene that contains the selected component
+    const selectedSceneIndex = state.scenes.findIndex(
+      (scene) => scene.id === selectedSceneId
+    );
+
+    if (selectedSceneIndex === -1) return;
+
+    const selectedScene = state.scenes[selectedSceneIndex];
+
+    // Filter out the selected component
+    const updatedComponents = selectedScene.components.filter(
+      (component) => component.id !== selectedObjectId
+    );
+
+    // Update the scenes array with the new components
+    set((state) => {
+      const updatedScenes = [...state.scenes];
+      updatedScenes[selectedSceneIndex] = {
+        ...selectedScene,
+        components: updatedComponents,
+      };
+
+      return {
+        ...state,
+        scenes: updatedScenes,
+        selectedObjectId: null, // Clear the selected object
+      };
+    });
+
+    // Hide the overlay
+    useOverlayStore.getState().hideOverlay();
   },
 }));
 
