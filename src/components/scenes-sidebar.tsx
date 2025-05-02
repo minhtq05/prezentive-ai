@@ -8,7 +8,7 @@ import DeleteSceneDialog from "./delete-scene-dialog";
 import AddSceneDialog from "@/components/add-scene-dialog";
 import { useMemo } from "react";
 
-export default function Sidebar() {
+export default function ScenesSidebar() {
   const scenes = useScenesStore((state) => state.scenes);
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
   const selectScene = useScenesStore((state) => state.selectScene);
