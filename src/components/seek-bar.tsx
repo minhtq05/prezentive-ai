@@ -286,7 +286,7 @@ export const SeekBar: React.FC<{
             >
               {/* Ruler */}
               <div className="h-6 border-b border-t border-gray-200 bg-gray-50 relative overflow-hidden">
-                <div className="absolute left-0 top-0 h-full overflow-hidden">
+                <div className="h-full overflow-hidden">
                   {secondMarkers.map((marker, i) => (
                     <div
                       key={`second-${i}`}
