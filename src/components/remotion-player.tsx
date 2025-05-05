@@ -8,6 +8,7 @@ import ObjectOverlay from "./object-overlay";
 import { rgbaColorToString } from "@/lib/colors";
 import { Separator } from "./ui/separator";
 import { SeekBar } from "./seek-bar";
+import usePlayerStore from "@/store/player-store";
 
 const ANIMATION_DURATION = 10; // Duration of the animation in frames
 
@@ -233,6 +234,9 @@ export default function RemotionPlayer() {
   const scenes = useScenesStore((state) => state.scenes);
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
   const selectObject = useScenesStore((state) => state.selectObject);
+  const setPlayerRefElement = usePlayerStore(
+    (state) => state.setPlayerRefElement
+  );
 
   // Find the selected scene based on the ID instead of the 'selected' property
   const selectedScene = useMemo(
@@ -252,13 +256,10 @@ export default function RemotionPlayer() {
     [selectedScene, totalDuration]
   );
 
-  // Remotion player reference
-  const playerRef = useRef<PlayerRef>(null);
-
   return (
     <>
       <Player
-        ref={playerRef}
+        ref={setPlayerRefElement}
         component={RemotionComponent}
         // component={RemotionTestingComponent}
         durationInFrames={durationInFrames}
@@ -273,8 +274,6 @@ export default function RemotionPlayer() {
         style={{ width: "100%" }}
         acknowledgeRemotionLicense
       />
-      <Separator orientation="horizontal" />
-      <SeekBar playerRef={playerRef} durationInFrames={durationInFrames} />
     </>
   );
 }
