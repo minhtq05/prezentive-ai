@@ -22,7 +22,7 @@ export default function ScenesSidebar() {
   return (
     <div className="h-full w-full flex flex-col p-4 overflow-hidden">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium">Scenes</h2>
+        <h2 className="text-md font-medium">Scenes</h2>
         <AddSceneDialog onAddScene={addScene}>
           <Button variant="outline" size="sm">
             Add Scene
@@ -35,7 +35,7 @@ export default function ScenesSidebar() {
       <div className="flex-1 overflow-y-auto space-y-2">
         <div
           className={cn(
-            "p-3 rounded-md cursor-pointer transition-colors",
+            "p-2 rounded-sm cursor-pointer transition-colors hover:duration-0",
             selectedSceneId === null
               ? "bg-primary text-primary-foreground"
               : "hover:bg-secondary"
@@ -43,7 +43,7 @@ export default function ScenesSidebar() {
           onClick={() => selectScene(null)}
         >
           <div className="flex justify-between items-center">
-            <span className="font-medium">Preview</span>
+            <span className="text-sm font-medium">Preview</span>
             <span className="text-xs opacity-70">{totalDuration} frames</span>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function ScenesSidebar() {
           <div
             key={scene.id}
             className={cn(
-              "p-3 rounded-md cursor-pointer transition-colors",
+              "p-2 rounded-sm cursor-pointer transition-colors hover:duration-0",
               scene.id === selectedSceneId
                 ? "bg-primary text-primary-foreground"
                 : "hover:bg-secondary"
@@ -59,7 +59,7 @@ export default function ScenesSidebar() {
             onClick={() => selectScene(scene.id)}
           >
             <div className="flex justify-between items-center">
-              <span className="font-medium">{scene.title}</span>
+              <span className="text-sm font-medium">{scene.title}</span>
               <span className="text-xs opacity-70">
                 {scene.durationInFrames} frames
               </span>
