@@ -583,7 +583,7 @@ function useSeekBar({
         .left as number;
 
       const _frame = getFrameFromX(
-        e.clientX - posLeft + e.currentTarget.scrollLeft,
+        e.clientX - posLeft,
         durationInFrames,
         width
       );
@@ -663,13 +663,39 @@ function useSeekBar({
   // Calculate time markers for the ruler
   const secondMarkers = useMemo(() => {
     const markers: { position: number; label: string }[] = [];
-    const secondsCount = Math.ceil(durationInFrames / 30); // 30 frames per second
-    const pixelsPerSecond = (30 * width) / Math.max(1, durationInFrames);
+    const timeSeparation = durationInFrames / (30 * 30); // keep under 30 markers in the timeline
+    const acceptableSeparations = [
+      0.1, // 0.1 second (3 frames)
+      1, // 1 second (30 frames)
+      2, // 2 seconds (60 frames)
+      5, // 5 seconds (150 frames)
+      10, // 10 seconds (300 frames)
+      20, // 20 seconds (600 frames)
+      30, // 30 seconds (900 frames)
+      60, // 1 minute (1800 frames)
+      120, // 2 minutes (3600 frames)
+      300, // 5 minutes (9000 frames)
+      600, // 10 minutes (18000 frames)
+    ];
 
-    for (let i = 0; i <= secondsCount; i++) {
+    let bestSeparation = -1;
+    for (const separation of acceptableSeparations) {
+      if (separation >= timeSeparation) {
+        bestSeparation = separation;
+        break;
+      }
+    }
+    if (bestSeparation === -1) {
+      bestSeparation = acceptableSeparations[acceptableSeparations.length - 1];
+    }
+
+    const markersCount = Math.floor(durationInFrames / (bestSeparation * 30));
+    const pixelsPerFrame = width / Math.max(1, durationInFrames);
+
+    for (let i = 0; i <= markersCount; i++) {
       markers.push({
-        position: i * pixelsPerSecond,
-        label: `${i}s`,
+        position: i * pixelsPerFrame * bestSeparation * 30,
+        label: `${i * bestSeparation}s`,
       });
     }
 
