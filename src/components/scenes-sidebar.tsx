@@ -15,7 +15,7 @@ export default function ScenesSidebar() {
   const addScene = useScenesStore((state) => state.addScene);
   const deleteScene = useScenesStore((state) => state.deleteScene);
   const totalDuration = useMemo(
-    () => scenes.reduce((acc, scene) => acc + 150, 0),
+    () => scenes.reduce((acc, scene) => acc + scene.durationInFrames, 0),
     [scenes]
   );
 
