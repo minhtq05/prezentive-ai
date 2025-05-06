@@ -30,6 +30,8 @@ import usePlayerStore from "@/store/player-store";
 import { Size, useElementSize } from "@/hooks/use-element-size";
 import { useHoverState } from "./seek-bar-temp";
 import { useMeasure } from "@uidotdev/usehooks";
+import { Scene, SceneMedia, SceneText } from "@/types/scenes";
+import { cn } from "@/lib/utils";
 
 const getFrameFromX = (
   clientX: number,
@@ -86,9 +88,11 @@ export const SeekBar: React.FC<{
   const size = useElementSize(containerRef);
   const scenes = useScenesStore((state) => state.scenes);
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
+  const selectedScene =
+    scenes.find((scene) => scene.id === selectedSceneId) || null;
 
   const [seekBarRef, { width: seekBarWidth }] = useMeasure();
-  const width = size?.width ?? 0;
+  const width = useMemo(() => size?.width ?? 0, [size?.width]);
   // const scaledWidth = width * zoom;
 
   const { skipBackward, skipForward, onPointerDown, secondMarkers } =
@@ -111,105 +115,85 @@ export const SeekBar: React.FC<{
     setFrame(0);
   }, [selectedSceneId]);
 
-  // Calculate frame markers for the ruler (just show every 5 frames)
-  // const frameMarkers = useMemo(() => {
-  //   const markers: number[] = [];
-  //   const pixelsPerFrame = width / Math.max(1, durationInFrames - 1);
-
-  //   for (let i = 0; i < durationInFrames; i += 5) {
-  //     if (i % 30 !== 0) {
-  //       // Skip second markers
-  //       markers.push(i * pixelsPerFrame);
-  //     }
-  //   }
-
-  //   return markers;
-  // }, [durationInFrames, width]);
-
-  // Function to get cumulative frame offset for a scene
-  // const getSceneFrameOffset = (sceneIndex: number) => {
-  //   let offset = 0;
-  //   for (let i = 0; i < sceneIndex; i++) {
-  //     offset += scenes[i].durationInFrames;
-  //   }
-  //   return offset;
-  // };
-
-  // Group components by type for the timeline tracks
-  // const trackComponents = useMemo(() => {
-  //   const textComponents: {
-  //     scene: Scene;
-  //     component: SceneText;
-  //     offset: number;
-  //   }[] = [];
-  //   const mediaComponents: {
-  //     scene: Scene;
-  //     component: SceneMedia;
-  //     offset: number;
-  //   }[] = [];
-  //   const audioComponents: {
-  //     scene: Scene;
-  //     component: SceneMedia;
-  //     offset: number;
-  //   }[] = [];
-
-  //   scenes.forEach((scene, index) => {
-  //     const offset = getSceneFrameOffset(index);
-
-  //     scene.components.forEach((component) => {
-  //       if (component.type === "scene-text") {
-  //         textComponents.push({
-  //           scene,
-  //           component: component as SceneText,
-  //           offset,
-  //         });
-  //       } else if (component.type === "scene-media") {
-  //         const mediaComponent = component as SceneMedia;
-  //         if (mediaComponent.mediaType === "audio") {
-  //           audioComponents.push({
-  //             scene,
-  //             component: mediaComponent,
-  //             offset,
-  //           });
-  //         } else {
-  //           mediaComponents.push({
-  //             scene,
-  //             component: mediaComponent,
-  //             offset,
-  //           });
-  //         }
-  //       }
-  //     });
-  //   });
-
-  //   return { textComponents, mediaComponents, audioComponents };
-  // }, [scenes]);
-
   // Function to render scenes backgrounds in the timeline
   const renderSceneBackgrounds = () => {
-    let currentOffset = 0;
-
-    return scenes.map((scene) => {
+    return (selectedScene === null ? scenes : [selectedScene]).map((scene) => {
       const pixelsPerFrame = width / Math.max(1, durationInFrames);
       const sceneWidth = scene.durationInFrames * pixelsPerFrame;
-      const leftPosition = currentOffset * pixelsPerFrame;
+
+      // Extract components from the scene
+      const textComponents: SceneText[] = [];
+      const mediaComponents: SceneMedia[] = [];
+
+      for (const component of scene.components) {
+        if (component.type === "scene-text") {
+          textComponents.push(component);
+        } else if (component.type === "scene-media") {
+          mediaComponents.push(component);
+        }
+      }
 
       const result = (
         <div
           key={scene.id}
-          className={`absolute h-full ${"bg-secondary/5"} border-secondary`}
+          className={`h-full ${"bg-secondary/5"} flex flex-col gap-1 box-border border-l-1 border-primary/10`}
           style={{
-            left: leftPosition,
             width: sceneWidth,
           }}
         >
-          <div className="absolute top-0 left-0 px-1 text-[10px] truncate max-w-full bg-black/10">
+          {/* Scene Title */}
+          <div className="px-1 text-[10px] truncate w-fit bg-black/10">
             {scene.title}
+          </div>
+
+          {/* Text Components Track */}
+          <div className="relative flex flex-col gap-1">
+            {textComponents.map((component) => (
+              <div
+                key={`text-${component.id}`}
+                className="h-6 rounded-xs bg-blue-200 border border-blue-300 overflow-hidden flex flex-row gap-1 items-center px-1 mx-1"
+                title={component.text || "Text"}
+              >
+                <TypeIcon size={12} />
+                <div className="text-[8px] truncate w-full max-w-[200px]">
+                  {component.text}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Media Components Track */}
+          <div className="relative flex flex-col gap-1">
+            {mediaComponents.map((component) => (
+              <div
+                key={`media-${component.id}`}
+                className={cn(
+                  "h-6 rounded-xs border overflow-hidden flex flex-row gap-1 items-center px-1 mx-1",
+                  component.mediaType === "image" &&
+                    "border-green-300 bg-green-200",
+                  component.mediaType === "video" &&
+                    "border-red-300 bg-red-200 ",
+                  component.mediaType === "audio" &&
+                    "border-yellow-300 bg-yellow-200 "
+                )}
+                title={component.src || "Media"}
+              >
+                <div className="px-1 text-[8px] truncate w-full flex items-center">
+                  {component.mediaType === "image" ? (
+                    <ImageIcon size={12} />
+                  ) : component.mediaType === "video" ? (
+                    <VideoIcon size={12} />
+                  ) : (
+                    <MusicIcon size={12} />
+                  )}
+                  {component.src || "Media"}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       );
 
-      currentOffset += scene.durationInFrames;
       return result;
     });
   };
@@ -273,10 +257,7 @@ export const SeekBar: React.FC<{
         <div ref={seekBarRef} className="h-full w-full">
           <div
             style={{
-              width:
-                Math.ceil((seekBarWidth ?? 0) / durationInFrames) *
-                durationInFrames *
-                zoom,
+              width: (seekBarWidth ?? 0) * zoom,
             }}
           >
             <div
@@ -349,7 +330,7 @@ export const SeekBar: React.FC<{
                 style={{ height: TRACK_HEIGHT * 4 + 8 }}
               >
                 {/* Scene backgrounds */}
-                <div className="absolute left-0 top-0 w-full h-full">
+                <div className="w-full h-full flex flex-row">
                   {renderSceneBackgrounds()}
                 </div>
                 {/* Playhead */}
@@ -357,116 +338,6 @@ export const SeekBar: React.FC<{
                   className="absolute top-0 h-full w-px bg-primary z-50"
                   style={{ left: playheadPosition }}
                 />
-                {/* Text track */}
-                {/* <div className="relative h-6 flex items-center px-2 z-10">
-          <div className="w-20 text-xs font-medium flex items-center gap-1">
-          <TypeIcon size={12} />
-          <span>Text</span>
-          </div>
-          <div className="flex-1 h-full relative">
-          {trackComponents.textComponents.map((item, index) => {
-            const pixelsPerFrame = width / Math.max(1, durationInFrames - 1);
-            const startFrame = item.offset + item.component.from;
-            const endFrame =
-            item.offset +
-            (item.component.to || item.scene.durationInFrames);
-            const itemWidth = (endFrame - startFrame) * pixelsPerFrame;
-            const leftPosition = startFrame * pixelsPerFrame;
-            
-            return (
-              <div
-              key={`text-${item.component.id}`}
-              className="absolute top-1 h-4 rounded-sm bg-blue-200 border border-blue-300 overflow-hidden"
-              style={{
-                left: leftPosition,
-                width: Math.max(itemWidth, 4),
-                }}
-                >
-                <div className="px-1 text-[8px] truncate w-full">
-                {item.component.text.substring(0, 20)}
-                {item.component.text.length > 20 ? "..." : ""}
-                </div>
-                </div>
-                );
-                })}
-                </div>
-                </div> */}
-                {/* Image/Video track */}
-                {/* <div className="relative h-6 flex items-center px-2 z-10 bg-gray-50/50">
-          <div className="w-20 text-xs font-medium flex items-center gap-1">
-          <ImageIcon size={12} />
-          <span>Media</span>
-          </div>
-          <div className="flex-1 h-full relative">
-          {trackComponents.mediaComponents.map((item, index) => {
-            const pixelsPerFrame = width / Math.max(1, durationInFrames - 1);
-            const startFrame = item.offset + item.component.from;
-            const endFrame =
-            item.offset +
-            (item.component.to || item.scene.durationInFrames);
-            const itemWidth = (endFrame - startFrame) * pixelsPerFrame;
-            const leftPosition = startFrame * pixelsPerFrame;
-            
-            const isVideo = item.component.mediaType === "video";
-            
-            return (
-              <div
-              key={`media-${item.component.id}`}
-              className={`absolute top-1 h-4 rounded-sm border overflow-hidden ${
-                isVideo
-                ? "bg-purple-200 border-purple-300"
-                : "bg-green-200 border-green-300"
-                }`}
-                style={{
-                  left: leftPosition,
-                  width: Math.max(itemWidth, 4),
-                  }}
-                  >
-                  <div className="px-1 text-[8px] truncate w-full flex items-center gap-1">
-                  {isVideo ? <VideoIcon size={8} /> : <ImageIcon size={8} />}
-                  <span>
-                  {item.component.alt || (isVideo ? "Video" : "Image")}
-                  </span>
-                  </div>
-                  </div>
-                  );
-                  })}
-                  </div>
-                  </div> */}
-                {/* Audio track */}
-                {/* <div className="relative h-6 flex items-center px-2 z-10">
-          <div className="w-20 text-xs font-medium flex items-center gap-1">
-          <MusicIcon size={12} />
-          <span>Audio</span>
-          </div>
-          <div className="flex-1 h-full relative">
-          {trackComponents.audioComponents.map((item, index) => {
-            const pixelsPerFrame = width / Math.max(1, durationInFrames - 1);
-            const startFrame = item.offset + item.component.from;
-            const endFrame =
-            item.offset +
-            (item.component.to || item.scene.durationInFrames);
-            const itemWidth = (endFrame - startFrame) * pixelsPerFrame;
-            const leftPosition = startFrame * pixelsPerFrame;
-            
-            return (
-              <div
-              key={`audio-${item.component.id}`}
-              className="absolute top-1 h-4 rounded-sm bg-yellow-200 border border-yellow-300 overflow-hidden"
-              style={{
-                left: leftPosition,
-                width: Math.max(itemWidth, 4),
-                }}
-                >
-                <div className="px-1 text-[8px] truncate w-full flex items-center gap-1">
-                <MusicIcon size={8} />
-                <span>{item.component.alt || "Audio"}</span>
-                </div>
-                </div>
-                );
-                })}
-                </div>
-                </div> */}
               </div>
             </div>
           </div>
