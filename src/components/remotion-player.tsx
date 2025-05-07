@@ -1,13 +1,11 @@
 import useScenesStore from "@/store/scenes-store";
 import { Scene, SceneAnimation } from "@/types/scenes";
-import { Player, PlayerRef } from "@remotion/player";
-import { useCallback, useMemo, useRef } from "react";
+import { Player } from "@remotion/player";
+import { useCallback, useMemo } from "react";
 import { AbsoluteFill, Series, Img, OffthreadVideo } from "remotion";
 import { Animated, Animation, Scale } from "remotion-animated";
 import ObjectOverlay from "./object-overlay";
 import { rgbaColorToString } from "@/lib/colors";
-import { Separator } from "./ui/separator";
-import { SeekBar } from "./seek-bar";
 import usePlayerStore from "@/store/player-store";
 
 const ANIMATION_DURATION = 10; // Duration of the animation in frames
@@ -15,11 +13,10 @@ const ANIMATION_DURATION = 10; // Duration of the animation in frames
 const animationsDict: {
   [key in SceneAnimation]: (durationInFrames: number) => Animation;
 } = {
-  "zoom-in": (durationInFrames: number) => Scale({ by: 1, initial: 10 }),
+  "zoom-in": () => Scale({ by: 1, initial: 10 }),
   "zoom-out": (durationInFrames: number) =>
     Scale({ by: 10, initial: 1, start: durationInFrames - ANIMATION_DURATION }),
-  "scale-in": (durationInFrames: number) =>
-    Scale({ by: 1, initial: 0, mass: 75 }),
+  "scale-in": () => Scale({ by: 1, initial: 0, mass: 75 }),
   "scale-out": (durationInFrames: number) =>
     Scale({ by: 0, start: durationInFrames - ANIMATION_DURATION, mass: 75 }),
 };
@@ -217,14 +214,6 @@ function RemotionComponent({
     <AbsoluteFill onClick={() => handleSelectObject(null)}>
       <Series>{renderedScenes}</Series>
       <ObjectOverlay />
-    </AbsoluteFill>
-  );
-}
-
-function RemotionTestingComponent() {
-  return (
-    <AbsoluteFill>
-      <OffthreadVideo src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
     </AbsoluteFill>
   );
 }
