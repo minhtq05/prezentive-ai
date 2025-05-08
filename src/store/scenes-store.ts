@@ -1,6 +1,5 @@
-import { Scene, SceneComponent, SceneText, SceneMedia } from "@/types/scenes";
+import { Scene, SceneComponent, SceneText } from "@/types/scenes";
 import { create } from "zustand";
-import { v4 as uuid } from "uuid";
 import {
   createSectionTitleLayout,
   createTitleAndContentLayout,

@@ -12,7 +12,7 @@ const FONT_SIZES = {
 // Base template for creating scenes
 const createBaseScene = (title: string): Scene => ({
   id: uuidv4(),
-  durationInFrames: 750, // 5 seconds at 30fps
+  durationInFrames: 150, // 5 seconds at 30fps
   title,
   selected: false,
   components: [],

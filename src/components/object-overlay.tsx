@@ -24,7 +24,7 @@ export default function ObjectOverlay() {
 
   useEffect(() => {
     commitOverlayChanges();
-  }, [debouncedOverlayObject]);
+  }, [debouncedOverlayObject, commitOverlayChanges]);
 
   if (!visibleOverlayId || !overlayObject) {
     return null;

@@ -28,10 +28,11 @@ import { Button } from "./ui/button";
 
 import usePlayerStore from "@/store/player-store";
 import { Size, useElementSize } from "@/hooks/use-element-size";
-import { useHoverState } from "./seek-bar-temp";
 import { useMeasure } from "@uidotdev/usehooks";
-import { Scene, SceneMedia, SceneText } from "@/types/scenes";
+import { SceneMedia, SceneText } from "@/types/scenes";
 import { cn } from "@/lib/utils";
+import { useHoverState } from "@/hooks/use-hover-state";
+import { toast } from "sonner";
 
 const getFrameFromX = (
   clientX: number,
@@ -58,9 +59,10 @@ const findBodyInWhichDivIsLocated = (div: HTMLElement) => {
   return current;
 };
 
-const BAR_HEIGHT = 5;
-const KNOB_SIZE = 12;
-const VERTICAL_PADDING = 0;
+const PLAYHEAD_WIDTH = 1;
+// const BAR_HEIGHT = 5;
+// const KNOB_SIZE = 12;
+// const VERTICAL_PADDING = 0;
 const TRACK_HEIGHT = 72; // Height of each track
 
 export const SeekBar: React.FC<{
@@ -118,7 +120,8 @@ export const SeekBar: React.FC<{
   // Function to render scenes backgrounds in the timeline
   const renderSceneBackgrounds = () => {
     return (selectedScene === null ? scenes : [selectedScene]).map((scene) => {
-      const pixelsPerFrame = width / Math.max(1, durationInFrames);
+      const pixelsPerFrame =
+        (width - PLAYHEAD_WIDTH) / Math.max(1, durationInFrames);
       const sceneWidth = scene.durationInFrames * pixelsPerFrame;
 
       // Extract components from the scene
@@ -200,7 +203,8 @@ export const SeekBar: React.FC<{
 
   // Calculate current playhead position
   const playheadPosition = useMemo(() => {
-    const pixelsPerFrame = width / Math.max(1, durationInFrames);
+    const pixelsPerFrame =
+      (width - PLAYHEAD_WIDTH) / Math.max(1, durationInFrames);
     return frame * pixelsPerFrame;
   }, [frame, durationInFrames, width]);
 
@@ -236,7 +240,38 @@ export const SeekBar: React.FC<{
           </Button>
         </div>
 
-        <div className="flex items-center w-3/10 justify-end">
+        <div className="flex flex-row gap-1 items-center w-3/10 justify-end">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              // axios
+              //   .get("http://localhost:3000/api/render", {
+              //     params: {
+              //       compositionId: "main-video",
+              //       inputProps: {
+              //         previewMode: false,
+              //         scenes: [],
+              //         handleSelectObject: () => {},
+              //       },
+              //     },
+              //   })
+              //   .then((response) => {
+              //     console.log("Render started", response.data);
+              //   })
+              //   .catch((error) => {
+              //     console.error("Error starting render", error);
+              //   });
+              toast("Function not yet implemented", {
+                description:
+                  "Video rendering is not yet implemented in this version.",
+                duration: 10000,
+                icon: "⚠️",
+              });
+            }}
+          >
+            Render
+          </Button>
           <Button
             size="sm"
             variant={loop ? "secondary" : "outline"}
@@ -245,14 +280,14 @@ export const SeekBar: React.FC<{
           >
             <Repeat size={16} />
           </Button>
-          <div className="ml-2 text-xs">
+          {/* <div className="text-xs w-24 flex flex-row justify-end">
             Frame: {frame}/{durationInFrames - 1}
-          </div>
+          </div> */}
         </div>
       </div>
 
       {/* Seek bar with ruler */}
-      <div className="flex-1 relative overflow-x-scroll">
+      <div className="flex-1 flex flex-row relative overflow-x-scroll">
         {/* Interactive seek bar */}
         <div ref={seekBarRef} className="h-full w-full">
           <div
@@ -267,34 +302,38 @@ export const SeekBar: React.FC<{
             >
               {/* Ruler */}
               <div className="h-6 border-b border-t border-gray-200 bg-gray-50 relative overflow-hidden">
-                <div className="h-full overflow-hidden">
+                <div className="h-full w-full overflow-hidden flex flex-row">
                   {secondMarkers.map((marker, i) => (
                     <div
                       key={`second-${i}`}
-                      className="absolute top-0 h-full border-l border-gray-300"
-                      style={{ left: marker.position }}
+                      className="box-border top-0 h-full border-l border-gray-300"
+                      style={{ width: marker.width }}
                     >
                       <span className="text-[10px] ml-1 text-gray-500">
                         {marker.label}
                       </span>
                     </div>
                   ))}
+                  <div
+                    style={{ width: PLAYHEAD_WIDTH }}
+                    className="bg-gray-300"
+                  />
                 </div>
               </div>
 
               {/* Seek Bar */}
-              <div className="relative h-5">
+              <div className="relative h-5 overflow-hidden">
                 <div className="absolute h-1 top-2 bg-gray-300 w-full">
                   <div
                     className="absolute h-1 bg-gray-200 opacity-60"
                     style={{
                       width: `${
                         (((outFrame ?? durationInFrames - 1) - (inFrame ?? 0)) /
-                          (durationInFrames - 1)) *
+                          durationInFrames) *
                         100
                       }%`,
                       marginLeft: `${
-                        ((inFrame ?? 0) / (durationInFrames - 1)) * 100
+                        ((inFrame ?? 0) / durationInFrames) * 100
                       }%`,
                     }}
                   />
@@ -302,11 +341,10 @@ export const SeekBar: React.FC<{
                     className="absolute h-1 bg-black"
                     style={{
                       width: `${
-                        ((frame - (inFrame ?? 0)) / (durationInFrames - 1)) *
-                        100
+                        ((frame - (inFrame ?? 0)) / durationInFrames) * 100
                       }%`,
                       marginLeft: `${
-                        ((inFrame ?? 0) / (durationInFrames - 1)) * 100
+                        ((inFrame ?? 0) / durationInFrames) * 100
                       }%`,
                     }}
                   />
@@ -316,10 +354,7 @@ export const SeekBar: React.FC<{
                     barHovered ? "opacity-100" : "opacity-0"
                   }`}
                   style={{
-                    left: Math.max(
-                      0,
-                      (frame / Math.max(1, durationInFrames - 1)) * width
-                    ),
+                    left: playheadPosition,
                   }}
                 />
               </div>
@@ -332,6 +367,10 @@ export const SeekBar: React.FC<{
                 {/* Scene backgrounds */}
                 <div className="w-full h-full flex flex-row">
                   {renderSceneBackgrounds()}
+                  <div
+                    style={{ width: PLAYHEAD_WIDTH }}
+                    className="bg-primary/10"
+                  />
                 </div>
                 {/* Playhead */}
                 <div
@@ -533,7 +572,7 @@ function useSeekBar({
 
   // Calculate time markers for the ruler
   const secondMarkers = useMemo(() => {
-    const markers: { position: number; label: string }[] = [];
+    const markers: { width: number; label: string }[] = [];
     const timeSeparation = durationInFrames / (30 * 30); // keep under 30 markers in the timeline
     const acceptableSeparations = [
       0.1, // 0.1 second (3 frames)
@@ -560,12 +599,16 @@ function useSeekBar({
       bestSeparation = acceptableSeparations[acceptableSeparations.length - 1];
     }
 
-    const markersCount = Math.floor(durationInFrames / (bestSeparation * 30));
-    const pixelsPerFrame = width / Math.max(1, durationInFrames);
+    const markersCount =
+      Math.floor(durationInFrames / (bestSeparation * 30)) - 1;
+    const pixelsPerFrame =
+      (width - PLAYHEAD_WIDTH) / Math.max(1, durationInFrames);
+
+    const widthPerMarker = pixelsPerFrame * bestSeparation * 30;
 
     for (let i = 0; i <= markersCount; i++) {
       markers.push({
-        position: i * pixelsPerFrame * bestSeparation * 30,
+        width: widthPerMarker,
         label: `${i * bestSeparation}s`,
       });
     }

@@ -48,7 +48,7 @@ export default function Home() {
           {/* <SeekBar playerRef={playerRef} durationInFrames={durationInFrames} /> */}
         </TabsContent>
         <TabsContent value="media-vault" className="flex flex-col items-center">
-          Nothing's here yet
+          Nothing&apos;s here yet
         </TabsContent>
       </Tabs>
       <KeyboardEventHandler />

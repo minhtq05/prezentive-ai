@@ -35,8 +35,8 @@ export default function DeleteSceneDialog({
         <DialogHeader>
           <DialogTitle>Delete Scene</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete "{sceneTitle}"? This action cannot
-            be undone.
+            Are you sure you want to delete &quot;{sceneTitle}&quot;? This
+            action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="mt-4">

@@ -5,7 +5,6 @@ import {
   Type as TextIcon,
   Image as ImageIcon,
   Film as VideoIcon,
-  Plus,
 } from "lucide-react";
 import useScenesStore from "@/store/scenes-store";
 import { SceneText, SceneMedia } from "@/types/scenes";

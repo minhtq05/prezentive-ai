@@ -5,7 +5,7 @@ import useScenesStore from "@/store/scenes-store";
 import useOverlayStore from "@/store/overlay-store";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import { RgbaColor, RgbaColorPicker } from "react-colorful";
+import { RgbaColor } from "react-colorful";
 import { cn } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -15,29 +15,10 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-
-interface TextVerticalAlignmentOption {
-  value: "top" | "center" | "bottom";
-  icon: React.ReactNode;
-}
-
-interface TextStyleOption {
-  type: "weight" | "style" | "decoration" | "transform";
-  value: string;
-  label: string;
-}
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const animationsNames: { [key in SceneAnimation]: string } = {
   "zoom-in": "Zoom In",
