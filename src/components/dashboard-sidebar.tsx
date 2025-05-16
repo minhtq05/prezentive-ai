@@ -1,6 +1,6 @@
 "use client";
 
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { Label } from "@/components/ui/label";
 import {
   Sidebar,
   SidebarContent,
@@ -13,25 +13,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import {
-  ChevronRight,
-  Image,
-  LayoutDashboard,
-  LucideIcon,
-  Search,
-  SquareKanban,
-} from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { SignedIn, UserButton } from "@clerk/nextjs";
+import { Image, LayoutDashboard, Search, SquareKanban } from "lucide-react";
 import Link from "next/link";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
 export function DashboardSidebar() {
   return (
@@ -130,44 +115,44 @@ function SearchForm({ ...props }: React.ComponentProps<"form">) {
   );
 }
 
-interface CollapsibleLinkProps {
-  item: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  };
-}
+// interface CollapsibleLinkProps {
+//   item: {
+//     title: string;
+//     url: string;
+//     icon?: LucideIcon;
+//     isActive?: boolean;
+//     items?: {
+//       title: string;
+//       url: string;
+//     }[];
+//   };
+// }
 
-function CollapsibleLink({ item }: CollapsibleLinkProps) {
-  return (
-    <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton>
-            {item.icon && <item.icon />}
-            <span>{item.title}</span>
-            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {item.items?.map((subItem) => (
-              <SidebarMenuSubItem key={subItem.title}>
-                <SidebarMenuSubButton asChild>
-                  <Link href={subItem.url}>
-                    <span>{subItem.title}</span>
-                  </Link>
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            ))}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
-    </Collapsible>
-  );
-}
+// function CollapsibleLink({ item }: CollapsibleLinkProps) {
+//   return (
+//     <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
+//       <SidebarMenuItem>
+//         <CollapsibleTrigger asChild>
+//           <SidebarMenuButton>
+//             {item.icon && <item.icon />}
+//             <span>{item.title}</span>
+//             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+//           </SidebarMenuButton>
+//         </CollapsibleTrigger>
+//         <CollapsibleContent>
+//           <SidebarMenuSub>
+//             {item.items?.map((subItem) => (
+//               <SidebarMenuSubItem key={subItem.title}>
+//                 <SidebarMenuSubButton asChild>
+//                   <Link href={subItem.url}>
+//                     <span>{subItem.title}</span>
+//                   </Link>
+//                 </SidebarMenuSubButton>
+//               </SidebarMenuSubItem>
+//             ))}
+//           </SidebarMenuSub>
+//         </CollapsibleContent>
+//       </SidebarMenuItem>
+//     </Collapsible>
+//   );
+// }

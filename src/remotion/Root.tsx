@@ -1,6 +1,6 @@
-import { RenderableRemotionComponent } from "./renderable-component";
-import { defaultScenes } from "../constants";
 import { Composition } from "remotion";
+import { defaultScenes } from "../constants";
+import { RenderableRemotionComponent } from "./renderable-component";
 
 export const RemotionRoot: React.FC = () => {
   return (

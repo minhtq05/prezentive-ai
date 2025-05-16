@@ -46,3 +46,6 @@ next-env.d.ts
 # lock files
 /bun.lockb
 package-lock.json
+
+# disk built files (not important at this moment)
+/dist
