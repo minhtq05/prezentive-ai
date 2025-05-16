@@ -33,7 +33,7 @@ export default function LandingPage() {
         <h1 className="text-6xl font-bold">Welcome to LectureAI</h1>
         <p className="text-lg">Your AI-powered educational assistant.</p>
         <div className="flex flex-row gap-4">
-          <Button onClick={() => router.push("/dashboard")}>Open App</Button>
+          <Button onClick={() => router.push("")}>Get started</Button>
           <Button
             variant="secondary"
             onClick={() => router.push("/documentation")}
