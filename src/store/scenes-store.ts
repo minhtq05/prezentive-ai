@@ -1,18 +1,12 @@
 import { Scene, SceneComponent, SceneText } from "@/types/scenes";
 import { create } from "zustand";
-import {
-  createSectionTitleLayout,
-  createTitleAndContentLayout,
-  createTitleAndTwoImagesLayout,
-  createTitleAndVideoLayout,
-  createTitleLayout,
-} from "@/lib/scenes-layout";
 import useOverlayStore from "./overlay-store";
 
 export interface ScenesStore {
   scenes: Scene[];
   selectedSceneId: string | null;
   selectedObjectId: string | null;
+  fillScenes: (scenes: Scene[]) => void;
   addScene: (scene: Scene) => void;
   deleteScene: (id: string) => void;
   selectScene: (id: string | null) => void;
@@ -24,14 +18,17 @@ export interface ScenesStore {
 
 const useScenesStore = create<ScenesStore>((set, get) => ({
   scenes: [
-    createTitleLayout(),
-    createTitleAndContentLayout(),
-    createSectionTitleLayout(),
-    createTitleAndTwoImagesLayout(),
-    createTitleAndVideoLayout(),
+    // createTitleLayout(),
+    // createTitleAndContentLayout(),
+    // createSectionTitleLayout(),
+    // createTitleAndTwoImagesLayout(),
+    // createTitleAndVideoLayout(),
   ],
   selectedSceneId: null,
   selectedObjectId: null,
+  fillScenes: (scenes: Scene[]) => {
+    set({ scenes });
+  },
   addScene: (scene) =>
     set((state) => {
       return {

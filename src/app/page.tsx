@@ -38,12 +38,12 @@ export default function LandingPage() {
         <p className="text-lg">Your AI-powered educational assistant.</p>
         <div className="flex flex-row gap-4">
           {username ? (
-            <Button onClick={() => router.push(`/u/${username}/projects`)}>
+            <Button onClick={() => router.push(`/u/${username}/`)}>
               Get Started
             </Button>
           ) : (
             <SignUpButton>
-              <Button onClick={() => router.push(`/u/${username}/projects`)}>
+              <Button onClick={() => router.push(`/u/${username}/`)}>
                 Get Started
               </Button>
             </SignUpButton>

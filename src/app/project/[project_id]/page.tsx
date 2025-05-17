@@ -1,19 +1,57 @@
 "use client";
 
-import ScenesSidebar from "@/components/scenes-sidebar";
 import ElementSidebar from "@/components/element-sidebar";
-import { Separator } from "@/components/ui/separator";
+import KeyboardEventHandler from "@/components/keyboard-event-handler";
 import PropertiesPanel from "@/components/properties-panel";
 import RemotionPlayer from "@/components/remotion-player";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import KeyboardEventHandler from "@/components/keyboard-event-handler";
+import ScenesSidebar from "@/components/scenes-sidebar";
 import { SeekBar } from "@/components/seek-bar";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useScenesStore from "@/store/scenes-store";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getProjectById, updateProjectElements } from "./actions";
 
 export default function Home() {
+  const { project_id: projectId } = useParams<{ project_id: string }>();
+  const scenes = useScenesStore((state) => state.scenes);
+  const fillScenes = useScenesStore((state) => state.fillScenes);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    // Fetch project data or perform any setup needed for the project
+    const fetchProjectById = async () => {
+      const project = await getProjectById(projectId);
+      if (!project) {
+        console.error("Failed to fetch project data");
+        return;
+      }
+      console.log("Project data:", project.elements);
+      // Handle the project data as needed
+      try {
+        fillScenes(JSON.parse(project.elements));
+      } catch (error) {
+        console.error("Error parsing project elements:", error);
+      }
+    };
+    if (projectId !== undefined) {
+      fetchProjectById();
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    setIsUpdating(true);
+    updateProjectElements(projectId, JSON.stringify(scenes)).finally(() => {
+      setIsUpdating(false);
+    });
+  }, [scenes]);
+
   return (
     <div className="w-screen h-screen flex flex-col">
       <Tabs defaultValue="editor" className="gap-0 w-full h-full">
         <header className="flex justify-center items-center h-12">
+          {isUpdating ? "true" : "false"}
           <TabsList>
             <TabsTrigger value="editor">Editor</TabsTrigger>
             <TabsTrigger value="media-vault">Media Vault</TabsTrigger>

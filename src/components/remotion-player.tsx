@@ -1,12 +1,12 @@
+import { rgbaColorToString } from "@/lib/colors";
+import usePlayerStore from "@/store/player-store";
 import useScenesStore from "@/store/scenes-store";
 import { Scene, SceneAnimation } from "@/types/scenes";
 import { Player } from "@remotion/player";
 import { useCallback, useMemo } from "react";
-import { AbsoluteFill, Series, Img, OffthreadVideo } from "remotion";
+import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
 import { Animated, Animation, Scale } from "remotion-animated";
 import ObjectOverlay from "./object-overlay";
-import { rgbaColorToString } from "@/lib/colors";
-import usePlayerStore from "@/store/player-store";
 
 const ANIMATION_DURATION = 10; // Duration of the animation in frames
 
@@ -247,22 +247,28 @@ export default function RemotionPlayer() {
 
   return (
     <>
-      <Player
-        ref={setPlayerRefElement}
-        component={RemotionComponent}
-        // component={RemotionTestingComponent}
-        durationInFrames={durationInFrames}
-        inputProps={{
-          previewMode: selectedScene ? false : true,
-          scenes: selectedScene ? [selectedScene] : scenes,
-          handleSelectObject: selectObject,
-        }}
-        compositionWidth={1920}
-        compositionHeight={1080}
-        fps={30}
-        style={{ width: "100%" }}
-        acknowledgeRemotionLicense
-      />
+      {durationInFrames > 0 ? (
+        <Player
+          ref={setPlayerRefElement}
+          component={RemotionComponent}
+          // component={RemotionTestingComponent}
+          durationInFrames={durationInFrames}
+          inputProps={{
+            previewMode: selectedScene ? false : true,
+            scenes: selectedScene ? [selectedScene] : scenes,
+            handleSelectObject: selectObject,
+          }}
+          compositionWidth={1920}
+          compositionHeight={1080}
+          fps={30}
+          style={{ width: "100%" }}
+          acknowledgeRemotionLicense
+        />
+      ) : (
+        <div className="flex items-center justify-center w-full h-full">
+          <p className="text-zinc-500">No scenes available</p>
+        </div>
+      )}
     </>
   );
 }
