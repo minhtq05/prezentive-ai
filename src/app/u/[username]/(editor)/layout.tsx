@@ -71,7 +71,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                       },
                     }}
                   />
-                  Quang Minh Tran
+                  <div>{username}</div>
                 </div>
               </SignedIn>
             </SidebarMenuButton>
