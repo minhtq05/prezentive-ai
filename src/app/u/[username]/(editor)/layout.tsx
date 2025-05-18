@@ -24,7 +24,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-export type View = "All Projects" | "Media Vault" | "Settings";
+export type View = "All Projects" | "Templates" | "Media Vault" | "Settings";
 
 export default function DashboardLayout({
   children,
@@ -95,6 +95,18 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   <Link href={`/u/${username}/projects`}>
                     <SquareKanban />
                     <span className="text-sm">All Projects</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={view === "Templates"}
+                  onClick={() => setView("Templates")}
+                >
+                  <Link href={`/u/${username}/templates`}>
+                    <Settings />
+                    <span className="text-sm">Templates</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
