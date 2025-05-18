@@ -31,7 +31,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-export type View = "Dashboard" | "Media Vault" | "Settings";
+export type View = "All Projects" | "Media Vault" | "Settings";
 
 export default function DashboardLayout({
   children,
@@ -40,7 +40,7 @@ export default function DashboardLayout({
 }) {
   const params = useParams();
   const { username } = params as { username: string };
-  const [view, setView] = useState<View>("Dashboard");
+  const [view, setView] = useState<View>("All Projects");
 
   return (
     <SidebarProvider>
@@ -96,12 +96,12 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={view === "Dashboard"}
-                  onClick={() => setView("Dashboard")}
+                  isActive={view === "All Projects"}
+                  onClick={() => setView("All Projects")}
                 >
-                  <Link href={`/u/${username}/dashboard`}>
+                  <Link href={`/u/${username}/projects`}>
                     <SquareKanban />
-                    <span className="text-sm">Dashboard</span>
+                    <span className="text-sm">All Projects</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
