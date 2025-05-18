@@ -219,16 +219,6 @@ export default function Projects() {
           </Dialog>
         </div>
       </div>
-      <div className="flex flex-col gap-2 items-between justify-center bg-muted/50 p-4">
-        <h1 className="text-xl text-muted-foreground font-bold">Templates</h1>
-        <div className="flex flex-row gap-2">
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors gap-2 py-0 shadow-none overflow-hidden">
-            <div className="aspect-video bg-muted/30 flex items-center justify-center w-64">
-              <FileIcon className="h-12 w-12 text-muted-foreground/50" />
-            </div>
-          </Card>
-        </div>
-      </div>
       <div className="px-4">
         {projects.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
