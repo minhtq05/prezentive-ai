@@ -1,5 +1,6 @@
 "use client";
 
+import { CommandMenu } from "@/components/search-bar";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -46,6 +47,7 @@ export default function DashboardLayout({
         </header>
         {children}
       </SidebarInset>
+      <CommandMenu />
     </SidebarProvider>
   );
 }
@@ -153,10 +155,13 @@ function SearchForm({ ...props }: React.ComponentProps<"form">) {
           </Label>
           <SidebarInput
             id="search"
-            placeholder="Search the docs..."
-            className="pl-8"
+            placeholder="Search..."
+            className="pl-8 peer"
           />
           <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
+          <code className="peer-focus:hidden text-xs pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 select-none opacity-50 flex items-center justify-center border p-0.5 rounded-sm bg-muted">
+            Ctrl+K
+          </code>
         </SidebarGroupContent>
       </SidebarGroup>
     </form>
