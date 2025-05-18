@@ -187,14 +187,14 @@ export default function Projects() {
         <div className="flex items-center gap-2">
           <Button
             size="icon"
-            variant={viewMode === "grid" ? "default" : "outline"}
+            variant={viewMode === "grid" ? "default" : "ghost"}
             onClick={() => setViewMode("grid")}
           >
             <Grid className="h-4 w-4" />
           </Button>
           <Button
             size="icon"
-            variant={viewMode === "table" ? "default" : "outline"}
+            variant={viewMode === "table" ? "default" : "ghost"}
             onClick={() => setViewMode("table")}
           >
             <List className="h-4 w-4" />
