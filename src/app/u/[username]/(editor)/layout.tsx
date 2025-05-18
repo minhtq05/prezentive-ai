@@ -1,5 +1,12 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -18,7 +25,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { SignedIn, UserButton } from "@clerk/nextjs";
-import { Image, Search, Settings, SquareKanban } from "lucide-react";
+import { Image, Moon, Search, Settings, SquareKanban, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -56,6 +64,8 @@ interface DashboardSidebarProps {
 }
 
 function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
+  const { setTheme } = useTheme();
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -117,6 +127,34 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                     <Settings />
                     <span className="text-sm">Settings</span>
                   </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={view === "Settings"}
+                  onClick={() => setView("Settings")}
+                >
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                        <span className="sr-only">Toggle theme</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setTheme("light")}>
+                        Light
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        Dark
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("system")}>
+                        System
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
