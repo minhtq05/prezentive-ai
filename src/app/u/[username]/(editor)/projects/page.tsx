@@ -22,7 +22,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { Project } from "@/types/database";
 import { useAuth } from "@clerk/nextjs";
 import { format } from "date-fns";
 import {
@@ -40,6 +39,7 @@ import {
   createProject,
   deleteProject,
   getProjects,
+  ProjectInfo,
   updateProject,
 } from "./actions";
 
@@ -47,17 +47,49 @@ export default function Projects() {
   const router = useRouter();
   const { userId } = useAuth();
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<ProjectInfo[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [currentProject, setCurrentProject] = useState<Project | null>(null);
+  const [infoEditingProject, setInfoEditingProject] =
+    useState<ProjectInfo | null>(null);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+    null
+  );
+
+  // Handle keyboard events for project selection
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedProjectId) {
+        setSelectedProjectId(null);
+      } else if (e.key === "Enter" && selectedProjectId) {
+        navigateToProject(selectedProjectId);
+      }
+    };
+
+    // Handle clicks outside of project cards
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // If clicking outside any card and a project is selected, deselect it
+      if (selectedProjectId && !target.closest("[data-project-card]")) {
+        setSelectedProjectId(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [selectedProjectId]);
 
   useEffect(() => {
     async function fetchProjects() {
@@ -88,20 +120,20 @@ export default function Projects() {
     }
   };
 
-  const handleOpenEditDialog = (project: Project) => {
-    setCurrentProject(project);
+  const handleOpenEditDialog = (project: ProjectInfo) => {
+    setInfoEditingProject(project);
     setEditName(project.name);
     setEditDescription(project.description || "");
     setEditDialogOpen(true);
   };
 
   const handleUpdateProject = async () => {
-    if (!currentProject || !editName.trim()) return;
+    if (!infoEditingProject || !editName.trim()) return;
 
     setIsLoading(true);
     try {
       const updatedProject = await updateProject(
-        currentProject.id,
+        infoEditingProject.id,
         editName,
         editDescription
       );
@@ -112,7 +144,7 @@ export default function Projects() {
           )
         );
         setEditDialogOpen(false);
-        setCurrentProject(null);
+        setInfoEditingProject(null);
         setEditName("");
         setEditDescription("");
       }
@@ -233,8 +265,13 @@ export default function Projects() {
             {projects.map((project) => (
               <Card
                 key={project.id}
-                className="cursor-pointer hover:bg-accent/50 transition-colors gap-2 py-0 shadow-none overflow-hidden"
-                onClick={() => navigateToProject(project.id)}
+                className={`cursor-pointer hover:bg-accent/50 transition-colors gap-2 py-0 shadow-none overflow-hidden relative ${
+                  selectedProjectId === project.id
+                    ? "outline outline-2 outline-offset-2 outline-primary-500"
+                    : ""
+                }`}
+                onClick={() => setSelectedProjectId(project.id)}
+                data-project-card
               >
                 <div className="aspect-video bg-muted/30 flex items-center justify-center border-b w-64">
                   <FileIcon className="h-12 w-12 text-muted-foreground/50" />
@@ -264,6 +301,21 @@ export default function Projects() {
                     <Ellipsis className="h-4 w-4" />
                   </Button>
                 </CardHeader>
+
+                {/* Selection overlay */}
+                {selectedProjectId === project.id && (
+                  <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center z-10">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateToProject(project.id);
+                      }}
+                      className="w-24"
+                    >
+                      Open
+                    </Button>
+                  </div>
+                )}
               </Card>
             ))}
           </div>
@@ -338,7 +390,7 @@ export default function Projects() {
             <div className="flex flex-1 justify-start">
               <Button
                 onClick={() => {
-                  if (currentProject) {
+                  if (infoEditingProject) {
                     setEditDialogOpen(false);
                     setIsDeleting(true);
                   }
@@ -380,8 +432,8 @@ export default function Projects() {
             </Button>
             <Button
               onClick={() => {
-                if (currentProject) {
-                  handleDeleteProject(currentProject.id);
+                if (infoEditingProject) {
+                  handleDeleteProject(infoEditingProject.id);
                   setIsDeleting(false);
                 }
               }}

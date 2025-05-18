@@ -1,13 +1,20 @@
 "use server";
 
-import { Project } from "@/types/database";
 import { createClerkSupabaseClientSsr } from "@/utils/supabase/client";
 
-export async function getProjects(): Promise<Project[]> {
+export type ProjectInfo = {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  modified_at: string;
+};
+
+export async function getProjects(): Promise<ProjectInfo[]> {
   const supabase = await createClerkSupabaseClientSsr();
   const { data, error } = await supabase
     .from("projects")
-    .select("*")
+    .select("id, name, description, created_at, modified_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -22,12 +29,12 @@ export async function createProject(
   userId: string,
   name: string,
   description: string
-): Promise<Project | null> {
+): Promise<ProjectInfo | null> {
   const supabase = await createClerkSupabaseClientSsr();
   const { data, error } = await supabase
     .from("projects")
     .insert([{ user_id: userId, name, description, elements: "" }])
-    .select()
+    .select("id, name, description, created_at, modified_at")
     .single();
 
   if (error) {
@@ -42,13 +49,13 @@ export async function updateProject(
   projectId: string,
   name: string,
   description: string
-): Promise<Project | null> {
+): Promise<ProjectInfo | null> {
   const supabase = await createClerkSupabaseClientSsr();
   const { data, error } = await supabase
     .from("projects")
     .update({ name, description, modified_at: new Date().toISOString() })
     .eq("id", projectId)
-    .select()
+    .select("id, name, description, created_at, modified_at")
     .single();
 
   if (error) {
