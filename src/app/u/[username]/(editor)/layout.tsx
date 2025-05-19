@@ -9,6 +9,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarInput,
   SidebarInset,
@@ -19,13 +20,27 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { SignedIn, UserButton } from "@clerk/nextjs";
-import { Image, Search, Settings, SquareKanban } from "lucide-react";
+import { Search } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import {
+  CameraReelsFill,
+  GearFill,
+  HouseDoorFill,
+  ImageFill,
+  Images,
+  KanbanFill,
+} from "react-bootstrap-icons";
 
-export type View = "All Projects" | "Templates" | "Media Vault" | "Settings";
+export type View =
+  | "Home"
+  | "All Projects"
+  | "Templates"
+  | "Images"
+  | "Videos"
+  | "Settings";
 
 export default function DashboardLayout({
   children,
@@ -86,8 +101,21 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={view === "Home"}
+                  onClick={() => setView("Home")}
+                >
+                  <Link href={`/u/${username}/home`}>
+                    <HouseDoorFill />
+                    <span className="text-sm">Home</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
@@ -95,7 +123,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   onClick={() => setView("All Projects")}
                 >
                   <Link href={`/u/${username}/projects`}>
-                    <SquareKanban />
+                    <KanbanFill />
                     <span className="text-sm">All Projects</span>
                   </Link>
                 </SidebarMenuButton>
@@ -107,23 +135,51 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   onClick={() => setView("Templates")}
                 >
                   <Link href={`/u/${username}/templates`}>
-                    <Settings />
+                    <ImageFill />
                     <span className="text-sm">Templates</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Media Vault</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={view === "Images"}
+                  onClick={() => setView("Images")}
+                >
+                  <Link href={`/u/${username}/media`}>
+                    <Images />
+                    <span className="text-sm">Images</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={view === "Media Vault"}
-                  onClick={() => setView("Media Vault")}
+                  isActive={view === "Videos"}
+                  onClick={() => setView("Videos")}
                 >
                   <Link href={`/u/${username}/media`}>
-                    <Image />
-                    <span className="text-sm">Media Vault</span>
+                    <CameraReelsFill />
+                    <span className="text-sm">Videos</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <div className="px-4">
+          <Separator />
+        </div>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
@@ -131,7 +187,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   onClick={() => setView("Settings")}
                 >
                   <Link href={`/u/${username}/settings`}>
-                    <Settings />
+                    <GearFill />
                     <span className="text-sm">Settings</span>
                   </Link>
                 </SidebarMenuButton>
