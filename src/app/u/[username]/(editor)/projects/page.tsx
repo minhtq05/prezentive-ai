@@ -14,6 +14,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
   Table,
   TableBody,
   TableCell,
@@ -184,7 +194,31 @@ export default function Projects() {
     <div className="flex flex-col gap-4 w-full py-4">
       <div className="flex justify-between items-center px-4">
         <h1 className="text-2xl font-bold">Projects</h1>
-        <div className="flex items-center gap-2">
+      </div>
+      <div className="px-4">
+        <Separator />
+      </div>
+      <div className="px-4 flex flex-col gap-2">
+        <div className="flex items-center gap-2 justify-end w-full">
+          <Select>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Order" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Sort By</SelectLabel>
+                <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                <SelectItem value="date_created">Date created</SelectItem>
+                <SelectItem value="date_modified">Date modified</SelectItem>
+              </SelectGroup>
+              <Separator />
+              <SelectGroup>
+                <SelectLabel>Order</SelectLabel>
+                <SelectItem value="oldest_first">Oldest first</SelectItem>
+                <SelectItem value="newest_first">Newest first</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           <Button
             size="icon"
             variant={viewMode === "grid" ? "default" : "ghost"}
@@ -250,105 +284,107 @@ export default function Projects() {
             </DialogContent>
           </Dialog>
         </div>
-      </div>
-      <div className="px-4">
-        {projects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <p>No projects yet. Create your first project to get started.</p>
-            )}
-          </div>
-        ) : viewMode === "grid" ? (
-          <div className="flex flex-row flex-wrap gap-4 w-fit">
-            {projects.map((project) => (
-              <Card
-                key={project.id}
-                className={`cursor-pointer hover:bg-accent/50 transition-colors gap-2 py-0 shadow-none overflow-hidden relative ${
-                  selectedProjectId === project.id
-                    ? "outline outline-2 outline-offset-2 outline-primary-500"
-                    : ""
-                }`}
-                onClick={() => setSelectedProjectId(project.id)}
-                data-project-card
-              >
-                <div className="aspect-video bg-muted/30 flex items-center justify-center border-b w-64">
-                  <FileIcon className="h-12 w-12 text-muted-foreground/50" />
-                </div>
-                <CardHeader className="relative px-4 pb-4 pt-2 flex flex-row">
-                  <div className="flex flex-col gap-1 w-full">
-                    <CardTitle className="relative text-sm">
-                      {project.name}
-                    </CardTitle>
-                    {/* <CardDescription className="relative line-clamp-2 text-sm text-muted-foreground">
+        <div>
+          {projects.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              {isLoading ? (
+                <p>Loading...</p>
+              ) : (
+                <p>
+                  No projects yet. Create your first project to get started.
+                </p>
+              )}
+            </div>
+          ) : viewMode === "grid" ? (
+            <div className="flex flex-row flex-wrap gap-4 w-fit">
+              {projects.map((project) => (
+                <Card
+                  key={project.id}
+                  className={`cursor-pointer hover:bg-accent/50 transition-colors gap-2 py-0 shadow-none overflow-hidden relative ${
+                    selectedProjectId === project.id
+                      ? "outline outline-2 outline-offset-2 outline-primary-500"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedProjectId(project.id)}
+                  data-project-card
+                >
+                  <div className="aspect-video bg-muted/30 flex items-center justify-center border-b w-64">
+                    <FileIcon className="h-12 w-12 text-muted-foreground/50" />
+                  </div>
+                  <CardHeader className="relative px-4 pb-4 pt-2 flex flex-row">
+                    <div className="flex flex-col gap-1 w-full">
+                      <CardTitle className="relative text-sm">
+                        {project.name}
+                      </CardTitle>
+                      {/* <CardDescription className="relative line-clamp-2 text-sm text-muted-foreground">
                   {project.description || "No description"}
                   </CardDescription> */}
-                    <div className="text-xs text-muted-foreground flex flex-row gap-1">
-                      <User className="w-4 h-4" />
-                      {formatDate(project.modified_at)}
+                      <div className="text-xs text-muted-foreground flex flex-row gap-1">
+                        <User className="w-4 h-4" />
+                        {formatDate(project.modified_at)}
+                      </div>
                     </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenEditDialog(project);
-                    }}
-                    size="sm"
-                    className="h-full"
-                  >
-                    <Ellipsis className="h-4 w-4" />
-                  </Button>
-                </CardHeader>
-
-                {/* Selection overlay */}
-                {selectedProjectId === project.id && (
-                  <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center z-10">
                     <Button
+                      variant="ghost"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigateToProject(project.id);
+                        handleOpenEditDialog(project);
                       }}
-                      className="w-24"
+                      size="sm"
+                      className="h-full"
                     >
-                      Open
+                      <Ellipsis className="h-4 w-4" />
                     </Button>
-                  </div>
-                )}
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Last Modified</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {projects.map((project) => (
-                  <TableRow
-                    key={project.id}
-                    className="cursor-pointer hover:bg-accent/50"
-                    onClick={() => navigateToProject(project.id)}
-                  >
-                    <TableCell>{project.name}</TableCell>
-                    <TableCell className="max-w-md truncate">
-                      {project.description || "No description"}
-                    </TableCell>
-                    <TableCell>{formatDate(project.created_at)}</TableCell>
-                    <TableCell>{formatDate(project.modified_at)}</TableCell>
+                  </CardHeader>
+
+                  {/* Selection overlay */}
+                  {selectedProjectId === project.id && (
+                    <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center z-10">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToProject(project.id);
+                        }}
+                        className="w-24"
+                      >
+                        Open
+                      </Button>
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Last Modified</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+                </TableHeader>
+                <TableBody>
+                  {projects.map((project) => (
+                    <TableRow
+                      key={project.id}
+                      className="cursor-pointer hover:bg-accent/50"
+                      onClick={() => navigateToProject(project.id)}
+                    >
+                      <TableCell>{project.name}</TableCell>
+                      <TableCell className="max-w-md truncate">
+                        {project.description || "No description"}
+                      </TableCell>
+                      <TableCell>{formatDate(project.created_at)}</TableCell>
+                      <TableCell>{formatDate(project.modified_at)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Edit Project Dialog */}

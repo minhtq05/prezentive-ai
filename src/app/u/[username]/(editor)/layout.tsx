@@ -215,9 +215,9 @@ function SearchForm({ ...props }: React.ComponentProps<"form">) {
             className="pl-8 peer"
           />
           <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
-          <code className="peer-focus:hidden text-xs pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 select-none opacity-50 flex items-center justify-center border p-0.5 rounded-sm bg-muted">
+          <kbd className="peer-focus:hidden text-xs pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 select-none opacity-50 flex items-center justify-center">
             Ctrl+K
-          </code>
+          </kbd>
         </SidebarGroupContent>
       </SidebarGroup>
     </form>
