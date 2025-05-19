@@ -20,18 +20,18 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { SignedIn, UserButton } from "@clerk/nextjs";
-import { Search } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import {
-  CameraReelsFill,
+  Film,
   GearFill,
   HouseDoorFill,
   ImageFill,
   Images,
   KanbanFill,
+  Search,
 } from "react-bootstrap-icons";
 
 export type View =
@@ -78,10 +78,10 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="px-0">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="h-10">
+            <SidebarMenuButton className="h-10 px-4">
               <SignedIn>
                 <div className="flex flex-row gap-2 items-center justify-center">
                   <UserButton
@@ -100,8 +100,8 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+        <SidebarGroup className="px-0">
+          <SidebarGroupLabel className="px-4">Platform</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -109,6 +109,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   asChild
                   isActive={view === "Home"}
                   onClick={() => setView("Home")}
+                  className="px-4 font-medium"
                 >
                   <Link href={`/u/${username}/home`}>
                     <HouseDoorFill />
@@ -121,6 +122,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   asChild
                   isActive={view === "All Projects"}
                   onClick={() => setView("All Projects")}
+                  className="px-4 font-medium"
                 >
                   <Link href={`/u/${username}/projects`}>
                     <KanbanFill />
@@ -133,6 +135,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   asChild
                   isActive={view === "Templates"}
                   onClick={() => setView("Templates")}
+                  className="px-4 font-medium"
                 >
                   <Link href={`/u/${username}/templates`}>
                     <ImageFill />
@@ -143,8 +146,8 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Media Vault</SidebarGroupLabel>
+        <SidebarGroup className="px-0">
+          <SidebarGroupLabel className="px-4">Media Vault</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -152,6 +155,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   asChild
                   isActive={view === "Images"}
                   onClick={() => setView("Images")}
+                  className="px-4 font-medium"
                 >
                   <Link href={`/u/${username}/media`}>
                     <Images />
@@ -164,9 +168,10 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   asChild
                   isActive={view === "Videos"}
                   onClick={() => setView("Videos")}
+                  className="px-4 font-medium"
                 >
                   <Link href={`/u/${username}/media`}>
-                    <CameraReelsFill />
+                    <Film />
                     <span className="text-sm">Videos</span>
                   </Link>
                 </SidebarMenuButton>
@@ -177,7 +182,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
         <div className="px-4">
           <Separator />
         </div>
-        <SidebarGroup>
+        <SidebarGroup className="px-0">
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -185,6 +190,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   asChild
                   isActive={view === "Settings"}
                   onClick={() => setView("Settings")}
+                  className="px-4 font-medium"
                 >
                   <Link href={`/u/${username}/settings`}>
                     <GearFill />
@@ -204,7 +210,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
 function SearchForm({ ...props }: React.ComponentProps<"form">) {
   return (
     <form {...props}>
-      <SidebarGroup className="py-0">
+      <SidebarGroup className="py-0 px-4">
         <SidebarGroupContent className="relative">
           <Label htmlFor="search" className="sr-only">
             Search
@@ -212,10 +218,10 @@ function SearchForm({ ...props }: React.ComponentProps<"form">) {
           <SidebarInput
             id="search"
             placeholder="Search..."
-            className="pl-8 peer"
+            className="pl-9 peer rounded-full h-9"
           />
-          <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
-          <kbd className="peer-focus:hidden text-xs pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 select-none opacity-50 flex items-center justify-center">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
+          <kbd className="peer-focus:hidden text-xs pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none opacity-50 flex items-center justify-center">
             Ctrl+K
           </kbd>
         </SidebarGroupContent>

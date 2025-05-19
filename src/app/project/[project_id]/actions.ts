@@ -1,15 +1,23 @@
 "use server";
 
-import { Project } from "@/types/database";
 import { createClerkSupabaseClientSsr } from "@/utils/supabase/client";
+
+type ProjectData = {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  modified_at: string;
+  elements: string;
+};
 
 export async function getProjectById(
   projectId: string
-): Promise<Project | null> {
+): Promise<ProjectData | null> {
   const supabase = await createClerkSupabaseClientSsr();
   const { data, error } = await supabase
     .from("projects")
-    .select("*")
+    .select("id, name, description, created_at, modified_at, elements")
     .eq("id", projectId)
     .single();
 
@@ -24,13 +32,13 @@ export async function getProjectById(
 export async function updateProjectElements(
   projectId: string,
   elements: string
-): Promise<Project | null> {
+): Promise<ProjectData | null> {
   const supabase = await createClerkSupabaseClientSsr();
   const { data, error } = await supabase
     .from("projects")
     .update({ elements, modified_at: new Date().toISOString() })
     .eq("id", projectId)
-    .select()
+    .select("id, name, description, created_at, modified_at, elements")
     .single();
 
   if (error) {

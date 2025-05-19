@@ -34,17 +34,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@clerk/nextjs";
 import { format } from "date-fns";
-import {
-  Ellipsis,
-  FileIcon,
-  Grid,
-  List,
-  Plus,
-  Trash,
-  User,
-} from "lucide-react";
+import { Ellipsis, FileIcon, Plus, RefreshCw, Trash, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ColumnsGap, List } from "react-bootstrap-icons";
 import {
   createProject,
   deleteProject,
@@ -101,14 +94,19 @@ export default function Projects() {
     };
   }, [selectedProjectId]);
 
-  useEffect(() => {
+  const handleFetchProjects = async () => {
     async function fetchProjects() {
       const projects = await getProjects();
       setProjects(projects);
     }
+    setIsLoading(true);
     fetchProjects().finally(() => {
       setIsLoading(false);
     });
+  };
+
+  useEffect(() => {
+    handleFetchProjects();
   }, []);
 
   const handleCreateProject = async () => {
@@ -200,8 +198,37 @@ export default function Projects() {
       </div>
       <div className="px-4 flex flex-col gap-2">
         <div className="flex items-center gap-2 justify-end w-full">
+          <div>
+            <Button
+              size="icon"
+              variant={viewMode === "grid" ? "outline" : "ghost"}
+              onClick={() => setViewMode("grid")}
+              className="rounded-r-none rounded-l-sm"
+            >
+              <ColumnsGap className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant={viewMode === "table" ? "outline" : "ghost"}
+              onClick={() => setViewMode("table")}
+              className="rounded-l-none rounded-r-sm"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="p-2 h-full">
+            <Separator orientation="vertical" />
+          </div>
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => handleFetchProjects()}
+            className="rounded-full"
+          >
+            <RefreshCw className="h-" />
+          </Button>
           <Select>
-            <SelectTrigger className="w-36">
+            <SelectTrigger className="w-36 rounded-full">
               <SelectValue placeholder="Order" />
             </SelectTrigger>
             <SelectContent>
@@ -219,23 +246,9 @@ export default function Projects() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button
-            size="icon"
-            variant={viewMode === "grid" ? "default" : "ghost"}
-            onClick={() => setViewMode("grid")}
-          >
-            <Grid className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant={viewMode === "table" ? "default" : "ghost"}
-            onClick={() => setViewMode("table")}
-          >
-            <List className="h-4 w-4" />
-          </Button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="bg-royal-blue rounded-full">
                 <Plus className="h-4 w-4" />
                 Create New Project
               </Button>
@@ -277,6 +290,7 @@ export default function Projects() {
                 <Button
                   onClick={handleCreateProject}
                   disabled={!name.trim() || isLoading}
+                  className="bg-royal-blue rounded-full"
                 >
                   {isLoading ? "Creating..." : "Create"}
                 </Button>
@@ -324,17 +338,18 @@ export default function Projects() {
                         {formatDate(project.modified_at)}
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenEditDialog(project);
-                      }}
-                      size="sm"
-                      className="h-full"
-                    >
-                      <Ellipsis className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center justify-center h-full">
+                      <Button
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEditDialog(project);
+                        }}
+                        className="h-8 w-8 rounded-full"
+                      >
+                        <Ellipsis className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </CardHeader>
 
                   {/* Selection overlay */}
@@ -345,7 +360,7 @@ export default function Projects() {
                           e.stopPropagation();
                           navigateToProject(project.id);
                         }}
-                        className="w-24"
+                        className="w-24 rounded-full bg-royal-blue"
                       >
                         Open
                       </Button>
@@ -433,14 +448,16 @@ export default function Projects() {
                 }}
                 variant="destructive"
                 disabled={isLoading}
+                className="rounded-full"
               >
-                <Trash className="h-4 w-4 mr-2" />
+                <Trash className="h-4 w-4" />
                 Delete
               </Button>
             </div>
             <Button
               onClick={handleUpdateProject}
               disabled={!editName.trim() || isLoading}
+              className="bg-royal-blue rounded-full"
             >
               {isLoading ? "Updating..." : "Update"}
             </Button>
