@@ -5,10 +5,10 @@ export default async function ProjectLayout({
   params,
   children,
 }: {
-  params: { project_id: string };
+  params: Promise<{ project_id: string }>;
   children: React.ReactNode;
 }) {
-  const project_id = params.project_id;
+  const project_id = (await params).project_id;
   const project = await getProjectById(project_id);
 
   if (!project) {

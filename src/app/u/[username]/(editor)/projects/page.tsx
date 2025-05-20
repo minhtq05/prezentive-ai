@@ -1,5 +1,6 @@
 "use client";
 
+import Container from "@/components/container";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -34,10 +35,17 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@clerk/nextjs";
 import { format } from "date-fns";
-import { Ellipsis, FileIcon, Plus, RefreshCw, Trash, User } from "lucide-react";
+import {
+  Ellipsis,
+  FileIcon,
+  LayoutGrid,
+  List,
+  Plus,
+  Trash,
+  User,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ColumnsGap, List } from "react-bootstrap-icons";
 import {
   createProject,
   deleteProject,
@@ -189,217 +197,204 @@ export default function Projects() {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full py-4">
-      <div className="flex justify-between items-center px-4">
-        <h1 className="text-2xl font-bold">Projects</h1>
-      </div>
-      <div className="px-4">
-        <Separator />
-      </div>
-      <div className="px-4 flex flex-col gap-2">
-        <div className="flex items-center gap-2 justify-end w-full">
-          <div>
-            <Button
-              size="icon"
-              variant={viewMode === "grid" ? "outline" : "ghost"}
-              onClick={() => setViewMode("grid")}
-              className="rounded-r-none rounded-l-sm"
-            >
-              <ColumnsGap className="h-4 w-4" />
-            </Button>
-            <Button
-              size="icon"
-              variant={viewMode === "table" ? "outline" : "ghost"}
-              onClick={() => setViewMode("table")}
-              className="rounded-l-none rounded-r-sm"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="p-2 h-full">
-            <Separator orientation="vertical" />
-          </div>
+    <Container>
+      <h1 className="text-2xl font-bold">Projects</h1>
+      <Separator />
+      <div className="flex items-center gap-2 justify-end w-full">
+        <div>
           <Button
             size="icon"
-            variant="outline"
-            onClick={() => handleFetchProjects()}
-            className="rounded-full"
+            variant={viewMode === "grid" ? "outline" : "ghost"}
+            onClick={() => setViewMode("grid")}
           >
-            <RefreshCw className="h-" />
+            <LayoutGrid size="sm" />
           </Button>
-          <Select>
-            <SelectTrigger className="w-36 rounded-full">
-              <SelectValue placeholder="Order" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Sort By</SelectLabel>
-                <SelectItem value="alphabetical">Alphabetical</SelectItem>
-                <SelectItem value="date_created">Date created</SelectItem>
-                <SelectItem value="date_modified">Date modified</SelectItem>
-              </SelectGroup>
-              <Separator />
-              <SelectGroup>
-                <SelectLabel>Order</SelectLabel>
-                <SelectItem value="oldest_first">Oldest first</SelectItem>
-                <SelectItem value="newest_first">Newest first</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-royal-blue rounded-full">
-                <Plus className="h-4 w-4" />
-                Create New Project
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
-                <DialogDescription>
-                  Add a name and description for your new project.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-medium">
-                    Name
-                  </Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter project name"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-sm font-medium">
-                    Description
-                  </Label>
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter project description"
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  onClick={handleCreateProject}
-                  disabled={!name.trim() || isLoading}
-                  className="bg-royal-blue rounded-full"
-                >
-                  {isLoading ? "Creating..." : "Create"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button
+            size="icon"
+            variant={viewMode === "table" ? "outline" : "ghost"}
+            onClick={() => setViewMode("table")}
+          >
+            <List size="sm" />
+          </Button>
         </div>
-        <div>
-          {projects.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-              {isLoading ? (
-                <p>Loading...</p>
-              ) : (
-                <p>
-                  No projects yet. Create your first project to get started.
-                </p>
-              )}
+        <div className="p-2 h-full">
+          <Separator orientation="vertical" />
+        </div>
+        <Button variant="link" onClick={() => handleFetchProjects()}>
+          Reload
+        </Button>
+        <Select>
+          <SelectTrigger className="w-36" variant="ghost">
+            <SelectValue placeholder="Order" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Sort By</SelectLabel>
+              <SelectItem value="alphabetical">Alphabetical</SelectItem>
+              <SelectItem value="date_created">Date created</SelectItem>
+              <SelectItem value="date_modified">Date modified</SelectItem>
+            </SelectGroup>
+            <Separator />
+            <SelectGroup>
+              <SelectLabel>Order</SelectLabel>
+              <SelectItem value="oldest_first">Oldest first</SelectItem>
+              <SelectItem value="newest_first">Newest first</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="action" size="action">
+              <Plus size="sm" />
+              Create New Project
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Project</DialogTitle>
+              <DialogDescription>
+                Add a name and description for your new project.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-medium">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter project name"
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-sm font-medium">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter project description"
+                  disabled={isLoading}
+                />
+              </div>
             </div>
-          ) : viewMode === "grid" ? (
-            <div className="flex flex-row flex-wrap gap-4 w-fit">
-              {projects.map((project) => (
-                <Card
-                  key={project.id}
-                  className={`cursor-pointer hover:bg-accent/50 transition-colors gap-2 py-0 shadow-none overflow-hidden relative ${
-                    selectedProjectId === project.id
-                      ? "outline outline-2 outline-offset-2 outline-primary-500"
-                      : ""
-                  }`}
-                  onClick={() => setSelectedProjectId(project.id)}
-                  data-project-card
-                >
-                  <div className="aspect-video bg-muted/30 flex items-center justify-center border-b w-64">
-                    <FileIcon className="h-12 w-12 text-muted-foreground/50" />
-                  </div>
-                  <CardHeader className="relative px-4 pb-4 pt-2 flex flex-row">
-                    <div className="flex flex-col gap-1 w-full">
-                      <CardTitle className="relative text-sm">
-                        {project.name}
-                      </CardTitle>
-                      {/* <CardDescription className="relative line-clamp-2 text-sm text-muted-foreground">
+            <DialogFooter>
+              <Button
+                onClick={handleCreateProject}
+                disabled={!name.trim() || isLoading}
+                variant="action"
+                size="action"
+              >
+                {isLoading ? "Creating..." : "Create"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <div>
+        {projects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : (
+              <p>No projects yet. Create your first project to get started.</p>
+            )}
+          </div>
+        ) : viewMode === "grid" ? (
+          <div className="flex flex-row flex-wrap gap-4">
+            {projects.map((project) => (
+              <Card
+                key={project.id}
+                className={`cursor-pointer hover:bg-accent/50 transition-colors gap-2 py-0 shadow-none overflow-hidden relative ${
+                  selectedProjectId === project.id
+                    ? "outline outline-2 outline-offset-2 outline-primary-500"
+                    : ""
+                }`}
+                onClick={() => setSelectedProjectId(project.id)}
+                data-project-card
+              >
+                <div className="aspect-video bg-muted/30 flex items-center justify-center border-b w-64">
+                  <FileIcon className="h-12 w-12 text-muted-foreground/50" />
+                </div>
+                <CardHeader className="relative px-4 pb-4 pt-2 flex flex-row">
+                  <div className="flex flex-col gap-1 w-full">
+                    <CardTitle className="relative text-sm">
+                      {project.name}
+                    </CardTitle>
+                    {/* <CardDescription className="relative line-clamp-2 text-sm text-muted-foreground">
                   {project.description || "No description"}
                   </CardDescription> */}
-                      <div className="text-xs text-muted-foreground flex flex-row gap-1">
-                        <User className="w-4 h-4" />
-                        {formatDate(project.modified_at)}
-                      </div>
+                    <div className="text-xs text-muted-foreground flex flex-row gap-1">
+                      <User className="w-4 h-4" />
+                      {formatDate(project.modified_at)}
                     </div>
-                    <div className="flex items-center justify-center h-full">
-                      <Button
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenEditDialog(project);
-                        }}
-                        className="h-8 w-8 rounded-full"
-                      >
-                        <Ellipsis className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-
-                  {/* Selection overlay */}
-                  {selectedProjectId === project.id && (
-                    <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center z-10">
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigateToProject(project.id);
-                        }}
-                        className="w-24 rounded-full bg-royal-blue"
-                      >
-                        Open
-                      </Button>
-                    </div>
-                  )}
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Last Modified</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {projects.map((project) => (
-                    <TableRow
-                      key={project.id}
-                      className="cursor-pointer hover:bg-accent/50"
-                      onClick={() => navigateToProject(project.id)}
+                  </div>
+                  <div className="flex items-center justify-center h-full">
+                    <Button
+                      variant="outline"
+                      size="action-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenEditDialog(project);
+                      }}
                     >
-                      <TableCell>{project.name}</TableCell>
-                      <TableCell className="max-w-md truncate">
-                        {project.description || "No description"}
-                      </TableCell>
-                      <TableCell>{formatDate(project.created_at)}</TableCell>
-                      <TableCell>{formatDate(project.modified_at)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </div>
+                      <Ellipsis size="sm" />
+                    </Button>
+                  </div>
+                </CardHeader>
+
+                {/* Selection overlay */}
+                {selectedProjectId === project.id && (
+                  <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center z-10">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateToProject(project.id);
+                      }}
+                      variant="action"
+                      size="action"
+                    >
+                      Open
+                    </Button>
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Last Modified</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {projects.map((project) => (
+                  <TableRow
+                    key={project.id}
+                    className="cursor-pointer hover:bg-accent/50"
+                    onClick={() => navigateToProject(project.id)}
+                  >
+                    <TableCell>{project.name}</TableCell>
+                    <TableCell className="max-w-md truncate">
+                      {project.description || "No description"}
+                    </TableCell>
+                    <TableCell>{formatDate(project.created_at)}</TableCell>
+                    <TableCell>{formatDate(project.modified_at)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
 
       {/* Edit Project Dialog */}
@@ -448,16 +443,17 @@ export default function Projects() {
                 }}
                 variant="destructive"
                 disabled={isLoading}
-                className="rounded-full"
+                size="action"
               >
-                <Trash className="h-4 w-4" />
+                <Trash size="sm" />
                 Delete
               </Button>
             </div>
             <Button
               onClick={handleUpdateProject}
               disabled={!editName.trim() || isLoading}
-              className="bg-royal-blue rounded-full"
+              variant="action"
+              size="action"
             >
               {isLoading ? "Updating..." : "Update"}
             </Button>
@@ -497,6 +493,6 @@ export default function Projects() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </Container>
   );
 }
