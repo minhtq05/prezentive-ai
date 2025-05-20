@@ -67,7 +67,7 @@ export default function Home() {
               <ElementSidebar />
             </div>
             <Separator orientation="vertical" />
-            <div className="flex-none w-[20%] h-full">
+            <div className="flex-none w-fit h-full">
               <ScenesSidebar />
             </div>
             <Separator orientation="vertical" />

@@ -14,6 +14,39 @@ import Moveable, {
 } from "react-moveable";
 import { Img, OffthreadVideo } from "remotion";
 
+const moveableConfigs = {
+  draggable: true,
+  throttleDrag: 1,
+  edgeDraggable: false,
+  startDragRotate: 0,
+  throttleDragRotate: 0,
+  zoom: 1.5,
+
+  resizable: true,
+  renderDirections: ["nw", "n", "ne", "w", "e", "sw", "s", "se"],
+
+  snappable: true,
+  snapDirections: {
+    top: true,
+    left: true,
+    bottom: true,
+    right: true,
+    center: true,
+    middle: true,
+  },
+  elementSnapDirections: {
+    top: true,
+    left: true,
+    bottom: true,
+    right: true,
+    center: true,
+    middle: true,
+  },
+  snapThreshold: 200,
+  verticalGuidelines: [0, 480, 960, 1440, 1920],
+  horizontalGuidelines: [0, 270, 540, 810, 1080],
+};
+
 export default function ObjectOverlay() {
   const visibleOverlayId = useOverlayStore((state) => state.visibleOverlayId);
   const overlayObject = useOverlayStore((state) => state.overlayObject);
@@ -104,12 +137,6 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
       </div>
       <Moveable
         target={overlayRef}
-        draggable={true}
-        throttleDrag={1}
-        edgeDraggable={false}
-        startDragRotate={0}
-        throttleDragRotate={0}
-        zoom={1.5}
         // dragging handler
         onDrag={(e: OnDrag) => {
           // Apply transform during drag for smooth visual feedback
@@ -127,8 +154,6 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
           updateOverlayProperty("left", newLeft);
         }}
         // resize handler
-        resizable={true}
-        renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
         onResize={(e: OnResize) => {
           e.target.style.width = `${e.width}px`;
           e.target.style.height = `${e.height}px`;
@@ -148,10 +173,7 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
           updateOverlayProperty("top", newTop);
           updateOverlayProperty("left", newLeft);
         }}
-        // grid snapping handler
-        snappable={true}
-        verticalGuidelines={[0, 480, 960, 1440, 1920]}
-        horizontalGuidelines={[0, 270, 540, 810, 1080]}
+        {...moveableConfigs}
       />
     </>
   );
@@ -233,12 +255,6 @@ function MediaOverlay({ mediaObject }: { mediaObject: SceneMedia }) {
       </div>
       <Moveable
         target={overlayRef}
-        draggable={true}
-        throttleDrag={1}
-        edgeDraggable={false}
-        startDragRotate={0}
-        throttleDragRotate={0}
-        zoom={1.5}
         // dragging handler
         onDrag={(e: OnDrag) => {
           // Apply transform during drag for smooth visual feedback
@@ -256,9 +272,6 @@ function MediaOverlay({ mediaObject }: { mediaObject: SceneMedia }) {
           updateOverlayProperty("left", newLeft);
         }}
         // resize handler with scalable=true for media
-        resizable={true}
-        // scalable={true} // Enable scaling for media elements
-        renderDirections={["nw", "n", "ne", "w", "e", "sw", "s", "se"]}
         onResize={(e: OnResize) => {
           e.target.style.width = `${e.width}px`;
           e.target.style.height = `${e.height}px`;
@@ -278,10 +291,7 @@ function MediaOverlay({ mediaObject }: { mediaObject: SceneMedia }) {
           updateOverlayProperty("top", newTop);
           updateOverlayProperty("left", newLeft);
         }}
-        // grid snapping handler
-        snappable={true}
-        verticalGuidelines={[0, 480, 960, 1440, 1920]}
-        horizontalGuidelines={[0, 270, 540, 810, 1080]}
+        {...moveableConfigs}
       />
     </>
   );

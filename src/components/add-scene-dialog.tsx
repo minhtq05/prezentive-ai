@@ -1,6 +1,21 @@
 "use client";
 
-import { useState, JSX } from "react";
+import { rgbaColorToString } from "@/lib/colors";
+import {
+  createSectionTitleLayout,
+  createTitleAndContentLayout,
+  createTitleAndTwoImagesLayout,
+  createTitleAndVideoLayout,
+  createTitleLayout,
+} from "@/lib/scenes-layout";
+import { Scene, SceneMedia } from "@/types/scenes";
+import {
+  Image as ImageIcon,
+  Music as MusicIcon,
+  Video as VideoIcon,
+} from "lucide-react";
+import { JSX, useState } from "react";
+import { Button } from "./ui//button";
 import {
   Dialog,
   DialogContent,
@@ -9,21 +24,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui//dialog";
-import { Button } from "./ui//button";
-import {
-  createTitleLayout,
-  createTitleAndContentLayout,
-  createSectionTitleLayout,
-  createTitleAndTwoImagesLayout,
-  createTitleAndVideoLayout,
-} from "@/lib/scenes-layout";
-import { Scene, SceneMedia } from "@/types/scenes";
-import { rgbaColorToString } from "@/lib/colors";
-import {
-  Image as ImageIcon,
-  Video as VideoIcon,
-  Music as MusicIcon,
-} from "lucide-react";
 
 interface AddSceneDialogProps {
   onAddScene: (scene: Scene) => void;
