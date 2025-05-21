@@ -14,7 +14,6 @@ const createBaseScene = (title: string): Scene => ({
   id: uuidv4(),
   durationInFrames: 150, // 5 seconds at 30fps
   title,
-  selected: false,
   components: [],
 });
 

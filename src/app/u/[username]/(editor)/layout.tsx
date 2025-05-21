@@ -45,7 +45,7 @@ export default function DashboardLayout({
     <SidebarProvider>
       <DashboardSidebar username={username} view={view} setView={setView} />
       <SidebarInset>
-        <header className="flex flex-row gap-2 items-center p-4 border-b">
+        <header className="flex flex-row gap-2 items-center h-14 p-4 border-b">
           <h1>{view}</h1>
         </header>
         {children}

@@ -43,12 +43,7 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
     // Commit any pending changes before changing scenes
     get().commitOverlayChanges();
 
-    set((state) => ({
-      scenes: state.scenes.map((scene) =>
-        scene.id === id
-          ? { ...scene, selected: true }
-          : { ...scene, selected: false }
-      ),
+    set(() => ({
       selectedSceneId: id,
       selectedObjectId: null, // Reset selected object when changing scenes
     }));

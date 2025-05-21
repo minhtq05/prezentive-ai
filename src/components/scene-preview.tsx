@@ -1,99 +1,17 @@
-"use client";
-
-import AddSceneDialog from "@/components/add-scene-dialog";
-import { Button } from "@/components/ui/button";
 import { rgbaColorToString } from "@/lib/colors";
-import { cn } from "@/lib/utils";
-import useScenesStore from "@/store/scenes-store";
 import { Scene, SceneMedia } from "@/types/scenes";
 import {
   Image as ImageIcon,
   Music as MusicIcon,
   Video as VideoIcon,
 } from "lucide-react";
-import { useMemo } from "react";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
-export default function ScenesSidebar() {
-  const scenes = useScenesStore((state) => state.scenes);
-  const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
-  const selectScene = useScenesStore((state) => state.selectScene);
-  const addScene = useScenesStore((state) => state.addScene);
-  // const deleteScene = useScenesStore((state) => state.deleteScene);
-  const totalDuration = useMemo(
-    () => scenes.reduce((acc, scene) => acc + scene.durationInFrames, 0),
-    [scenes]
-  );
-
-  const CounterWrapper = ({
-    index,
-    children,
-  }: {
-    index: number;
-    children: React.ReactNode;
-  }) => {
-    return (
-      <div className="flex flex-row gap-2">
-        <div className="text-sm text-muted-foreground">{index}</div>
-        {children}
-      </div>
-    );
-  };
-
-  return (
-    <div className="w-52 h-full flex flex-col gap-2 p-4 pb-0 overflow-hidden">
-      <div className="flex justify-between items-center">
-        <h2 className="text-md font-medium">Scenes</h2>
-        <AddSceneDialog onAddScene={addScene}>
-          <Button variant="ghost" size="sm">
-            Add Scene
-          </Button>
-        </AddSceneDialog>
-      </div>
-      <ScrollArea className="flex-1 overflow-scroll" type="always">
-        <div className="relative space-y-2 h-full pb-2">
-          <CounterWrapper index={0}>
-            <div
-              className={cn(
-                "w-36 aspect-video rounded-sm cursor-pointer transition-colors hover:duration-0 flex flex-col justify-center items-center gap-1",
-                selectedSceneId === null
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary hover:bg-secondary"
-              )}
-              onClick={() => selectScene(null)}
-            >
-              <span className="text-sm font-medium">Preview</span>
-              <span className="text-xs opacity-70">{totalDuration} frames</span>
-            </div>
-          </CounterWrapper>
-          {scenes.map((scene, index) => (
-            <CounterWrapper key={scene.id} index={index + 1}>
-              <div
-                className={cn(
-                  "w-36 aspect-video rounded-sm border-2 cursor-pointer transition-colors hover:duration-0 overflow-hidden",
-                  scene.id === selectedSceneId
-                    ? "border-primary"
-                    : "border-secondary hover:border-primary/20"
-                )}
-                onClick={() => selectScene(scene.id)}
-              >
-                <ScenePreview scene={scene} />
-              </div>
-            </CounterWrapper>
-          ))}
-        </div>
-        <ScrollBar />
-      </ScrollArea>
-    </div>
-  );
-}
-
-interface ScenePreviewProps {
+export interface ScenePreviewProps {
   scene: Scene;
 }
 
 // Helper to render a scaled-down template preview
-const ScenePreview = ({ scene }: ScenePreviewProps) => {
+export const ScenePreview = ({ scene }: ScenePreviewProps) => {
   return (
     <div
       className="relative mx-auto aspect-video"
@@ -102,7 +20,7 @@ const ScenePreview = ({ scene }: ScenePreviewProps) => {
       <div
         className="absolute inset-0 overflow-hidden"
         style={{
-          transform: "scale(0.075)", // Scale from 1920x1080 to 144x81
+          transform: "scale(0.125)", // Scale from 1920x1080 to 240x135
           transformOrigin: "top left",
           width: "1920px",
           height: "1080px",

@@ -1,20 +1,20 @@
 "use client";
 
-import { Button } from "./ui/button";
+import useScenesStore from "@/store/scenes-store";
+import { SceneMedia, SceneText } from "@/types/scenes";
 import {
-  Type as TextIcon,
   Image as ImageIcon,
+  Type as TextIcon,
   Film as VideoIcon,
 } from "lucide-react";
-import useScenesStore from "@/store/scenes-store";
-import { SceneText, SceneMedia } from "@/types/scenes";
+import { v4 as uuidv4 } from "uuid";
+import { Button } from "./ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { v4 as uuidv4 } from "uuid";
 
 export default function ElementSidebar() {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
@@ -127,7 +127,7 @@ export default function ElementSidebar() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col items-center gap-4 py-4">
+    <div className="flex flex-row items-center gap-2 p-1">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -136,12 +136,12 @@ export default function ElementSidebar() {
               size="icon"
               onClick={handleAddText}
               disabled={!selectedSceneId}
-              className="rounded-sm h-12 w-12 flex items-center justify-center"
+              className="h-12 w-12 flex items-center justify-center"
             >
-              <TextIcon className="!h-5 !w-5" />
+              <TextIcon />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">
+          <TooltipContent side="bottom">
             <p>Add Text</p>
           </TooltipContent>
         </Tooltip>
@@ -153,12 +153,12 @@ export default function ElementSidebar() {
               size="icon"
               onClick={handleAddImage}
               disabled={!selectedSceneId}
-              className="rounded-sm h-12 w-12 flex items-center justify-center"
+              className="h-12 w-12 flex items-center justify-center"
             >
-              <ImageIcon className="!h-5 !w-5" />
+              <ImageIcon />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">
+          <TooltipContent side="bottom">
             <p>Add Image</p>
           </TooltipContent>
         </Tooltip>
@@ -170,12 +170,12 @@ export default function ElementSidebar() {
               size="icon"
               onClick={handleAddVideo}
               disabled={!selectedSceneId}
-              className="rounded-sm h-12 w-12 flex items-center justify-center"
+              className="h-12 w-12 flex items-center justify-center"
             >
-              <VideoIcon className="!h-5 !w-5" />
+              <VideoIcon />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">
+          <TooltipContent side="bottom">
             <p>Add Video</p>
           </TooltipContent>
         </Tooltip>

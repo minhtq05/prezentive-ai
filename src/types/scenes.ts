@@ -5,7 +5,6 @@ export type Scene = {
   id: string;
   durationInFrames: number;
   title: string;
-  selected: boolean;
   components: SceneComponent[];
 };
 

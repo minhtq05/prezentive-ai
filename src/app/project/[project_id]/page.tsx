@@ -6,20 +6,48 @@ import PropertiesPanel from "@/components/properties-panel";
 import RemotionPlayer from "@/components/remotion-player";
 import ScenesSidebar from "@/components/scenes-sidebar";
 import { SeekBar } from "@/components/seek-bar";
+import { Button } from "@/components/ui/button";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useEditorStore from "@/store/editor-store";
 import useScenesStore from "@/store/scenes-store";
+import { Box, Image, Layers2 } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getProjectById, updateProjectElements } from "./actions";
 
-export default function Home() {
+export default function ProjectEditorPage() {
   const { project_id: projectId } = useParams<{ project_id: string }>();
   const scenes = useScenesStore((state) => state.scenes);
   const fillScenes = useScenesStore((state) => state.fillScenes);
-  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Use the editor store instead of local state
+  const isUpdating = useEditorStore((state) => state.isUpdating);
+  const isFirstRender = useEditorStore((state) => state.isFirstRender);
+  const prevProjectId = useEditorStore((state) => state.prevProjectId);
+  const setIsUpdating = useEditorStore((state) => state.setIsUpdating);
+  const setIsFirstRender = useEditorStore((state) => state.setIsFirstRender);
+  const setPrevProjectId = useEditorStore((state) => state.setPrevProjectId);
+  const resetForNewProject = useEditorStore(
+    (state) => state.resetForNewProject
+  );
 
   useEffect(() => {
+    // Use the editor store's resetForNewProject function
+    resetForNewProject(projectId);
+
     // Fetch project data or perform any setup needed for the project
     const fetchProjectById = async () => {
       const project = await getProjectById(projectId);
@@ -27,8 +55,6 @@ export default function Home() {
         console.error("Failed to fetch project data");
         return;
       }
-      console.log("Project data:", project.elements);
-      // Handle the project data as needed
       try {
         fillScenes(JSON.parse(project.elements));
       } catch (error) {
@@ -38,9 +64,13 @@ export default function Home() {
     if (projectId !== undefined) {
       fetchProjectById();
     }
-  }, [projectId]);
+  }, [projectId, resetForNewProject]);
 
   useEffect(() => {
+    if (isFirstRender) {
+      setIsFirstRender(false);
+      return;
+    }
     setIsUpdating(true);
     updateProjectElements(projectId, JSON.stringify(scenes)).finally(() => {
       setIsUpdating(false);
@@ -49,47 +79,105 @@ export default function Home() {
 
   return (
     <div className="w-screen h-screen flex flex-col">
-      <Tabs defaultValue="editor" className="gap-0 w-full h-full">
-        <header className="flex justify-center items-center h-12">
-          {isUpdating ? "true" : "false"}
-          <TabsList>
-            <TabsTrigger value="editor">Editor</TabsTrigger>
-            <TabsTrigger value="media-vault">Media Vault</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="editor" className="gap-0 w-full h-full flex flex-col">
+        <header className="flex flex-row h-14">
+          <MenuBar />
+          <Separator orientation="vertical" />
+          <ElementSidebar />
         </header>
         <Separator orientation="horizontal" />
-        <TabsContent
-          value="editor"
-          className="flex-1 flex flex-col overflow-auto"
-        >
-          <div className="flex-1 flex flex-row justify-center items-center overflow-auto">
-            <div className="w-16 flex flex-col h-full">
-              <ElementSidebar />
+        <div className="flex-1 overflow-auto flex flex-row">
+          <TabsList
+            variant="editor"
+            className="flex flex-col w-14 h-full justify-start"
+          >
+            <div className="h-14 w-14">
+              <TabsTrigger
+                variant="editor"
+                value="editor"
+                className="h-full w-full text-pretty whitespace-normal"
+              >
+                <Box />
+              </TabsTrigger>
             </div>
-            <Separator orientation="vertical" />
-            <div className="flex-none w-fit h-full">
-              <ScenesSidebar />
+            <div className="h-14 w-14">
+              <TabsTrigger
+                variant="editor"
+                value="media-vault"
+                className="h-full w-full text-pretty whitespace-normal"
+              >
+                <Image />
+              </TabsTrigger>
             </div>
-            <Separator orientation="vertical" />
-            <div className="flex-1 flex flex-col overflow-y-scroll relative h-full items-center justify-center">
-              <RemotionPlayer />
+          </TabsList>
+          <Separator orientation="vertical" />
+          <TabsContent
+            value="editor"
+            className="w-full h-full flex flex-col overflow-auto"
+          >
+            <div className="flex-1 flex flex-row justify-center items-center overflow-auto">
+              <div className="flex-none w-fit h-full">
+                <ScenesSidebar />
+              </div>
+              <Separator orientation="vertical" />
+              <div className="flex-1 flex flex-col overflow-y-scroll relative h-full items-center justify-center">
+                <RemotionPlayer />
+              </div>
+              <Separator orientation="vertical" />
+              <div className="flex-none w-[20%] h-full overflow-y-auto">
+                <PropertiesPanel />
+              </div>
             </div>
-            <Separator orientation="vertical" />
-            <div className="flex-none w-[20%] h-full overflow-y-auto">
-              <PropertiesPanel />
+            <Separator orientation="horizontal" />
+            <div className="flex flex-col relative min-h-[200px]">
+              <SeekBar />
             </div>
-          </div>
-          <Separator orientation="horizontal" />
-          <div className="flex flex-col relative min-h-[300px]">
-            <SeekBar />
-          </div>
-          {/* <SeekBar playerRef={playerRef} durationInFrames={durationInFrames} /> */}
-        </TabsContent>
-        <TabsContent value="media-vault" className="flex flex-col items-center">
-          Nothing&apos;s here yet
-        </TabsContent>
+          </TabsContent>
+          <TabsContent
+            value="media-vault"
+            className="flex flex-col items-center"
+          >
+            Nothing&apos;s here yet
+          </TabsContent>
+        </div>
       </Tabs>
       <KeyboardEventHandler />
     </div>
+  );
+}
+
+function MenuBar() {
+  return (
+    <Menubar className="shadow-none border-none h-14 w-14 p-0">
+      <MenubarMenu>
+        <MenubarTrigger asChild>
+          <Button
+            variant="ghost"
+            className="h-14 w-14 flex items-center justify-center rounded-none"
+          >
+            <Layers2 />
+          </Button>
+        </MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            <Link href="/">Back to projects</Link>
+          </MenubarItem>
+          <MenubarSub>
+            <MenubarSubTrigger>Files</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>New project</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Edit</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Undo</MenubarItem>
+              <MenubarItem>Redo</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
   );
 }

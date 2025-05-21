@@ -3,17 +3,17 @@
 import useScenesStore from "@/store/scenes-store";
 import type { PlayerRef } from "@remotion/player";
 import {
+  Image as ImageIcon,
+  Music as MusicIcon,
   Pause,
   Play,
   Repeat,
   SkipBack,
   SkipForward,
+  Type as TypeIcon,
+  Video as VideoIcon,
   ZoomIn,
   ZoomOut,
-  Image as ImageIcon,
-  Video as VideoIcon,
-  Music as MusicIcon,
-  Type as TypeIcon,
 } from "lucide-react";
 import React, {
   useCallback,
@@ -23,15 +23,15 @@ import React, {
   useState,
 } from "react";
 import { interpolate } from "remotion";
-import { Slider } from "./ui/slider";
 import { Button } from "./ui/button";
+import { Slider } from "./ui/slider";
 
-import usePlayerStore from "@/store/player-store";
 import { Size, useElementSize } from "@/hooks/use-element-size";
-import { useMeasure } from "@uidotdev/usehooks";
-import { SceneMedia, SceneText } from "@/types/scenes";
-import { cn } from "@/lib/utils";
 import { useHoverState } from "@/hooks/use-hover-state";
+import { cn } from "@/lib/utils";
+import usePlayerStore from "@/store/player-store";
+import { SceneMedia, SceneText } from "@/types/scenes";
+import { useMeasure } from "@uidotdev/usehooks";
 import { toast } from "sonner";
 
 const getFrameFromX = (
@@ -63,7 +63,7 @@ const PLAYHEAD_WIDTH = 1;
 // const BAR_HEIGHT = 5;
 // const KNOB_SIZE = 12;
 // const VERTICAL_PADDING = 0;
-const TRACK_HEIGHT = 72; // Height of each track
+const TRACK_HEIGHT = 32; // Height of each track
 
 export const SeekBar: React.FC<{
   inFrame?: number | null;
@@ -154,8 +154,9 @@ export const SeekBar: React.FC<{
             {textComponents.map((component) => (
               <div
                 key={`text-${component.id}`}
-                className="h-6 rounded-xs bg-blue-200 border border-blue-300 overflow-hidden flex flex-row gap-1 items-center px-1 mx-1"
+                className="rounded-xs bg-blue-200 border border-blue-300 overflow-hidden flex flex-row gap-1 items-center px-1 mx-1"
                 title={component.text || "Text"}
+                style={{ height: TRACK_HEIGHT }}
               >
                 <TypeIcon size={12} />
                 <div className="text-[8px] truncate w-full max-w-[200px]">
@@ -171,7 +172,7 @@ export const SeekBar: React.FC<{
               <div
                 key={`media-${component.id}`}
                 className={cn(
-                  "h-6 rounded-xs border overflow-hidden flex flex-row gap-1 items-center px-1 mx-1",
+                  "rounded-xs border overflow-hidden flex flex-row gap-1 items-center px-1 mx-1",
                   component.mediaType === "image" &&
                     "border-green-300 bg-green-200",
                   component.mediaType === "video" &&
@@ -180,6 +181,7 @@ export const SeekBar: React.FC<{
                     "border-yellow-300 bg-yellow-200 "
                 )}
                 title={component.src || "Media"}
+                style={{ height: TRACK_HEIGHT }}
               >
                 <div className="px-1 text-[8px] truncate w-full flex items-center">
                   {component.mediaType === "image" ? (
@@ -362,7 +364,7 @@ export const SeekBar: React.FC<{
               {/* Timeline tracks */}
               <div
                 className="relative border-t border-gray-200 flex flex-col"
-                style={{ height: TRACK_HEIGHT * 4 + 8 }}
+                style={{ height: 166 }}
               >
                 {/* Scene backgrounds */}
                 <div className="w-full h-full flex flex-row">
