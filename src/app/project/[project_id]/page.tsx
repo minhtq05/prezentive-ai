@@ -30,52 +30,9 @@ import { getProjectById, updateProjectElements } from "./actions";
 
 export default function ProjectEditorPage() {
   const { project_id: projectId } = useParams<{ project_id: string }>();
-  const scenes = useScenesStore((state) => state.scenes);
-  const fillScenes = useScenesStore((state) => state.fillScenes);
-
-  // Use the editor store instead of local state
   const isUpdating = useEditorStore((state) => state.isUpdating);
-  const isFirstRender = useEditorStore((state) => state.isFirstRender);
-  const prevProjectId = useEditorStore((state) => state.prevProjectId);
-  const setIsUpdating = useEditorStore((state) => state.setIsUpdating);
-  const setIsFirstRender = useEditorStore((state) => state.setIsFirstRender);
-  const setPrevProjectId = useEditorStore((state) => state.setPrevProjectId);
-  const resetForNewProject = useEditorStore(
-    (state) => state.resetForNewProject
-  );
 
-  useEffect(() => {
-    // Use the editor store's resetForNewProject function
-    resetForNewProject(projectId);
-
-    // Fetch project data or perform any setup needed for the project
-    const fetchProjectById = async () => {
-      const project = await getProjectById(projectId);
-      if (!project) {
-        console.error("Failed to fetch project data");
-        return;
-      }
-      try {
-        fillScenes(JSON.parse(project.elements));
-      } catch (error) {
-        console.error("Error parsing project elements:", error);
-      }
-    };
-    if (projectId !== undefined) {
-      fetchProjectById();
-    }
-  }, [projectId, resetForNewProject]);
-
-  useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
-      return;
-    }
-    setIsUpdating(true);
-    updateProjectElements(projectId, JSON.stringify(scenes)).finally(() => {
-      setIsUpdating(false);
-    });
-  }, [scenes]);
+  useProjectUpdateEffect(projectId);
 
   return (
     <div className="w-screen h-screen flex flex-col">
@@ -84,6 +41,11 @@ export default function ProjectEditorPage() {
           <MenuBar />
           <Separator orientation="vertical" />
           <ElementSidebar />
+          {isUpdating && (
+            <div className="flex items-center justify-center gap-1 w-14 h-14 text-sm text-primary">
+              Saving...
+            </div>
+          )}
         </header>
         <Separator orientation="horizontal" />
         <div className="flex-1 overflow-auto flex flex-row">
@@ -144,6 +106,52 @@ export default function ProjectEditorPage() {
       <KeyboardEventHandler />
     </div>
   );
+}
+
+function useProjectUpdateEffect(projectId: string) {
+  const scenes = useScenesStore((state) => state.scenes);
+  const fillScenes = useScenesStore((state) => state.fillScenes);
+
+  // Use the editor store instead of local state
+  const isFirstRender = useEditorStore((state) => state.isFirstRender);
+  const setIsUpdating = useEditorStore((state) => state.setIsUpdating);
+  const setIsFirstRender = useEditorStore((state) => state.setIsFirstRender);
+  const resetForNewProject = useEditorStore(
+    (state) => state.resetForNewProject
+  );
+
+  useEffect(() => {
+    // Use the editor store's resetForNewProject function
+    resetForNewProject(projectId);
+
+    // Fetch project data or perform any setup needed for the project
+    const fetchProjectById = async () => {
+      const project = await getProjectById(projectId);
+      if (!project) {
+        console.error("Failed to fetch project data");
+        return;
+      }
+      try {
+        fillScenes(JSON.parse(project.elements));
+      } catch (error) {
+        console.error("Error parsing project elements:", error);
+      }
+    };
+    if (projectId !== undefined) {
+      fetchProjectById();
+    }
+  }, [projectId, resetForNewProject]);
+
+  useEffect(() => {
+    if (isFirstRender) {
+      setIsFirstRender(false);
+      return;
+    }
+    setIsUpdating(true);
+    updateProjectElements(projectId, JSON.stringify(scenes)).finally(() => {
+      setIsUpdating(false);
+    });
+  }, [scenes]);
 }
 
 function MenuBar() {
