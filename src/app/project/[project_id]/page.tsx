@@ -1,6 +1,6 @@
 "use client";
 
-import ElementSidebar from "@/components/element-sidebar";
+import ElementHeader from "@/components/element-header";
 import KeyboardEventHandler from "@/components/keyboard-event-handler";
 import PropertiesPanel from "@/components/properties-panel";
 import RemotionPlayer from "@/components/remotion-player";
@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useEditorStore from "@/store/editor-store";
 import useScenesStore from "@/store/scenes-store";
+import { useUser } from "@clerk/nextjs";
 import { Box, Image, Layers2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -36,19 +37,9 @@ export default function ProjectEditorPage() {
 
   return (
     <div className="w-screen h-screen flex flex-col">
-      <Tabs defaultValue="editor" className="gap-0 w-full h-full flex flex-col">
-        <header className="flex flex-row h-14">
-          <MenuBar />
-          <Separator orientation="vertical" />
-          <ElementSidebar />
-          {isUpdating && (
-            <div className="flex items-center justify-center gap-1 w-14 h-14 text-sm text-primary">
-              Saving...
-            </div>
-          )}
-        </header>
-        <Separator orientation="horizontal" />
-        <div className="flex-1 overflow-auto flex flex-row">
+      <Tabs defaultValue="editor" className="flex flex-row gap-0 w-full h-full">
+        <div className="flex flex-col w-14 h-full justify-start">
+          <MenuButton />
           <TabsList
             variant="editor"
             className="flex flex-col w-14 h-full justify-start"
@@ -72,36 +63,42 @@ export default function ProjectEditorPage() {
               </TabsTrigger>
             </div>
           </TabsList>
-          <Separator orientation="vertical" />
-          <TabsContent
-            value="editor"
-            className="w-full h-full flex flex-col overflow-auto"
-          >
-            <div className="flex-1 flex flex-row justify-center items-center overflow-auto">
-              <div className="flex-none w-fit h-full">
-                <ScenesSidebar />
-              </div>
-              <Separator orientation="vertical" />
-              <div className="flex-1 flex flex-col overflow-y-scroll relative h-full items-center justify-center">
-                <RemotionPlayer />
-              </div>
-              <Separator orientation="vertical" />
-              <div className="flex-none w-[20%] h-full overflow-y-auto">
-                <PropertiesPanel />
-              </div>
-            </div>
-            <Separator orientation="horizontal" />
-            <div className="flex flex-col relative min-h-[200px]">
-              <SeekBar />
-            </div>
-          </TabsContent>
-          <TabsContent
-            value="media-vault"
-            className="flex flex-col items-center"
-          >
-            Nothing&apos;s here yet
-          </TabsContent>
         </div>
+        <Separator orientation="vertical" />
+        <TabsContent
+          value="editor"
+          className="flex-auto flex flex-col overflow-auto"
+        >
+          <header className="flex flex-row h-14">
+            <ElementHeader />
+            {isUpdating && (
+              <div className="flex items-center justify-center gap-1 w-14 h-14 text-sm text-primary">
+                Saving...
+              </div>
+            )}
+          </header>
+          <Separator />
+          <div className="flex-1 flex flex-row justify-center items-center overflow-hidden">
+            <div className="flex-none w-fit h-full">
+              <ScenesSidebar />
+            </div>
+            <Separator orientation="vertical" />
+            <div className="flex-1 flex flex-col overflow-y-scroll relative h-full items-center justify-center">
+              <RemotionPlayer />
+            </div>
+            <Separator orientation="vertical" />
+            <div className="flex-none w-[20%] h-full overflow-y-auto">
+              <PropertiesPanel />
+            </div>
+          </div>
+          <Separator orientation="horizontal" />
+          <div className="flex flex-col relative h-72 overflow-auto">
+            <SeekBar />
+          </div>
+        </TabsContent>
+        <TabsContent value="media-vault" className="flex flex-col items-center">
+          Nothing&apos;s here yet
+        </TabsContent>
       </Tabs>
       <KeyboardEventHandler />
     </div>
@@ -154,7 +151,9 @@ function useProjectUpdateEffect(projectId: string) {
   }, [scenes]);
 }
 
-function MenuBar() {
+function MenuButton() {
+  const { user } = useUser();
+
   return (
     <Menubar className="shadow-none border-none h-14 w-14 p-0">
       <MenubarMenu>
@@ -166,9 +165,11 @@ function MenuBar() {
             <Layers2 />
           </Button>
         </MenubarTrigger>
-        <MenubarContent>
+        <MenubarContent className="ml-2">
           <MenubarItem>
-            <Link href="/">Back to projects</Link>
+            <Link href={user ? `/u/${user.username}` : "/"}>
+              Back to projects
+            </Link>
           </MenubarItem>
           <MenubarSub>
             <MenubarSubTrigger>Files</MenubarSubTrigger>

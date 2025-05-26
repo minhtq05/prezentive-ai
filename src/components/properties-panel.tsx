@@ -1,14 +1,5 @@
 "use client";
 
-import { SceneAnimation, SceneMedia, SceneText } from "@/types/scenes";
-import useScenesStore from "@/store/scenes-store";
-import useOverlayStore from "@/store/overlay-store";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-import { RgbaColor } from "react-colorful";
-import { cn } from "@/lib/utils";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
 import ColorPicker from "@/components/color-picker";
 import {
   Select,
@@ -18,7 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import useOverlayStore from "@/store/overlay-store";
+import useScenesStore from "@/store/scenes-store";
+import { SceneAnimation, SceneMedia, SceneText } from "@/types/scenes";
+import { RgbaColor } from "react-colorful";
+import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Input } from "./ui/input";
+import { Separator } from "./ui/separator";
+import { Textarea } from "./ui/textarea";
 
 const animationsNames: { [key in SceneAnimation]: string } = {
   "zoom-in": "Zoom In",
@@ -320,7 +320,7 @@ export default function PropertiesPanel() {
                 <label className="text-xs text-muted-foreground">
                   Horizontal
                 </label>
-                <div className="flex border rounded-sm mt-1">
+                <div className="flex border rounded-sm mt-1 overflow-hidden">
                   <Button
                     variant={
                       textObject.textAlign === "left" ? "default" : "outline"
@@ -370,7 +370,7 @@ export default function PropertiesPanel() {
                 <label className="text-xs text-muted-foreground">
                   Vertical
                 </label>
-                <div className="flex border rounded-sm mt-1">
+                <div className="flex border rounded-sm mt-1 overflow-hidden">
                   <Button
                     variant={
                       textObject.textAlignVertical === "top"

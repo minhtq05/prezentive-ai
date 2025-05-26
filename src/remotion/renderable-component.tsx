@@ -1,8 +1,8 @@
-import { rgbaColorToString } from "../lib/colors";
-import { Scene, SceneAnimation } from "../types/scenes";
 import { useCallback, useMemo } from "react";
 import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
 import { Animated, Animation, Scale } from "remotion-animated";
+import { rgbaColorToString } from "../lib/colors";
+import { Scene, SceneAnimation } from "../types/scenes";
 
 const ANIMATION_DURATION = 10; // Duration of the animation in frames
 
@@ -191,10 +191,7 @@ export function RenderableRemotionComponent({
   }, [scenes, previewMode, handleSelectObject, AnimationsWrapper]);
 
   return (
-    <AbsoluteFill
-      onClick={() => handleSelectObject(null)}
-      style={{ backgroundColor: "white" }}
-    >
+    <AbsoluteFill style={{ backgroundColor: "white" }}>
       <Series>{renderedScenes}</Series>
     </AbsoluteFill>
   );

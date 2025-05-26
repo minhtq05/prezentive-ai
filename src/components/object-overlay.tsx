@@ -5,7 +5,8 @@ import useOverlayStore from "@/store/overlay-store";
 import useScenesStore from "@/store/scenes-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { useDebounce } from "@uidotdev/usehooks";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import Moveable, {
   OnDrag,
   OnDragEnd,
@@ -13,6 +14,7 @@ import Moveable, {
   OnResizeEnd,
 } from "react-moveable";
 import { Img, OffthreadVideo } from "remotion";
+import sanitizeHtml from "sanitize-html";
 
 const moveableConfigs = {
   draggable: true,
@@ -42,9 +44,15 @@ const moveableConfigs = {
     center: true,
     middle: true,
   },
-  snapThreshold: 200,
+  snapThreshold: 10,
   verticalGuidelines: [0, 480, 960, 1440, 1920],
   horizontalGuidelines: [0, 270, 540, 810, 1080],
+  checkInput: true,
+};
+
+const sanitizeConf = {
+  allowedTags: [],
+  allowedAttributes: { a: ["href"] },
 };
 
 export default function ObjectOverlay() {
@@ -85,10 +93,22 @@ export default function ObjectOverlay() {
 }
 
 function TextOverlay({ textObject }: { textObject: SceneText }) {
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null!);
   const updateOverlayProperty = useOverlayStore(
     (state) => state.updateOverlayProperty
   );
+  const [editable, setEditable] = useState(false);
+
+  useEffect(() => {
+    if (overlayRef.current && editable) {
+      const range = document.createRange();
+      range.selectNodeContents(overlayRef.current);
+      const selection = window.getSelection();
+      if (!selection) return;
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }, [editable]);
 
   const textStyle: React.CSSProperties = {
     position: "absolute",
@@ -123,17 +143,36 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
     borderRadius: "4px",
     zIndex: 1000,
     userSelect: "none", // Prevent text selection
-    // transition: "all 0.1s ease", // Smooth transition for changes
+    outline: "none", // Remove default input outline
+    verticalAlign: "middle",
   };
 
   return (
     <>
-      <div
+      {/* <div
         ref={overlayRef}
         style={textStyle}
         onClick={(e) => e.stopPropagation()}
       >
         {textObject.text || <p className="text-zinc-500">Enter text here...</p>}
+      </div> */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        onDoubleClick={() => setEditable(true)}
+      >
+        <ContentEditable
+          innerRef={overlayRef}
+          style={textStyle}
+          html={textObject.text}
+          disabled={!editable}
+          onChange={(e: ContentEditableEvent) => {
+            // Update the text in the store
+            updateOverlayProperty<SceneText, "text">(
+              "text",
+              sanitizeHtml(e.target.value, sanitizeConf)
+            );
+          }}
+        />
       </div>
       <Moveable
         target={overlayRef}
@@ -180,7 +219,7 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
 }
 
 function MediaOverlay({ mediaObject }: { mediaObject: SceneMedia }) {
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null!);
   const updateOverlayProperty = useOverlayStore(
     (state) => state.updateOverlayProperty
   );

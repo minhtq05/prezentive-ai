@@ -33,6 +33,7 @@ import usePlayerStore from "@/store/player-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { useMeasure } from "@uidotdev/usehooks";
 import { toast } from "sonner";
+import { Separator } from "./ui/separator";
 
 const getFrameFromX = (
   clientX: number,
@@ -118,7 +119,7 @@ export const SeekBar: React.FC<{
   }, [selectedSceneId]);
 
   // Function to render scenes backgrounds in the timeline
-  const renderSceneBackgrounds = () => {
+  const renderSceneBackgrounds = useCallback(() => {
     return (selectedScene === null ? scenes : [selectedScene]).map((scene) => {
       const pixelsPerFrame =
         (width - PLAYHEAD_WIDTH) / Math.max(1, durationInFrames);
@@ -139,7 +140,7 @@ export const SeekBar: React.FC<{
       const result = (
         <div
           key={scene.id}
-          className={`h-full ${"bg-secondary/5"} flex flex-col gap-1 box-border border-l-1 border-primary/10`}
+          className="h-full bg-secondary/5 flex flex-col gap-1 box-border border-l-1 border-primary/10"
           style={{
             width: sceneWidth,
           }}
@@ -183,7 +184,7 @@ export const SeekBar: React.FC<{
                 title={component.src || "Media"}
                 style={{ height: TRACK_HEIGHT }}
               >
-                <div className="px-1 text-[8px] truncate w-full flex items-center">
+                <div className="flex items-center px-1 text-[8px] truncate w-full">
                   {component.mediaType === "image" ? (
                     <ImageIcon size={12} />
                   ) : component.mediaType === "video" ? (
@@ -201,7 +202,7 @@ export const SeekBar: React.FC<{
 
       return result;
     });
-  };
+  }, [selectedScene, scenes, width, durationInFrames]);
 
   // Calculate current playhead position
   const playheadPosition = useMemo(() => {
@@ -211,9 +212,9 @@ export const SeekBar: React.FC<{
   }, [frame, durationInFrames, width]);
 
   return (
-    <div className="flex-1 flex flex-col w-full">
+    <div className="flex flex-col w-full h-full overflow-auto">
       {/* Control Panel */}
-      <div className="w-full flex flex-row p-2">
+      <div className="flex px-2 w-full h-10">
         <div className="flex items-center gap-2 w-3/10">
           <ZoomOut size={16} />
           <Slider
@@ -230,19 +231,19 @@ export const SeekBar: React.FC<{
           </span>
         </div>
 
-        <div className="flex justify-center gap-2 w-4/10">
+        <div className="flex justify-center items-center gap-2 w-4/10">
           <Button size="sm" variant="ghost" onClick={skipBackward}>
-            <SkipBack size={16} />
+            <SkipBack size={10} />
           </Button>
           <Button size="sm" variant="outline" onClick={togglePlayPause}>
-            {playing ? <Pause size={16} /> : <Play size={16} />}
+            {playing ? <Pause size={10} /> : <Play size={10} />}
           </Button>
           <Button size="sm" variant="ghost" onClick={skipForward}>
-            <SkipForward size={16} />
+            <SkipForward size={10} />
           </Button>
         </div>
 
-        <div className="flex flex-row gap-1 items-center w-3/10 justify-end">
+        <div className="flex justify-end items-center gap-1 w-3/10">
           <Button
             size="sm"
             variant="outline"
@@ -289,22 +290,23 @@ export const SeekBar: React.FC<{
       </div>
 
       {/* Seek bar with ruler */}
-      <div className="flex-1 flex flex-row relative overflow-x-scroll">
+      <div className="flex-1 flex relative overflow-auto">
         {/* Interactive seek bar */}
-        <div ref={seekBarRef} className="h-full w-full">
+        <div ref={seekBarRef} className="h-full w-full overflow-auto">
           <div
             style={{
               width: (seekBarWidth ?? 0) * zoom,
             }}
+            className="h-full"
           >
             <div
               ref={containerRef}
               onPointerDown={onPointerDown}
-              className="relative w-full h-full bg-gray-100 cursor-pointer select-none touch-none"
+              className="relative flex flex-col w-full h-full bg-gray-100 cursor-pointer select-none touch-none"
             >
               {/* Ruler */}
               <div className="h-6 border-b border-t border-gray-200 bg-gray-50 relative overflow-hidden">
-                <div className="h-full w-full overflow-hidden flex flex-row">
+                <div className="flex flex-row h-full w-full overflow-hidden">
                   {secondMarkers.map((marker, i) => (
                     <div
                       key={`second-${i}`}
@@ -360,25 +362,22 @@ export const SeekBar: React.FC<{
                   }}
                 />
               </div>
-
+              <Separator />
               {/* Timeline tracks */}
-              <div
-                className="relative border-t border-gray-200 flex flex-col"
-                style={{ height: 166 }}
-              >
+              <div className="flex-auto flex flex-col overflow-scroll">
                 {/* Scene backgrounds */}
-                <div className="w-full h-full flex flex-row">
+                <div className="flex-auto flex flex-row relative w-full">
                   {renderSceneBackgrounds()}
                   <div
                     style={{ width: PLAYHEAD_WIDTH }}
                     className="bg-primary/10"
                   />
+                  {/* Playhead */}
+                  <div
+                    className="absolute top-0 h-full w-px bg-primary z-50"
+                    style={{ left: playheadPosition }}
+                  />
                 </div>
-                {/* Playhead */}
-                <div
-                  className="absolute top-0 h-full w-px bg-primary z-50"
-                  style={{ left: playheadPosition }}
-                />
               </div>
             </div>
           </div>
