@@ -1,17 +1,30 @@
 "use client";
 
 import AddSceneDialog from "@/components/add-scene-dialog";
+import EditSceneDialog from "@/components/edit-scene-dialog";
 import { Button } from "@/components/ui/button";
-import { rgbaColorToString } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 import useScenesStore from "@/store/scenes-store";
-import { Scene, SceneMedia } from "@/types/scenes";
+import { Scene } from "@/types/scenes";
+import { useMemo, useState } from "react";
+import { ScenePreview } from "./scene-preview";
 import {
-  Image as ImageIcon,
-  Music as MusicIcon,
-  Video as VideoIcon,
-} from "lucide-react";
-import { useMemo } from "react";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "./ui/context-menu";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
 export default function ScenesSidebar() {
@@ -19,25 +32,41 @@ export default function ScenesSidebar() {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
   const selectScene = useScenesStore((state) => state.selectScene);
   const addScene = useScenesStore((state) => state.addScene);
-  // const deleteScene = useScenesStore((state) => state.deleteScene);
+  const deleteScene = useScenesStore((state) => state.deleteScene);
+  const updateSceneInfo = useScenesStore((state) => state.updateSceneInfo);
   const totalDuration = useMemo(
     () => scenes.reduce((acc, scene) => acc + scene.durationInFrames, 0),
     [scenes]
   );
 
-  const CounterWrapper = ({
-    index,
-    children,
-  }: {
-    index: number;
-    children: React.ReactNode;
-  }) => {
-    return (
-      <div className="flex flex-row gap-2">
-        <div className="text-sm text-muted-foreground">{index}</div>
-        {children}
-      </div>
-    );
+  const [editingScene, setEditingScene] = useState<Scene | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [sceneToDelete, setSceneToDelete] = useState<string | null>(null);
+
+  const handleEditScene = (scene: Scene) => {
+    setEditingScene(scene);
+  };
+
+  const handleUpdateScene = (
+    id: string,
+    title: string,
+    durationInFrames: number
+  ) => {
+    updateSceneInfo(id, title, durationInFrames);
+    setEditingScene(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (sceneToDelete) {
+      deleteScene(sceneToDelete);
+      setSceneToDelete(null);
+    }
+    setDeleteDialogOpen(false);
+  };
+
+  const handleDeleteScene = (id: string) => {
+    setSceneToDelete(id);
+    setDeleteDialogOpen(true);
   };
 
   return (
@@ -68,139 +97,92 @@ export default function ScenesSidebar() {
           </CounterWrapper>
           {scenes.map((scene, index) => (
             <CounterWrapper key={scene.id} index={index + 1}>
-              <div
-                className={cn(
-                  "w-36 aspect-video rounded-sm border-2 cursor-pointer transition-colors hover:duration-0 overflow-hidden",
-                  scene.id === selectedSceneId
-                    ? "border-primary"
-                    : "border-secondary hover:border-primary/20"
-                )}
-                onClick={() => selectScene(scene.id)}
-              >
-                <ScenePreview scene={scene} />
-              </div>
+              <ContextMenu>
+                <ContextMenuTrigger>
+                  <div
+                    className={cn(
+                      "w-36 aspect-video rounded-sm border-2 cursor-pointer transition-colors hover:duration-0 overflow-hidden",
+                      scene.id === selectedSceneId
+                        ? "border-primary"
+                        : "border-secondary hover:border-primary/20"
+                    )}
+                    onClick={() => selectScene(scene.id)}
+                  >
+                    <ScenePreview scene={scene} />
+                  </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  <ContextMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      handleEditScene(scene);
+                    }}
+                  >
+                    Edit Scene
+                  </ContextMenuItem>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    variant="destructive"
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      handleDeleteScene(scene.id);
+                    }}
+                  >
+                    Delete Scene
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
             </CounterWrapper>
           ))}
         </div>
         <ScrollBar />
       </ScrollArea>
+
+      {/* Edit Scene Dialog */}
+      {editingScene && (
+        <EditSceneDialog
+          scene={editingScene}
+          open={!!editingScene}
+          onOpenChange={(open) => {
+            if (!open) setEditingScene(null);
+          }}
+          onUpdate={handleUpdateScene}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Scene</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this scene? This action cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
 
-interface ScenePreviewProps {
-  scene: Scene;
-}
-
-// Helper to render a scaled-down template preview
-const ScenePreview = ({ scene }: ScenePreviewProps) => {
+const CounterWrapper = ({
+  index,
+  children,
+}: {
+  index: number;
+  children: React.ReactNode;
+}) => {
   return (
-    <div
-      className="relative mx-auto aspect-video"
-      style={{ width: "240px", height: "135px" }}
-    >
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{
-          transform: "scale(0.075)", // Scale from 1920x1080 to 144x81
-          transformOrigin: "top left",
-          width: "1920px",
-          height: "1080px",
-        }}
-      >
-        {renderScenePreview(scene)}
-      </div>
-    </div>
-  );
-};
-
-// Generic scene renderer that maps actual components from a scene template
-const renderScenePreview = (scene: Scene) => {
-  return (
-    <div
-      style={{
-        width: "1920px",
-        height: "1080px",
-        background: "white",
-        position: "relative",
-      }}
-    >
-      {scene.components.map((component) => {
-        // Currently only handling SceneText components
-        if (component.type === "scene-text") {
-          const textComponent = component;
-          return (
-            <div
-              key={textComponent.id}
-              style={{
-                position: "absolute",
-                top: `${textComponent.top}px`,
-                left: `${textComponent.left}px`,
-                width: `${textComponent.width}px`,
-                height: `${textComponent.height}px`,
-                fontSize: `${textComponent.fontSize}px`,
-                fontFamily: textComponent.fontFamily,
-                color: rgbaColorToString(textComponent.color),
-                backgroundColor: rgbaColorToString(
-                  textComponent.backgroundColor
-                ),
-                textAlign: textComponent.textAlign,
-                fontWeight: textComponent.fontWeight,
-                fontStyle: textComponent.fontStyle,
-                textDecoration: textComponent.textDecoration,
-                textTransform: textComponent.textTransform,
-                overflow: "hidden",
-                display: "flex",
-                alignItems:
-                  textComponent.textAlignVertical === "top"
-                    ? "flex-start"
-                    : textComponent.textAlignVertical === "bottom"
-                    ? "flex-end"
-                    : "center",
-                justifyContent:
-                  textComponent.textAlign === "left"
-                    ? "flex-start"
-                    : textComponent.textAlign === "right"
-                    ? "flex-end"
-                    : "center",
-              }}
-            >
-              {textComponent.text}
-            </div>
-          );
-        } else if (component.type === "scene-media") {
-          const mediaComponent = component as SceneMedia;
-          return (
-            <div
-              key={mediaComponent.id}
-              style={{
-                position: "absolute",
-                top: `${mediaComponent.top}px`,
-                left: `${mediaComponent.left}px`,
-                width: `${mediaComponent.width}px`,
-                height: `${mediaComponent.height}px`,
-                backgroundColor: "rgba(240, 240, 240, 0.5)",
-                border: "1px dashed #aaa",
-                borderRadius: "4px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {mediaComponent.mediaType === "image" && (
-                <ImageIcon size={48} color="#666" />
-              )}
-              {mediaComponent.mediaType === "video" && (
-                <VideoIcon size={48} color="#666" />
-              )}
-              {mediaComponent.mediaType === "audio" && (
-                <MusicIcon size={48} color="#666" />
-              )}
-            </div>
-          );
-        }
-        return null;
-      })}
+    <div className="flex flex-row gap-2">
+      <div className="text-sm text-muted-foreground">{index}</div>
+      {children}
     </div>
   );
 };

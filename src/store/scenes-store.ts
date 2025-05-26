@@ -14,6 +14,11 @@ export interface ScenesStore {
   getSelectedObject: () => SceneComponent | null;
   commitOverlayChanges: () => void;
   deleteSelectedComponent: () => void;
+  updateSceneInfo: (
+    id: string,
+    title: string,
+    durationInFrames: number
+  ) => void;
 }
 
 const useScenesStore = create<ScenesStore>((set, get) => ({
@@ -170,6 +175,29 @@ const useScenesStore = create<ScenesStore>((set, get) => ({
 
     // Hide the overlay
     useOverlayStore.getState().hideOverlay();
+  },
+  updateSceneInfo: (id, title, durationInFrames) => {
+    set((state) => {
+      const sceneIndex = state.scenes.findIndex((scene) => scene.id === id);
+      if (sceneIndex === -1) return state;
+
+      const updatedScene = {
+        ...state.scenes[sceneIndex],
+        title,
+        durationInFrames,
+      };
+
+      // Cap the "to" property of each component to the new duration
+      updatedScene.components = updatedScene.components.map((component) => ({
+        ...component,
+        to: Math.min(component.to || durationInFrames, durationInFrames),
+      }));
+
+      const updatedScenes = [...state.scenes];
+      updatedScenes[sceneIndex] = updatedScene;
+
+      return { ...state, scenes: updatedScenes };
+    });
   },
 }));
 
