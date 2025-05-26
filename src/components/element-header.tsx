@@ -7,7 +7,9 @@ import {
   Type as TextIcon,
   Film as VideoIcon,
 } from "lucide-react";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { AddMediaDialog } from "./add-media-dialog";
 import { Button } from "./ui/button";
 import {
   Tooltip,
@@ -16,10 +18,13 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 
-export default function ElementSidebar() {
+export default function ElementHeader() {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
   const scenes = useScenesStore((state) => state.scenes);
   const selectObject = useScenesStore((state) => state.selectObject);
+
+  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+  const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
 
   // Find the selected scene
   const selectedScene = scenes.find((scene) => scene.id === selectedSceneId);
@@ -56,54 +61,41 @@ export default function ElementSidebar() {
     addComponentToScene(newText);
   };
 
-  // Handler for adding new image
+  // Handler for opening image dialog
   const handleAddImage = () => {
     if (!selectedSceneId || !selectedScene) return;
-
-    // Create a new image component
-    const newImage: SceneMedia = {
-      id: uuidv4(),
-      type: "scene-media",
-      mediaType: "image",
-      src: "https://9meters.com/wp-content/uploads/claude-logo.webp", // Placeholder image
-      alt: "New Image",
-      fit: "contain",
-      from: 0,
-      to: selectedScene.durationInFrames,
-      top: 340, // Center vertically
-      left: 560, // Center horizontally
-      width: 800,
-      height: 400,
-      animations: [],
-    };
-
-    // Add the new component to the scene
-    addComponentToScene(newImage);
+    setIsImageDialogOpen(true);
   };
 
-  // Handler for adding new video
+  // Handler for opening video dialog
   const handleAddVideo = () => {
     if (!selectedSceneId || !selectedScene) return;
+    setIsVideoDialogOpen(true);
+  };
 
-    // Create a new video component
-    const newVideo: SceneMedia = {
+  // Handler for handling media upload from dialog
+  const handleMediaUpload = (mediaType: "image" | "video", src: string) => {
+    if (!selectedSceneId || !selectedScene) return;
+
+    // Create a new media component
+    const newMedia: SceneMedia = {
       id: uuidv4(),
       type: "scene-media",
-      mediaType: "video",
-      src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // Sample video
-      alt: "New Video",
+      mediaType: mediaType,
+      src: src,
+      alt: mediaType === "image" ? "Uploaded Image" : "Uploaded Video",
       fit: "contain",
       from: 0,
       to: selectedScene.durationInFrames,
       top: 340, // Center vertically
       left: 560, // Center horizontally
-      width: 800,
-      height: 450,
+      width: mediaType === "image" ? 800 : 800,
+      height: mediaType === "image" ? 400 : 450,
       animations: [],
     };
 
     // Add the new component to the scene
-    addComponentToScene(newVideo);
+    addComponentToScene(newMedia);
   };
 
   // Helper function to add a component to the selected scene
@@ -180,6 +172,22 @@ export default function ElementSidebar() {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
+      {/* Image Upload Dialog */}
+      <AddMediaDialog
+        open={isImageDialogOpen}
+        onOpenChange={setIsImageDialogOpen}
+        mediaType="image"
+        onUpload={(src) => handleMediaUpload("image", src)}
+      />
+
+      {/* Video Upload Dialog */}
+      <AddMediaDialog
+        open={isVideoDialogOpen}
+        onOpenChange={setIsVideoDialogOpen}
+        mediaType="video"
+        onUpload={(src) => handleMediaUpload("video", src)}
+      />
     </div>
   );
 }
