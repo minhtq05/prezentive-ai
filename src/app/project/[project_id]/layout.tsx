@@ -1,18 +1,15 @@
+import { currentUser } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
-import { getProjectById } from "./actions";
 
-export default async function ProjectLayout({
-  params,
+export default async function ProjectPageLayout({
   children,
 }: {
-  params: Promise<{ project_id: string }>;
   children: React.ReactNode;
 }) {
-  const project_id = (await params).project_id;
-  const project = await getProjectById(project_id);
+  const user = await currentUser();
 
-  if (!project) {
-    notFound();
+  if (!user) {
+    notFound(); // redirect to not found page
   }
 
   return <>{children}</>;

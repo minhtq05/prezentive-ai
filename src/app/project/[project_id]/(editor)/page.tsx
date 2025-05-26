@@ -40,6 +40,9 @@ export default function ProjectEditorPage() {
       <Tabs defaultValue="editor" className="flex flex-row gap-0 w-full h-full">
         <div className="flex flex-col w-14 h-full justify-start">
           <MenuButton />
+
+          <Separator />
+
           <TabsList
             variant="editor"
             className="flex flex-col w-14 h-full justify-start"
@@ -53,6 +56,7 @@ export default function ProjectEditorPage() {
                 <Box />
               </TabsTrigger>
             </div>
+
             <div className="h-14 w-14">
               <TabsTrigger
                 variant="editor"
@@ -77,7 +81,9 @@ export default function ProjectEditorPage() {
               </div>
             )}
           </header>
+
           <Separator />
+
           <div className="flex-1 flex flex-row justify-center items-center overflow-hidden">
             <div className="flex-none w-fit h-full">
               <ScenesSidebar />
@@ -91,7 +97,9 @@ export default function ProjectEditorPage() {
               <PropertiesPanel />
             </div>
           </div>
+
           <Separator orientation="horizontal" />
+
           <div className="flex flex-col relative h-72 overflow-auto">
             <SeekBar />
           </div>
