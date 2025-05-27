@@ -22,7 +22,7 @@ const moveableConfigs = {
   edgeDraggable: false,
   startDragRotate: 0,
   throttleDragRotate: 0,
-  zoom: 1.5,
+  zoom: 2,
 
   resizable: true,
   renderDirections: ["nw", "n", "ne", "w", "e", "sw", "s", "se"],
@@ -44,10 +44,16 @@ const moveableConfigs = {
     center: true,
     middle: true,
   },
-  snapThreshold: 10,
-  verticalGuidelines: [0, 480, 960, 1440, 1920],
-  horizontalGuidelines: [0, 270, 540, 810, 1080],
+  snapThreshold: 20,
+  verticalGuidelines: [0, 960, 1920],
+  horizontalGuidelines: [0, 540, 1080],
   checkInput: true,
+  // padding: {
+  //   left: 8,
+  //   right: 8,
+  //   top: 8,
+  //   bottom: 8,
+  // },
 };
 
 const sanitizeConf = {
@@ -138,24 +144,14 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
         : textObject.textAlignVertical === "bottom"
         ? "flex-end"
         : "center",
-    // padding: "8px",
-    boxShadow: "0 0 0 2px rgba(30, 144, 255, 0.5)",
-    borderRadius: "4px",
     zIndex: 1000,
     userSelect: "none", // Prevent text selection
     outline: "none", // Remove default input outline
-    verticalAlign: "middle",
+    content: "testing",
   };
 
   return (
     <>
-      {/* <div
-        ref={overlayRef}
-        style={textStyle}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {textObject.text || <p className="text-zinc-500">Enter text here...</p>}
-      </div> */}
       <div
         onClick={(e) => e.stopPropagation()}
         onDoubleClick={() => setEditable(true)}
@@ -163,7 +159,12 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
         <ContentEditable
           innerRef={overlayRef}
           style={textStyle}
-          html={textObject.text}
+          html={
+            textObject.text ||
+            `<div style="width: 1px; height: ${
+              textObject.fontSize * 1.5
+            }px;"></div>`
+          }
           disabled={!editable}
           onChange={(e: ContentEditableEvent) => {
             // Update the text in the store

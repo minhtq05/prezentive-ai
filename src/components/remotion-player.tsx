@@ -211,7 +211,10 @@ function RemotionComponent({
   ]);
 
   return (
-    <AbsoluteFill onClick={() => handleSelectObject(null)}>
+    <AbsoluteFill
+      style={{ backgroundColor: "white" }}
+      onClick={() => handleSelectObject(null)}
+    >
       <Series>{renderedScenes}</Series>
       <ObjectOverlay />
     </AbsoluteFill>
@@ -246,29 +249,31 @@ export default function RemotionPlayer() {
   );
 
   return (
-    <>
-      {durationInFrames > 0 ? (
-        <Player
-          ref={setPlayerRefElement}
-          component={RemotionComponent}
-          // component={RemotionTestingComponent}
-          durationInFrames={durationInFrames}
-          inputProps={{
-            previewMode: selectedScene ? false : true,
-            scenes: selectedScene ? [selectedScene] : scenes,
-            handleSelectObject: selectObject,
-          }}
-          compositionWidth={1920}
-          compositionHeight={1080}
-          fps={30}
-          style={{ width: "100%" }}
-          acknowledgeRemotionLicense
-        />
-      ) : (
-        <div className="flex items-center justify-center w-full h-full">
-          <p className="text-zinc-500">No scenes available</p>
-        </div>
-      )}
-    </>
+    <div className="flex items-center justify-center aspect-video w-full max-h-full">
+      <div className="flex items-center justify-center aspect-video max-w-full h-full border-primary/75 border-1 overflow-hidden">
+        {durationInFrames > 0 ? (
+          <Player
+            ref={setPlayerRefElement}
+            component={RemotionComponent}
+            // component={RemotionTestingComponent}
+            durationInFrames={durationInFrames}
+            inputProps={{
+              previewMode: selectedScene ? false : true,
+              scenes: selectedScene ? [selectedScene] : scenes,
+              handleSelectObject: selectObject,
+            }}
+            compositionWidth={1920}
+            compositionHeight={1080}
+            fps={30}
+            style={{ width: "100%" }}
+            acknowledgeRemotionLicense
+          />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full">
+            <p className="text-zinc-500">No scenes available</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
