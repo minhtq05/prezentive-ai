@@ -213,7 +213,9 @@ function RemotionComponent({
   return (
     <AbsoluteFill
       style={{ backgroundColor: "white" }}
-      onClick={() => handleSelectObject(null)}
+      onClick={() => {
+        handleSelectObject(null);
+      }}
     >
       <Series>{renderedScenes}</Series>
       <ObjectOverlay />

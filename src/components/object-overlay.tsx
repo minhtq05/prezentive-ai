@@ -5,8 +5,9 @@ import useOverlayStore from "@/store/overlay-store";
 import useScenesStore from "@/store/scenes-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { useDebounce } from "@uidotdev/usehooks";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
+import { flushSync } from "react-dom";
 import Moveable, {
   OnDrag,
   OnDragEnd,
@@ -58,7 +59,8 @@ const moveableConfigs = {
 
 const sanitizeConf = {
   allowedTags: [],
-  allowedAttributes: { a: ["href"] },
+  // allowedAttributes: { a: ["href"] },
+  allowedAttributes: {},
 };
 
 export default function ObjectOverlay() {
@@ -167,7 +169,6 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
           }
           disabled={!editable}
           onChange={(e: ContentEditableEvent) => {
-            // Update the text in the store
             updateOverlayProperty<SceneText, "text">(
               "text",
               sanitizeHtml(e.target.value, sanitizeConf)
@@ -213,6 +214,7 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
           updateOverlayProperty("top", newTop);
           updateOverlayProperty("left", newLeft);
         }}
+        flushSync={flushSync}
         {...moveableConfigs}
       />
     </>
@@ -331,6 +333,7 @@ function MediaOverlay({ mediaObject }: { mediaObject: SceneMedia }) {
           updateOverlayProperty("top", newTop);
           updateOverlayProperty("left", newLeft);
         }}
+        flushSync={flushSync}
         {...moveableConfigs}
       />
     </>
