@@ -7,17 +7,12 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
-  useUser,
 } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
-  const { user } = useUser();
   const router = useRouter();
-
-  const username = user?.username || undefined;
-
   return (
     <div className="flex flex-col h-screen">
       <header className="sticky top-0 flex justify-end items-center p-4 gap-4 h-16">
@@ -37,17 +32,7 @@ export default function LandingPage() {
         <h1 className="text-6xl font-bold">Welcome to LectureAI</h1>
         <p className="text-lg">Your AI-powered educational assistant.</p>
         <div className="flex flex-row gap-4">
-          {username ? (
-            <Button onClick={() => router.push(`/u/${username}/`)}>
-              Get Started
-            </Button>
-          ) : (
-            <SignUpButton>
-              <Button onClick={() => router.push(`/u/${username}/`)}>
-                Get Started
-              </Button>
-            </SignUpButton>
-          )}
+          <Button onClick={() => router.push("/dashboard")}>Get Started</Button>
           <Button variant="secondary" onClick={() => router.push("/docs")}>
             Discover More
           </Button>

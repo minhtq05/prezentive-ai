@@ -1,6 +1,3 @@
-"use client";
-
-import { CommandMenu } from "@/components/search-bar";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -12,56 +9,20 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarInput,
-  SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
 } from "@/components/ui/sidebar";
+import { useUserStateStore } from "@/store/userstate-store";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useState } from "react";
 
-export type View =
-  | "Home"
-  | "All Projects"
-  | "Templates"
-  | "Images"
-  | "Videos"
-  | "Settings";
+export function DashboardSidebar() {
+  const view = useUserStateStore((state) => state.view);
+  const setView = useUserStateStore((state) => state.setView);
+  const username = useUserStateStore((state) => state.username);
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const params = useParams();
-  const { username } = params as { username: string };
-  const [view, setView] = useState<View>("All Projects");
-
-  return (
-    <SidebarProvider>
-      <DashboardSidebar username={username} view={view} setView={setView} />
-      <SidebarInset>
-        <header className="flex flex-row gap-2 items-center h-14 p-4 border-b">
-          <h1>{view}</h1>
-        </header>
-        {children}
-      </SidebarInset>
-      <CommandMenu />
-    </SidebarProvider>
-  );
-}
-
-interface DashboardSidebarProps {
-  username: string;
-  view: View;
-  setView: React.Dispatch<React.SetStateAction<View>>;
-}
-
-function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -97,7 +58,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   onClick={() => setView("Home")}
                   variant="navigation"
                 >
-                  <Link href={`/u/${username}/home`}>Home</Link>
+                  <Link href="/dashboard">Home</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -107,7 +68,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   onClick={() => setView("All Projects")}
                   variant="navigation"
                 >
-                  <Link href={`/u/${username}/projects`}>All Projects</Link>
+                  <Link href="/dashboard/projects">All Projects</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -117,7 +78,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   onClick={() => setView("Templates")}
                   variant="navigation"
                 >
-                  <Link href={`/u/${username}/templates`}>Templates</Link>
+                  <Link href="/dashboard/templates">Templates</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -130,21 +91,11 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={view === "Images"}
-                  onClick={() => setView("Images")}
+                  isActive={view === "Media Vault"}
+                  onClick={() => setView("Media Vault")}
                   variant="navigation"
                 >
-                  <Link href={`/u/${username}/media`}>Images</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={view === "Videos"}
-                  onClick={() => setView("Videos")}
-                  variant="navigation"
-                >
-                  <Link href={`/u/${username}/media`}>Videos</Link>
+                  <Link href="/dashboard/media">Media Vault</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -161,7 +112,7 @@ function DashboardSidebar({ username, view, setView }: DashboardSidebarProps) {
                   onClick={() => setView("Settings")}
                   variant="navigation"
                 >
-                  <Link href={`/u/${username}/settings`}>Settings</Link>
+                  <Link href="/dashboard/settings">Settings</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

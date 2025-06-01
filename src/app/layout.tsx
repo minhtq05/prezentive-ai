@@ -29,7 +29,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased overscroll-none
+          className={`${geistSans.variable} ${geistMono.variable} antialiased overscroll-none w-screen h-screen
         `}
           suppressHydrationWarning
         >

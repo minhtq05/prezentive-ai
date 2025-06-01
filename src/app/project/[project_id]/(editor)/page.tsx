@@ -22,7 +22,6 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useEditorStore from "@/store/editor-store";
 import useScenesStore from "@/store/scenes-store";
-import { useUser } from "@clerk/nextjs";
 import { Box, Image, Layers2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -160,8 +159,6 @@ function useProjectUpdateEffect(projectId: string) {
 }
 
 function MenuButton() {
-  const { user } = useUser();
-
   return (
     <Menubar className="shadow-none border-none h-14 w-14 p-0">
       <MenubarMenu>
@@ -175,9 +172,7 @@ function MenuButton() {
         </MenubarTrigger>
         <MenubarContent className="ml-2">
           <MenubarItem>
-            <Link href={user ? `/u/${user.username}` : "/"}>
-              Back to projects
-            </Link>
+            <Link href="/dashboard/projects">Back to projects</Link>
           </MenubarItem>
           <MenubarSub>
             <MenubarSubTrigger>Files</MenubarSubTrigger>

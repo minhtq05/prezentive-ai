@@ -1,6 +1,5 @@
 "use client";
 
-import Container from "@/components/container";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -197,9 +196,7 @@ export default function Projects() {
   };
 
   return (
-    <Container>
-      <h1 className="text-2xl font-bold">Projects</h1>
-      <Separator />
+    <>
       <div className="flex items-center gap-2 justify-end w-full">
         <div>
           <Button
@@ -493,6 +490,6 @@ export default function Projects() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Container>
+    </>
   );
 }
