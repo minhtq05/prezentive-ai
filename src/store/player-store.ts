@@ -1,7 +1,8 @@
+import { Scene } from "@/types/scenes";
 import { PlayerRef } from "@remotion/player";
+import { createRef, RefObject } from "react";
 import { create } from "zustand";
 import useScenesStore from "./scenes-store";
-import { createRef, RefObject } from "react";
 
 export interface PlayerStore {
   // Player state
@@ -17,7 +18,7 @@ export interface PlayerStore {
 
   // Actions
   setPlaying: (playing: boolean) => void;
-  setFrame: (frame: number) => void;
+  setFrame: (frame: number) => void; // Use with caution, only use for low-level control
   setZoom: (zoom: number) => void;
   setLoop: (loop: boolean) => void;
   setPlayerRefElement: (playerRef: PlayerRef | null) => void;
@@ -27,6 +28,10 @@ export interface PlayerStore {
   pause: () => void;
   togglePlayPause: () => void;
   seekTo: (frame: number) => void;
+
+  // Enable animations in editing mode
+  previewMode: boolean;
+  setPreviewMode: (enable: boolean) => void;
 }
 
 const usePlayerStore = create<PlayerStore>((set, get) => ({
@@ -38,10 +43,17 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   playerRef: createRef<PlayerRef>(),
   totalDuration: 0,
   durationInFrames: 0,
+  previewMode: true,
 
   // Actions
-  setPlaying: (playing) => set({ playing }),
-  setFrame: (frame) => set({ frame }),
+  setPlaying: (playing) => {
+    // When playing is toggled, deselect any object
+    useScenesStore.getState().selectObject(null);
+    set({ playing });
+  },
+  setFrame: (frame) => {
+    set({ frame, previewMode: true });
+  },
   setZoom: (zoom) => set({ zoom }),
   setLoop: (loop) => set({ loop }),
   setPlayerRefElement: (playerRef) => {
@@ -55,6 +67,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
   // Player controls
   play: () => {
+    useScenesStore.getState().selectObject(null);
     const { playerRef } = get();
     if (playerRef.current) {
       playerRef.current.play();
@@ -63,6 +76,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   pause: () => {
+    useScenesStore.getState().selectObject(null);
     const { playerRef } = get();
     if (playerRef.current) {
       playerRef.current.pause();
@@ -71,6 +85,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   togglePlayPause: () => {
+    useScenesStore.getState().selectObject(null);
     const { playing, playerRef } = get();
     if (playerRef.current) {
       if (playing) {
@@ -84,19 +99,27 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   seekTo: (frame) => {
+    useScenesStore.getState().selectObject(null);
     const { playerRef } = get();
     if (playerRef.current) {
       playerRef.current.seekTo(frame);
-      set({ frame });
+      set({ frame, previewMode: true });
     }
   },
+
+  setPreviewMode: (enable: boolean) =>
+    set({
+      previewMode: enable,
+    }),
 }));
 
-// Function to calculate and update durations
-const syncWithScenesStore = (state = useScenesStore.getState()) => {
-  const scenes = state.scenes;
-  const selectedSceneId = state.selectedSceneId;
-
+const syncWithScenesStore = ({
+  scenes,
+  selectedSceneId,
+}: {
+  scenes: Scene[];
+  selectedSceneId: string | null;
+}) => {
   // Calculate total duration from all scenes
   const totalDuration = scenes.reduce(
     (acc, scene) => acc + scene.durationInFrames,
@@ -117,9 +140,15 @@ const syncWithScenesStore = (state = useScenesStore.getState()) => {
 };
 
 // Subscribe to scenes store to update duration calculations
-useScenesStore.subscribe(syncWithScenesStore);
+useScenesStore.subscribe(
+  (state) => ({ scenes: state.scenes, selectedSceneId: state.selectedSceneId }),
+  (current, _) => {
+    syncWithScenesStore(current);
+  }
+);
 
 // Immediately calculate durations with initial state
-syncWithScenesStore();
+const { scenes, selectedSceneId } = useScenesStore.getState();
+syncWithScenesStore({ scenes, selectedSceneId });
 
 export default usePlayerStore;

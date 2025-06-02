@@ -1,3 +1,6 @@
+"use client";
+
+import { animationsDict } from "@/constants/animations";
 import { rgbaColorToString } from "@/lib/colors";
 import usePlayerStore from "@/store/player-store";
 import useScenesStore from "@/store/scenes-store";
@@ -5,32 +8,14 @@ import { Scene, SceneAnimation } from "@/types/scenes";
 import { Player } from "@remotion/player";
 import { useCallback, useMemo } from "react";
 import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
-import { Animated, Animation, Scale } from "remotion-animated";
+import { Animated } from "remotion-animated";
 import ObjectOverlay from "./object-overlay";
 
-const ANIMATION_DURATION = 10; // Duration of the animation in frames
-
-const animationsDict: {
-  [key in SceneAnimation]: (durationInFrames: number) => Animation;
-} = {
-  "zoom-in": () => Scale({ by: 1, initial: 10 }),
-  "zoom-out": (durationInFrames: number) =>
-    Scale({ by: 10, initial: 1, start: durationInFrames - ANIMATION_DURATION }),
-  "scale-in": () => Scale({ by: 1, initial: 0, mass: 75 }),
-  "scale-out": (durationInFrames: number) =>
-    Scale({ by: 0, start: durationInFrames - ANIMATION_DURATION, mass: 75 }),
-};
-
-function RemotionComponent({
-  previewMode,
-  scenes,
-  handleSelectObject,
-}: {
-  previewMode: boolean;
-  scenes: Scene[];
-  handleSelectObject: (id: string | null) => void;
-}) {
+function RemotionComponent({ scenes }: { scenes: Scene[] }) {
   const visibleOverlayId = useScenesStore((state) => state.selectedObjectId);
+  const selectObject = useScenesStore((state) => state.selectObject);
+  const previewMode = usePlayerStore((state) => state.previewMode);
+  const setPreviewMode = usePlayerStore((state) => state.setPreviewMode);
 
   const AnimationsWrapper = useCallback(
     ({
@@ -46,9 +31,10 @@ function RemotionComponent({
         <Animated
           animations={
             previewMode
-              ? animations.map((animation) =>
-                  animationsDict[animation](durationInFrames)
-                )
+              ? animations.reduce((acc, animation) => {
+                  acc.push(...animationsDict[animation.name](durationInFrames));
+                  return acc;
+                }, [] as any[])
               : []
           }
         >
@@ -112,15 +98,16 @@ function RemotionComponent({
                       userSelect: "none",
                     }}
                     onClick={(e) => {
-                      if (!previewMode) {
-                        e.stopPropagation();
-                        handleSelectObject(component.id);
-                      }
+                      e.stopPropagation();
+                      setPreviewMode(false);
+                      selectObject(component.id);
                     }}
                   >
                     {textComponent.text ||
                       (!previewMode && (
-                        <p className="text-zinc-500">Enter text here...</p>
+                        <p className="text-zinc-500 whitespace-nowrap">
+                          Enter text here...
+                        </p>
                       ))}
                   </div>
                 </AnimationsWrapper>
@@ -151,10 +138,9 @@ function RemotionComponent({
                       borderRadius: "4px",
                     }}
                     onClick={(e) => {
-                      if (!previewMode) {
-                        e.stopPropagation();
-                        handleSelectObject(component.id);
-                      }
+                      e.stopPropagation();
+                      setPreviewMode(false);
+                      selectObject(component.id);
                     }}
                   >
                     {mediaComponent.mediaType === "image" && (
@@ -202,19 +188,13 @@ function RemotionComponent({
         </AbsoluteFill>
       </Series.Sequence>
     ));
-  }, [
-    scenes,
-    previewMode,
-    visibleOverlayId,
-    handleSelectObject,
-    AnimationsWrapper,
-  ]);
+  }, [scenes, previewMode, visibleOverlayId, selectObject, AnimationsWrapper]);
 
   return (
     <AbsoluteFill
       style={{ backgroundColor: "white" }}
       onClick={() => {
-        handleSelectObject(null);
+        selectObject(null);
       }}
     >
       <Series>{renderedScenes}</Series>
@@ -227,7 +207,6 @@ export default function RemotionPlayer() {
   // Get scenes and selectedSceneId from the store
   const scenes = useScenesStore((state) => state.scenes);
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
-  const selectObject = useScenesStore((state) => state.selectObject);
   const setPlayerRefElement = usePlayerStore(
     (state) => state.setPlayerRefElement
   );
@@ -260,9 +239,7 @@ export default function RemotionPlayer() {
             // component={RemotionTestingComponent}
             durationInFrames={durationInFrames}
             inputProps={{
-              previewMode: selectedScene ? false : true,
               scenes: selectedScene ? [selectedScene] : scenes,
-              handleSelectObject: selectObject,
             }}
             compositionWidth={1920}
             compositionHeight={1080}

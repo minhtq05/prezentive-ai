@@ -1,21 +1,9 @@
+import { animationsDict } from "@/constants/animations";
 import { useCallback, useMemo } from "react";
 import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
-import { Animated, Animation, Scale } from "remotion-animated";
+import { Animated } from "remotion-animated";
 import { rgbaColorToString } from "../lib/colors";
 import { Scene, SceneAnimation } from "../types/scenes";
-
-const ANIMATION_DURATION = 10; // Duration of the animation in frames
-
-const animationsDict: {
-  [key in SceneAnimation]: (durationInFrames: number) => Animation;
-} = {
-  "zoom-in": () => Scale({ by: 1, initial: 10 }),
-  "zoom-out": (durationInFrames: number) =>
-    Scale({ by: 10, initial: 1, start: durationInFrames - ANIMATION_DURATION }),
-  "scale-in": () => Scale({ by: 1, initial: 0, mass: 75 }),
-  "scale-out": (durationInFrames: number) =>
-    Scale({ by: 0, start: durationInFrames - ANIMATION_DURATION, mass: 75 }),
-};
 
 export function RenderableRemotionComponent({
   previewMode,
@@ -40,9 +28,10 @@ export function RenderableRemotionComponent({
         <Animated
           animations={
             previewMode
-              ? animations.map((animation) =>
-                  animationsDict[animation](durationInFrames)
-                )
+              ? animations.reduce((acc, animation) => {
+                  acc.push(...animationsDict[animation.name](durationInFrames));
+                  return acc;
+                }, [] as any[])
               : []
           }
         >
@@ -101,12 +90,6 @@ export function RenderableRemotionComponent({
                           : "center",
                       userSelect: "none",
                     }}
-                    onClick={(e) => {
-                      if (!previewMode) {
-                        e.stopPropagation();
-                        handleSelectObject(component.id);
-                      }
-                    }}
                   >
                     {textComponent.text ||
                       (!previewMode && (
@@ -135,12 +118,6 @@ export function RenderableRemotionComponent({
                       overflow: "hidden",
                       userSelect: "none",
                       borderRadius: "4px",
-                    }}
-                    onClick={(e) => {
-                      if (!previewMode) {
-                        e.stopPropagation();
-                        handleSelectObject(component.id);
-                      }
                     }}
                   >
                     {mediaComponent.mediaType === "image" && (

@@ -14,7 +14,7 @@ export interface ScenePreviewProps {
 export const ScenePreview = ({ scene }: ScenePreviewProps) => {
   return (
     <div
-      className="relative mx-auto aspect-video"
+      className="relative mx-auto aspect-video select-none cursor-pointer"
       style={{ width: "240px", height: "135px" }}
     >
       <div

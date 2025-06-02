@@ -8,7 +8,32 @@ export type Scene = {
   components: SceneComponent[];
 };
 
-export type SceneAnimation = "zoom-in" | "zoom-out" | "scale-in" | "scale-out";
+export const SCENE_IN_ANIMATIONS: SceneInAnimationKey[] = [
+  "zoom-in",
+  "scale-in",
+  "none",
+];
+
+export type SceneInAnimationKey = "zoom-in" | "scale-in" | "none";
+export type SceneInAnimation = {
+  name: SceneInAnimationKey;
+  type: "animation-in";
+};
+
+export const SCENE_OUT_ANIMATIONS: SceneOutAnimationKey[] = [
+  "zoom-out",
+  "scale-out",
+  "none",
+];
+
+export type SceneOutAnimationKey = "zoom-out" | "scale-out" | "none";
+export type SceneOutAnimation = {
+  name: SceneOutAnimationKey;
+  type: "animation-out";
+};
+
+export type SceneAnimationKey = SceneInAnimationKey | SceneOutAnimationKey;
+export type SceneAnimation = SceneInAnimation | SceneOutAnimation;
 
 export type SceneBaseObject = {
   id: string;

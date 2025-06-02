@@ -2,9 +2,7 @@
 
 import { rgbaColorToString } from "@/lib/colors";
 import useOverlayStore from "@/store/overlay-store";
-import useScenesStore from "@/store/scenes-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
-import { useDebounce } from "@uidotdev/usehooks";
 import { useEffect, useRef, useState } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
 import { flushSync } from "react-dom";
@@ -66,14 +64,6 @@ const sanitizeConf = {
 export default function ObjectOverlay() {
   const visibleOverlayId = useOverlayStore((state) => state.visibleOverlayId);
   const overlayObject = useOverlayStore((state) => state.overlayObject);
-  const commitOverlayChanges = useScenesStore(
-    (state) => state.commitOverlayChanges
-  );
-  const debouncedOverlayObject = useDebounce(overlayObject, 1000);
-
-  useEffect(() => {
-    commitOverlayChanges();
-  }, [debouncedOverlayObject, commitOverlayChanges]);
 
   if (!visibleOverlayId || !overlayObject) {
     return null;
@@ -96,7 +86,7 @@ export default function ObjectOverlay() {
         />
       );
     default:
-      return null;
+      return null; // Handle unsupported types gracefully
   }
 }
 
@@ -155,6 +145,7 @@ function TextOverlay({ textObject }: { textObject: SceneText }) {
   return (
     <>
       <div
+        id="object-overlay"
         onClick={(e) => e.stopPropagation()}
         onDoubleClick={() => setEditable(true)}
       >
@@ -289,6 +280,7 @@ function MediaOverlay({ mediaObject }: { mediaObject: SceneMedia }) {
   return (
     <>
       <div
+        id="object-overlay"
         ref={overlayRef}
         style={mediaStyle}
         onClick={(e) => e.stopPropagation()}

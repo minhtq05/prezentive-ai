@@ -9,23 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { animationsNames } from "@/constants/animations";
 import { cn } from "@/lib/utils";
 import useOverlayStore from "@/store/overlay-store";
 import useScenesStore from "@/store/scenes-store";
-import { SceneAnimation, SceneMedia, SceneText } from "@/types/scenes";
+import { SceneMedia, SceneText } from "@/types/scenes";
 import { RgbaColor } from "react-colorful";
+import AnimationDialog from "./animation-dialog";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
-import { Textarea } from "./ui/textarea";
-
-const animationsNames: { [key in SceneAnimation]: string } = {
-  "zoom-in": "Zoom In",
-  "zoom-out": "Zoom Out",
-  "scale-in": "Scale In",
-  "scale-out": "Scale Out",
-};
 
 export default function PropertiesPanel() {
   const selectedObjectId = useScenesStore((state) => state.selectedObjectId);
@@ -66,7 +60,7 @@ export default function PropertiesPanel() {
         <h3 className="font-medium mb-4">Text Properties</h3>
         <div className="space-y-6">
           {/* Text Content */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="text-sm font-medium">Text Content</label>
             <Textarea
               className="w-full min-h-[100px] p-2 border rounded-sm bg-background"
@@ -80,8 +74,7 @@ export default function PropertiesPanel() {
             />
           </div>
 
-          <Separator />
-
+          <Separator /> */}
           {/* Font Properties */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Font Properties</label>
@@ -552,20 +545,37 @@ export default function PropertiesPanel() {
           {/* Animation */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Animations</label>
-            <div className="p-2 border rounded-sm">
-              <p className="text-xs text-muted-foreground">
-                Current animations:{" "}
-                {textObject.animations.length
-                  ? textObject.animations
-                      .map((animation) => animationsNames[animation])
-                      .join(", ")
-                  : "None"}
-              </p>
-              <Button variant="outline" size="sm" className="w-full mt-2">
-                Add Animation
-              </Button>
-            </div>
+            <p className="text-xs text-muted-foreground mb-2">
+              Current animations: {textObject.animations.length === 0 && "None"}
+            </p>
+            {textObject.animations.length > 0 && (
+              <div className="space-y-1">
+                {textObject.animations.map((animation, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between border-1 border-input px-2 py-1 rounded-md"
+                  >
+                    <span className="text-sm">
+                      {animationsNames[animation.name]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+          <AnimationDialog
+            currentAnimations={textObject.animations}
+            onUpdateAnimations={(animations) => {
+              updateOverlayProperty<SceneText, "animations">(
+                "animations",
+                animations
+              );
+            }}
+          >
+            <Button variant="outline" size="sm" className="w-full">
+              Update Animations
+            </Button>
+          </AnimationDialog>
         </div>
       </div>
     );
@@ -660,18 +670,38 @@ export default function PropertiesPanel() {
           {/* Animation */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Animations</label>
-            <div className="p-2 border rounded-sm">
-              <p className="text-xs text-muted-foreground">
-                Current animations:{" "}
-                {mediaObject.animations.length
-                  ? mediaObject.animations.join(", ")
-                  : "None"}
-              </p>
-              <Button variant="outline" size="sm" className="w-full mt-2">
-                Add Animation
-              </Button>
-            </div>
+            <p className="text-xs text-muted-foreground mb-2">
+              Current animations:{" "}
+              {mediaObject.animations.length === 0 && "None"}
+            </p>
+            {mediaObject.animations.length > 0 && (
+              <div className="space-y-1">
+                {mediaObject.animations.map((animation, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between border-1 border-input px-2 py-1 rounded-md"
+                  >
+                    <span className="text-sm">
+                      {animationsNames[animation.name]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+          <AnimationDialog
+            currentAnimations={mediaObject.animations}
+            onUpdateAnimations={(animations) => {
+              updateOverlayProperty<SceneMedia, "animations">(
+                "animations",
+                animations
+              );
+            }}
+          >
+            <Button variant="outline" size="sm" className="w-full">
+              Update Animations
+            </Button>
+          </AnimationDialog>
         </div>
       </div>
     );

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Fragment } from "react";
 import { getProjectById } from "./actions";
 
 export default async function ProjectEditorLayout({
@@ -15,5 +16,5 @@ export default async function ProjectEditorLayout({
     notFound();
   }
 
-  return <>{children}</>;
+  return <Fragment key={project_id}>{children}</Fragment>;
 }

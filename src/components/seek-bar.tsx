@@ -76,7 +76,6 @@ export const SeekBar: React.FC<{
   const playing = usePlayerStore((state) => state.playing);
   const setPlaying = usePlayerStore((state) => state.setPlaying);
   const frame = usePlayerStore((state) => state.frame);
-  const setFrame = usePlayerStore((state) => state.setFrame);
   const zoom = usePlayerStore((state) => state.zoom);
   const setZoom = usePlayerStore((state) => state.setZoom);
   const loop = usePlayerStore((state) => state.loop);
@@ -102,7 +101,6 @@ export const SeekBar: React.FC<{
     useSeekBar({
       playerRef,
       containerRef,
-      setFrame,
       setPlaying,
       seekTo,
       play,
@@ -115,7 +113,7 @@ export const SeekBar: React.FC<{
 
   // reset frame when selectedSceneId changes
   useEffect(() => {
-    setFrame(0);
+    seekTo(0);
   }, [selectedSceneId]);
 
   // Function to render scenes backgrounds in the timeline
@@ -243,7 +241,7 @@ export const SeekBar: React.FC<{
           </Button>
         </div>
 
-        <div className="flex justify-end items-center gap-1 w-3/10">
+        <div className="flex justify-end items-center gap-2 w-3/10">
           <Button
             size="sm"
             variant="outline"
@@ -390,7 +388,6 @@ export const SeekBar: React.FC<{
 function useSeekBar({
   playerRef,
   containerRef,
-  setFrame,
   setPlaying,
   seekTo,
   play,
@@ -402,7 +399,6 @@ function useSeekBar({
 }: {
   playerRef: React.RefObject<PlayerRef | null>;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  setFrame: (frame: number) => void;
   setPlaying: (playing: boolean) => void;
   seekTo: (frame: number) => void;
   play: () => void;
@@ -412,6 +408,7 @@ function useSeekBar({
   size: Size | null;
   playing: boolean;
 }) {
+  const setFrame = usePlayerStore((state) => state.setFrame);
   // local frame update when playerRef mounted
   useEffect(() => {
     if (!playerRef.current) {

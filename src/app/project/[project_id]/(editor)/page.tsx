@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useEditorStore from "@/store/editor-store";
 import useScenesStore from "@/store/scenes-store";
+import { useDebounce } from "@uidotdev/usehooks";
 import { Box, Image, Layers2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -30,7 +31,7 @@ import { getProjectById, updateProjectElements } from "./actions";
 
 export default function ProjectEditorPage() {
   const { project_id: projectId } = useParams<{ project_id: string }>();
-  const isUpdating = useEditorStore((state) => state.isUpdating);
+  const scenesIsUpdating = useScenesStore((state) => state.scenesIsUpdating);
 
   useProjectUpdateEffect(projectId);
 
@@ -74,7 +75,7 @@ export default function ProjectEditorPage() {
         >
           <header className="flex flex-row h-14">
             <ElementHeader />
-            {isUpdating && (
+            {scenesIsUpdating && (
               <div className="flex items-center justify-center gap-1 w-14 h-14 text-sm text-primary">
                 Saving...
               </div>
@@ -92,7 +93,7 @@ export default function ProjectEditorPage() {
               <RemotionPlayer />
             </div>
             <Separator orientation="vertical" />
-            <div className="flex-none w-[20%] h-full overflow-y-auto">
+            <div className="flex-none w-80 h-full overflow-y-auto">
               <PropertiesPanel />
             </div>
           </div>
@@ -115,11 +116,12 @@ export default function ProjectEditorPage() {
 function useProjectUpdateEffect(projectId: string) {
   const scenes = useScenesStore((state) => state.scenes);
   const fillScenes = useScenesStore((state) => state.fillScenes);
+  const scenesNonce = useScenesStore((state) => state.scenesNonce);
+  const setScenesIsUpdating = useScenesStore(
+    (state) => state.setScenesIsUpdating
+  );
+  const debouncedScenesNonce = useDebounce(scenesNonce, 300);
 
-  // Use the editor store instead of local state
-  const isFirstRender = useEditorStore((state) => state.isFirstRender);
-  const setIsUpdating = useEditorStore((state) => state.setIsUpdating);
-  const setIsFirstRender = useEditorStore((state) => state.setIsFirstRender);
   const resetForNewProject = useEditorStore(
     (state) => state.resetForNewProject
   );
@@ -147,15 +149,11 @@ function useProjectUpdateEffect(projectId: string) {
   }, [projectId, resetForNewProject]);
 
   useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
-      return;
-    }
-    setIsUpdating(true);
+    setScenesIsUpdating(true);
     updateProjectElements(projectId, JSON.stringify(scenes)).finally(() => {
-      setIsUpdating(false);
+      setScenesIsUpdating(false);
     });
-  }, [scenes]);
+  }, [debouncedScenesNonce]);
 }
 
 function MenuButton() {

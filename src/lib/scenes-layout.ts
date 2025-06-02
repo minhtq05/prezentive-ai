@@ -50,7 +50,10 @@ const createSceneText = (
   fontStyle: "normal",
   textDecoration: "none",
   textTransform: "none",
-  animations: ["zoom-in", "scale-out"],
+  animations: [
+    { name: "zoom-in", type: "animation-in" },
+    { name: "scale-out", type: "animation-out" },
+  ],
 });
 
 // Helper to create media components
@@ -78,7 +81,10 @@ const createSceneMedia = (
   left, // x position
   width,
   height,
-  animations: ["zoom-in", "scale-out"],
+  animations: [
+    { name: "zoom-in", type: "animation-in" },
+    { name: "scale-out", type: "animation-out" },
+  ],
 });
 
 // 1. Title Layout - Title and Subtitle

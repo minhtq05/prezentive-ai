@@ -1,17 +1,24 @@
 import { Scene, SceneComponent, SceneText } from "@/types/scenes";
+import { getTime } from "@/utils/time";
 import { create } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
 import useOverlayStore from "./overlay-store";
+
+// TODO: add server action to update project data when scenes change
 
 export interface ScenesStore {
   scenes: Scene[];
   selectedSceneId: string | null;
   selectedObjectId: string | null;
+  scenesNonce: number;
+  scenesIsUpdating: boolean;
   fillScenes: (scenes: Scene[]) => void;
   addScene: (scene: Scene) => void;
   deleteScene: (id: string) => void;
+  setScenesIsUpdating: (updating: boolean) => void;
   selectScene: (id: string | null) => void;
   selectObject: (id: string | null) => void;
-  getSelectedObject: () => SceneComponent | null;
+  _getSelectedObject: () => SceneComponent | null;
   commitOverlayChanges: () => void;
   deleteSelectedComponent: () => void;
   updateSceneInfo: (
@@ -21,184 +28,212 @@ export interface ScenesStore {
   ) => void;
 }
 
-const useScenesStore = create<ScenesStore>((set, get) => ({
-  scenes: [
-    // createTitleLayout(),
-    // createTitleAndContentLayout(),
-    // createSectionTitleLayout(),
-    // createTitleAndTwoImagesLayout(),
-    // createTitleAndVideoLayout(),
-  ],
-  selectedSceneId: null,
-  selectedObjectId: null,
-  fillScenes: (scenes: Scene[]) => {
-    set({ scenes });
-  },
-  addScene: (scene) =>
-    set((state) => {
-      return {
+const useScenesStore = create<ScenesStore>()(
+  subscribeWithSelector((set, get) => ({
+    scenes: [],
+    selectedSceneId: null,
+    selectedObjectId: null,
+    scenesNonce: 0,
+    scenesIsUpdating: false,
+
+    // First render, fill scenes with data fetched from the project
+    fillScenes: (scenes: Scene[]) => {
+      set({ scenes });
+    },
+
+    // User added scene, must POST update project data.
+    addScene: (scene) => {
+      set((state) => ({
+        scenesNonce: Math.max(state.scenesNonce + 1, getTime()),
         scenes: [...state.scenes, scene],
-      };
-    }),
-  deleteScene: (id) =>
-    set((state) => ({
-      scenes: state.scenes.filter((scene) => scene.id !== id),
-    })),
-  selectScene: (id) => {
-    // Commit any pending changes before changing scenes
-    get().commitOverlayChanges();
+      }));
+    },
 
-    set(() => ({
-      selectedSceneId: id,
-      selectedObjectId: null, // Reset selected object when changing scenes
-    }));
+    // User deleted scene, must POST update project data.
+    deleteScene: (id) =>
+      set((state) => ({
+        scenesNonce: Math.max(state.scenesNonce + 1, getTime()),
+        scenes: state.scenes.filter((scene) => scene.id !== id),
+      })),
 
-    // Hide the overlay when changing scenes
-    useOverlayStore.getState().hideOverlay();
-  },
-  selectObject: (id) => {
-    // Commit any pending changes before selecting a new object
-    get().commitOverlayChanges();
+    setScenesIsUpdating: (updating) => {
+      set(() => ({
+        scenesIsUpdating: updating,
+      }));
+    },
 
-    set(() => ({
-      selectedObjectId: id,
-    }));
+    selectScene: (id) => {
+      // Commit any pending changes before changing scenes
+      get().commitOverlayChanges();
 
-    // Show overlay for the new selected object
-    if (id) {
-      const selectedObject = get().getSelectedObject();
-      if (selectedObject) {
-        useOverlayStore.getState().showOverlay(selectedObject as SceneText);
-      }
-    } else {
-      useOverlayStore.getState().hideOverlay();
-    }
-  },
-  getSelectedObject: () => {
-    const state = get();
-    const selectedScene = state.scenes.find(
-      (scene) => scene.id === state.selectedSceneId
-    );
-    if (!selectedScene || !state.selectedObjectId) return null;
-    return (
-      selectedScene.components.find(
-        (component) => component.id === state.selectedObjectId
-      ) || null
-    );
-  },
-  commitOverlayChanges: () => {
-    const { visibleOverlayId, getOverlayData } = useOverlayStore.getState();
-    const state = get();
-
-    if (
-      !visibleOverlayId ||
-      !state.selectedObjectId ||
-      visibleOverlayId !== state.selectedObjectId
-    ) {
-      return; // No overlay to commit or mismatch in selected object
-    }
-
-    const overlayData = getOverlayData();
-    if (!overlayData) return;
-
-    // Find the scene and component to update
-    const selectedSceneIndex = state.scenes.findIndex(
-      (scene) => scene.id === state.selectedSceneId
-    );
-
-    if (selectedSceneIndex === -1) return;
-
-    const selectedScene = state.scenes[selectedSceneIndex];
-    const componentIndex = selectedScene.components.findIndex(
-      (component) => component.id === state.selectedObjectId
-    );
-
-    if (componentIndex === -1) return;
-
-    // Create a new array of scenes with the updated component from overlay
-    set((state) => {
-      const updatedScenes = [...state.scenes];
-      const updatedComponents = [
-        ...selectedScene.components.slice(0, componentIndex),
-        ...selectedScene.components.slice(componentIndex + 1),
-      ];
-
-      // Add the updated component with all overlay properties on top of the existing components for rendering
-      updatedComponents.push(overlayData);
-
-      updatedScenes[selectedSceneIndex] = {
-        ...selectedScene,
-        components: updatedComponents,
-      };
-
-      return {
-        ...state,
-        scenes: updatedScenes,
-      };
-    });
-  },
-  deleteSelectedComponent: () => {
-    const state = get();
-    const { selectedSceneId, selectedObjectId } = state;
-
-    // If no scene or object is selected, do nothing
-    if (!selectedSceneId || !selectedObjectId) return;
-
-    // Find the scene that contains the selected component
-    const selectedSceneIndex = state.scenes.findIndex(
-      (scene) => scene.id === selectedSceneId
-    );
-
-    if (selectedSceneIndex === -1) return;
-
-    const selectedScene = state.scenes[selectedSceneIndex];
-
-    // Filter out the selected component
-    const updatedComponents = selectedScene.components.filter(
-      (component) => component.id !== selectedObjectId
-    );
-
-    // Update the scenes array with the new components
-    set((state) => {
-      const updatedScenes = [...state.scenes];
-      updatedScenes[selectedSceneIndex] = {
-        ...selectedScene,
-        components: updatedComponents,
-      };
-
-      return {
-        ...state,
-        scenes: updatedScenes,
-        selectedObjectId: null, // Clear the selected object
-      };
-    });
-
-    // Hide the overlay
-    useOverlayStore.getState().hideOverlay();
-  },
-  updateSceneInfo: (id, title, durationInFrames) => {
-    set((state) => {
-      const sceneIndex = state.scenes.findIndex((scene) => scene.id === id);
-      if (sceneIndex === -1) return state;
-
-      const updatedScene = {
-        ...state.scenes[sceneIndex],
-        title,
-        durationInFrames,
-      };
-
-      // Cap the "to" property of each component to the new duration
-      updatedScene.components = updatedScene.components.map((component) => ({
-        ...component,
-        to: Math.min(component.to || durationInFrames, durationInFrames),
+      set(() => ({
+        selectedSceneId: id,
+        selectedObjectId: null, // Reset selected object when changing scenes
       }));
 
-      const updatedScenes = [...state.scenes];
-      updatedScenes[sceneIndex] = updatedScene;
+      // Hide the overlay when changing scenes
+      useOverlayStore.getState().hideOverlay();
+    },
 
-      return { ...state, scenes: updatedScenes };
-    });
-  },
-}));
+    selectObject: (id) => {
+      // Commit any pending changes before selecting a new object
+      get().commitOverlayChanges();
+
+      set(() => ({
+        selectedObjectId: id,
+      }));
+
+      // Show overlay for the new selected object
+      if (id) {
+        const selectedObject = get()._getSelectedObject();
+        // console.log("Selected Object:", id, selectedObject);
+        if (selectedObject) {
+          useOverlayStore.getState().showOverlay(selectedObject as SceneText);
+        }
+      } else {
+        useOverlayStore.getState().hideOverlay();
+      }
+    },
+
+    _getSelectedObject: () => {
+      const state = get();
+      const selectedScene = state.scenes.find(
+        (scene) => scene.id === state.selectedSceneId
+      );
+      if (!selectedScene || !state.selectedObjectId) return null;
+      return (
+        selectedScene.components.find(
+          (component) => component.id === state.selectedObjectId
+        ) || null
+      );
+    },
+
+    // Commit changes from the overlay to the selected component, must POST update project data.
+    commitOverlayChanges: () => {
+      const { visibleOverlayId, getOverlayData } = useOverlayStore.getState();
+      const state = get();
+
+      if (
+        !visibleOverlayId ||
+        !state.selectedObjectId ||
+        visibleOverlayId !== state.selectedObjectId
+      ) {
+        return; // No overlay to commit or mismatch in selected object
+      }
+
+      const overlayData = getOverlayData();
+      if (!overlayData) return;
+
+      // Find the scene and component to update
+      const selectedSceneIndex = state.scenes.findIndex(
+        (scene) => scene.id === state.selectedSceneId
+      );
+
+      if (selectedSceneIndex === -1) return;
+
+      const selectedScene = state.scenes[selectedSceneIndex];
+      const componentIndex = selectedScene.components.findIndex(
+        (component) => component.id === state.selectedObjectId
+      );
+
+      if (componentIndex === -1) return;
+
+      // Create a new array of scenes with the updated component from overlay
+      set((state) => {
+        const updatedScenes = [...state.scenes];
+        const updatedComponents = [
+          ...selectedScene.components.slice(0, componentIndex),
+          ...selectedScene.components.slice(componentIndex + 1),
+        ];
+
+        // Add the updated component with all overlay properties on top of the existing components for rendering
+        updatedComponents.push(overlayData);
+
+        updatedScenes[selectedSceneIndex] = {
+          ...selectedScene,
+          components: updatedComponents,
+        };
+
+        return {
+          ...state,
+          scenesNonce: Math.max(state.scenesNonce + 1, getTime()),
+          scenes: updatedScenes,
+        };
+      });
+    },
+
+    // Delete the selected component from the selected scene, must POST update project data.
+    deleteSelectedComponent: () => {
+      const state = get();
+      const { selectedSceneId, selectedObjectId } = state;
+
+      // If no scene or object is selected, do nothing
+      if (!selectedSceneId || !selectedObjectId) return;
+
+      // Find the scene that contains the selected component
+      const selectedSceneIndex = state.scenes.findIndex(
+        (scene) => scene.id === selectedSceneId
+      );
+
+      if (selectedSceneIndex === -1) return;
+
+      const selectedScene = state.scenes[selectedSceneIndex];
+
+      // Filter out the selected component
+      const updatedComponents = selectedScene.components.filter(
+        (component) => component.id !== selectedObjectId
+      );
+
+      // Update the scenes array with the new components
+      set((state) => {
+        const updatedScenes = [...state.scenes];
+        updatedScenes[selectedSceneIndex] = {
+          ...selectedScene,
+          components: updatedComponents,
+        };
+
+        return {
+          ...state,
+          scenesNonce: Math.max(state.scenesNonce + 1, getTime()),
+          scenes: updatedScenes,
+          selectedObjectId: null, // Clear the selected object
+        };
+      });
+
+      // Hide the overlay
+      useOverlayStore.getState().hideOverlay();
+    },
+
+    // User updates scene information and ensure components' "to" property is capped to the new duration
+    // Must POST update project data.
+    updateSceneInfo: (id, title, durationInFrames) => {
+      set((state) => {
+        const sceneIndex = state.scenes.findIndex((scene) => scene.id === id);
+        if (sceneIndex === -1) return state;
+
+        const updatedScene = {
+          ...state.scenes[sceneIndex],
+          title,
+          durationInFrames,
+        };
+
+        // Cap the "to" property of each component to the new duration
+        updatedScene.components = updatedScene.components.map((component) => ({
+          ...component,
+          to: Math.min(component.to || durationInFrames, durationInFrames),
+        }));
+
+        const updatedScenes = [...state.scenes];
+        updatedScenes[sceneIndex] = updatedScene;
+
+        return {
+          ...state,
+          scenesNonce: Math.max(state.scenesNonce + 1, getTime()),
+          scenes: updatedScenes,
+        };
+      });
+    },
+  }))
+);
 
 export default useScenesStore;
