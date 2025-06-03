@@ -12,7 +12,8 @@ import { Animated } from "remotion-animated";
 import ObjectOverlay from "./object-overlay";
 
 function RemotionComponent({ scenes }: { scenes: Scene[] }) {
-  const visibleOverlayId = useScenesStore((state) => state.selectedObjectId);
+  const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
+  const selectedObjectId = useScenesStore((state) => state.selectedObjectId);
   const selectObject = useScenesStore((state) => state.selectObject);
   const previewMode = usePlayerStore((state) => state.previewMode);
   const setPreviewMode = usePlayerStore((state) => state.setPreviewMode);
@@ -63,7 +64,7 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
                   <div
                     style={{
                       visibility:
-                        visibleOverlayId === textComponent.id
+                        selectedObjectId === textComponent.id
                           ? "hidden"
                           : "visible",
                       position: "absolute",
@@ -98,9 +99,11 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
                       userSelect: "none",
                     }}
                     onClick={(e) => {
-                      e.stopPropagation();
-                      setPreviewMode(false);
-                      selectObject(component.id);
+                      if (selectedSceneId) {
+                        e.stopPropagation();
+                        setPreviewMode(false);
+                        selectObject(component.id);
+                      }
                     }}
                   >
                     {textComponent.text ||
@@ -125,7 +128,7 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
                   <div
                     style={{
                       visibility:
-                        visibleOverlayId === mediaComponent.id
+                        selectedObjectId === mediaComponent.id
                           ? "hidden"
                           : "visible",
                       position: "absolute",
@@ -138,9 +141,11 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
                       borderRadius: "4px",
                     }}
                     onClick={(e) => {
-                      e.stopPropagation();
-                      setPreviewMode(false);
-                      selectObject(component.id);
+                      if (selectedSceneId) {
+                        e.stopPropagation();
+                        setPreviewMode(false);
+                        selectObject(component.id);
+                      }
                     }}
                   >
                     {mediaComponent.mediaType === "image" && (
@@ -188,13 +193,15 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
         </AbsoluteFill>
       </Series.Sequence>
     ));
-  }, [scenes, previewMode, visibleOverlayId, selectObject, AnimationsWrapper]);
+  }, [scenes, previewMode, selectedObjectId, selectObject, AnimationsWrapper]);
 
   return (
     <AbsoluteFill
       style={{ backgroundColor: "white" }}
       onClick={() => {
-        selectObject(null);
+        if (selectedSceneId) {
+          selectObject(null);
+        }
       }}
     >
       <Series>{renderedScenes}</Series>

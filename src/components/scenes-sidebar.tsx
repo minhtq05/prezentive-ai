@@ -81,7 +81,7 @@ export default function ScenesSidebar() {
       </div>
       <ScrollArea className="flex-1 overflow-scroll" type="always">
         <div className="relative space-y-2 h-full pb-2">
-          {/* <CounterWrapper index={0}>
+          <CounterWrapper index={0}>
             <div
               className={cn(
                 "w-36 aspect-video rounded-sm cursor-pointer transition-colors hover:duration-0 flex flex-col justify-center items-center gap-1",
@@ -94,7 +94,7 @@ export default function ScenesSidebar() {
               <span className="text-sm font-medium">Preview</span>
               <span className="text-xs opacity-70">{totalDuration} frames</span>
             </div>
-          </CounterWrapper> */}
+          </CounterWrapper>
           {scenes.map((scene, index) => (
             <CounterWrapper key={scene.id} index={index + 1}>
               <ContextMenu>
