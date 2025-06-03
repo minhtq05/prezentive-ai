@@ -6,12 +6,23 @@ import useOverlayStore from "./overlay-store";
 
 // TODO: add server action to update project data when scenes change
 
-export interface ScenesStore {
+const scenesStoreInitialState: ScenesStoreState = {
+  scenes: [],
+  selectedSceneId: null,
+  selectedObjectId: null,
+  scenesNonce: 0,
+  scenesIsUpdating: false,
+};
+
+export type ScenesStoreState = {
   scenes: Scene[];
   selectedSceneId: string | null;
   selectedObjectId: string | null;
   scenesNonce: number;
   scenesIsUpdating: boolean;
+};
+
+export type ScenesStoreActions = {
   fillScenes: (scenes: Scene[]) => void;
   addScene: (scene: Scene) => void;
   deleteScene: (id: string) => void;
@@ -26,15 +37,14 @@ export interface ScenesStore {
     title: string,
     durationInFrames: number
   ) => void;
-}
+  reset: () => void;
+};
+
+export type ScenesStore = ScenesStoreState & ScenesStoreActions;
 
 const useScenesStore = create<ScenesStore>()(
   subscribeWithSelector((set, get) => ({
-    scenes: [],
-    selectedSceneId: null,
-    selectedObjectId: null,
-    scenesNonce: 0,
-    scenesIsUpdating: false,
+    ...scenesStoreInitialState,
 
     // First render, fill scenes with data fetched from the project
     fillScenes: (scenes: Scene[]) => {
@@ -233,6 +243,8 @@ const useScenesStore = create<ScenesStore>()(
         };
       });
     },
+
+    reset: () => set(scenesStoreInitialState),
   }))
 );
 

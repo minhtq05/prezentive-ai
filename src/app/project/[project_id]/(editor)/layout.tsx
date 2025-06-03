@@ -16,5 +16,5 @@ export default async function ProjectEditorLayout({
     notFound();
   }
 
-  return <Fragment key={project_id}>{children}</Fragment>;
+  return <Fragment>{children}</Fragment>;
 }

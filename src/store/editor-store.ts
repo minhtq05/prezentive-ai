@@ -1,38 +1,39 @@
 import { create } from "zustand";
+import usePlayerStore from "./player-store";
+import useScenesStore from "./scenes-store";
 
 interface EditorState {
-  isUpdating: boolean;
   isFirstRender: boolean;
   prevProjectId: string | undefined;
-  setIsUpdating: (isUpdating: boolean) => void;
   setIsFirstRender: (isFirstRender: boolean) => void;
   setPrevProjectId: (prevProjectId: string | undefined) => void;
-  resetForNewProject: (projectId: string) => void;
+  resetNewProjectState: (projectId: string) => void;
 }
 
 const useEditorStore = create<EditorState>((set) => ({
-  isUpdating: false,
   isFirstRender: true,
   prevProjectId: undefined,
 
-  setIsUpdating: (isUpdating) => set({ isUpdating }),
   setIsFirstRender: (isFirstRender) => set({ isFirstRender }),
   setPrevProjectId: (prevProjectId) => set({ prevProjectId }),
 
-  resetForNewProject: (projectId) =>
+  resetNewProjectState: (projectId) => {
     set((state) => {
       // Only reset if the project ID has changed
       if (
         state.prevProjectId !== undefined &&
         state.prevProjectId !== projectId
       ) {
+        useScenesStore.getState().reset();
+        usePlayerStore.getState().reset();
         return {
           isFirstRender: true,
           prevProjectId: projectId,
         };
       }
       return { prevProjectId: projectId };
-    }),
+    });
+  },
 }));
 
 export default useEditorStore;

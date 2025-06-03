@@ -4,7 +4,18 @@ import { createRef, RefObject } from "react";
 import { create } from "zustand";
 import useScenesStore from "./scenes-store";
 
-export interface PlayerStore {
+const playerStoreInitialState: PlayerStoreState = {
+  playing: false,
+  frame: 0,
+  zoom: 1,
+  loop: false,
+  playerRef: createRef<PlayerRef>(),
+  totalDuration: 0,
+  durationInFrames: 0,
+  previewMode: true,
+};
+
+export type PlayerStoreState = {
   // Player state
   playing: boolean;
   frame: number;
@@ -16,6 +27,12 @@ export interface PlayerStore {
   totalDuration: number;
   durationInFrames: number;
 
+  // Preview mode for animations
+  // This is used to enable animations in editing mode
+  previewMode: boolean;
+};
+
+export type PlayerStoreActions = {
   // Actions
   setPlaying: (playing: boolean) => void;
   setFrame: (frame: number) => void; // Use with caution, only use for low-level control
@@ -30,32 +47,29 @@ export interface PlayerStore {
   seekTo: (frame: number) => void;
 
   // Enable animations in editing mode
-  previewMode: boolean;
   setPreviewMode: (enable: boolean) => void;
-}
+  reset: () => void;
+};
+
+export type PlayerStore = PlayerStoreState & PlayerStoreActions;
 
 const usePlayerStore = create<PlayerStore>((set, get) => ({
-  // Initial state
-  playing: false,
-  frame: 0,
-  zoom: 1,
-  loop: false,
-  playerRef: createRef<PlayerRef>(),
-  totalDuration: 0,
-  durationInFrames: 0,
-  previewMode: true,
-
+  ...playerStoreInitialState,
   // Actions
   setPlaying: (playing) => {
     // When playing is toggled, deselect any object
     useScenesStore.getState().selectObject(null);
     set({ playing });
   },
+
   setFrame: (frame) => {
     set({ frame, previewMode: true });
   },
+
   setZoom: (zoom) => set({ zoom }),
+
   setLoop: (loop) => set({ loop }),
+
   setPlayerRefElement: (playerRef) => {
     if (!playerRef) {
       return;
@@ -111,6 +125,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     set({
       previewMode: enable,
     }),
+
+  reset: () => set(playerStoreInitialState),
 }));
 
 const syncWithScenesStore = ({
