@@ -163,6 +163,16 @@ useScenesStore.subscribe(
   }
 );
 
+useScenesStore.subscribe(
+  (state) => state.selectedObjectId,
+  (selectedObjectId, _) => {
+    if (selectedObjectId) {
+      // If an object is selected, disable preview mode
+      usePlayerStore.setState({ previewMode: false });
+    }
+  }
+);
+
 // Immediately calculate durations with initial state
 const { scenes, selectedSceneId } = useScenesStore.getState();
 syncWithScenesStore({ scenes, selectedSceneId });

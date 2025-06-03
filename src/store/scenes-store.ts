@@ -1,4 +1,4 @@
-import { Scene, SceneComponent, SceneText } from "@/types/scenes";
+import { Scene, SceneComponent, SceneMedia, SceneText } from "@/types/scenes";
 import { getTime } from "@/utils/time";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
@@ -37,6 +37,7 @@ export type ScenesStoreActions = {
     title: string,
     durationInFrames: number
   ) => void;
+  addComponentToScene: (component: SceneText | SceneMedia) => void;
   reset: () => void;
 };
 
@@ -242,6 +243,34 @@ const useScenesStore = create<ScenesStore>()(
           scenes: updatedScenes,
         };
       });
+    },
+
+    // Add component to the selected scene, must POST update project data.
+    addComponentToScene: (component) => {
+      const state = get();
+      const { selectedSceneId } = state;
+
+      if (!selectedSceneId) return;
+
+      set((state) => {
+        const updatedScenes = state.scenes.map((scene) => {
+          if (scene.id === selectedSceneId) {
+            return {
+              ...scene,
+              components: [...scene.components, component],
+            };
+          }
+          return scene;
+        });
+
+        return {
+          scenes: updatedScenes,
+          scenesNonce: Math.max(state.scenesNonce + 1, getTime()),
+        };
+      });
+
+      // Select the newly added object
+      get().selectObject(component.id);
     },
 
     reset: () => set(scenesStoreInitialState),

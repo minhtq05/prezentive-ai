@@ -21,7 +21,9 @@ import {
 export default function ElementHeader() {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
   const scenes = useScenesStore((state) => state.scenes);
-  const selectObject = useScenesStore((state) => state.selectObject);
+  const addComponentToScene = useScenesStore(
+    (state) => state.addComponentToScene
+  );
 
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
@@ -96,26 +98,6 @@ export default function ElementHeader() {
 
     // Add the new component to the scene
     addComponentToScene(newMedia);
-  };
-
-  // Helper function to add a component to the selected scene
-  const addComponentToScene = (component: SceneText | SceneMedia) => {
-    useScenesStore.setState((state) => {
-      const updatedScenes = state.scenes.map((scene) => {
-        if (scene.id === selectedSceneId) {
-          return {
-            ...scene,
-            components: [...scene.components, component],
-          };
-        }
-        return scene;
-      });
-
-      return { scenes: updatedScenes };
-    });
-
-    // Select the newly added object
-    selectObject(component.id);
   };
 
   return (
