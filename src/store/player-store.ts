@@ -57,8 +57,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   ...playerStoreInitialState,
   // Actions
   setPlaying: (playing) => {
-    // When playing is toggled, deselect any object
-    useScenesStore.getState().selectObject(null);
     set({ playing });
   },
 
@@ -90,7 +88,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   pause: () => {
-    useScenesStore.getState().selectObject(null);
     const { playerRef } = get();
     if (playerRef.current) {
       playerRef.current.pause();
@@ -99,13 +96,13 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   togglePlayPause: () => {
-    useScenesStore.getState().selectObject(null);
     const { playing, playerRef } = get();
     if (playerRef.current) {
       if (playing) {
         playerRef.current.pause();
         set({ playing: false });
       } else {
+        useScenesStore.getState().selectObject(null);
         playerRef.current.play();
         set({ playing: true });
       }
@@ -168,7 +165,9 @@ useScenesStore.subscribe(
   (selectedObjectId, _) => {
     if (selectedObjectId) {
       // If an object is selected, disable preview mode
-      usePlayerStore.setState({ previewMode: false });
+      const { setPreviewMode, pause } = usePlayerStore.getState();
+      setPreviewMode(false);
+      pause();
     }
   }
 );
