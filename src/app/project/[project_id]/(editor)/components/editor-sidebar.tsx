@@ -7,9 +7,7 @@ export default function EditorSidebar() {
   return (
     <div className="flex flex-col w-14 h-full justify-start">
       <MenuButton />
-
       <Separator />
-
       <TabsList
         variant="editor"
         className="flex flex-col w-14 h-full justify-start"
@@ -23,7 +21,6 @@ export default function EditorSidebar() {
             <Box />
           </TabsTrigger>
         </div>
-
         <div className="h-14 w-14">
           <TabsTrigger
             variant="editor"

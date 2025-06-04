@@ -9,7 +9,7 @@ import { Player } from "@remotion/player";
 import { useCallback, useMemo } from "react";
 import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
 import { Animated } from "remotion-animated";
-import ObjectOverlay from "./object-overlay";
+import ObjectOverlay from "../../../../../components/object-overlay";
 
 function RemotionComponent({ scenes }: { scenes: Scene[] }) {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);

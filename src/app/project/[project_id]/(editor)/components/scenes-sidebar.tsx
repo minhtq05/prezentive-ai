@@ -2,12 +2,7 @@
 
 import AddSceneDialog from "@/components/add-scene-dialog";
 import EditSceneDialog from "@/components/edit-scene-dialog";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import useScenesStore from "@/store/scenes-store";
-import { Scene } from "@/types/scenes";
-import { useMemo, useState } from "react";
-import { ScenePreview } from "./scene-preview";
+import { ScenePreview } from "@/components/scene-preview";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,15 +12,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "./ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from "./ui/context-menu";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
+} from "@/components/ui/context-menu";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import useScenesStore from "@/store/scenes-store";
+import { Scene } from "@/types/scenes";
+import { useMemo, useState } from "react";
 
 export default function ScenesSidebar() {
   const scenes = useScenesStore((state) => state.scenes);

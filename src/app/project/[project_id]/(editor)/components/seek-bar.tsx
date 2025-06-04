@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import useScenesStore from "@/store/scenes-store";
 import type { PlayerRef } from "@remotion/player";
 import {
@@ -23,9 +25,8 @@ import React, {
   useState,
 } from "react";
 import { interpolate } from "remotion";
-import { Button } from "./ui/button";
-import { Slider } from "./ui/slider";
 
+import { Separator } from "@/components/ui/separator";
 import { Size, useElementSize } from "@/hooks/use-element-size";
 import { useHoverState } from "@/hooks/use-hover-state";
 import { cn } from "@/lib/utils";
@@ -33,7 +34,6 @@ import usePlayerStore from "@/store/player-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { useMeasure } from "@uidotdev/usehooks";
 import { toast } from "sonner";
-import { Separator } from "./ui/separator";
 
 const getFrameFromX = (
   clientX: number,

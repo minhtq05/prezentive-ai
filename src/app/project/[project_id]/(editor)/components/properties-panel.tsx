@@ -1,6 +1,10 @@
 "use client";
 
+import AnimationDialog from "@/components/animation-dialog";
 import ColorPicker from "@/components/color-picker";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -9,17 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { animationsNames } from "@/constants/animations";
 import { cn } from "@/lib/utils";
 import useOverlayStore from "@/store/overlay-store";
 import useScenesStore from "@/store/scenes-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { RgbaColor } from "react-colorful";
-import AnimationDialog from "./animation-dialog";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Input } from "./ui/input";
-import { Separator } from "./ui/separator";
 
 export default function PropertiesPanel() {
   const selectedObjectId = useScenesStore((state) => state.selectedObjectId);
