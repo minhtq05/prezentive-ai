@@ -15,12 +15,12 @@ import Link from "next/link";
 
 export default function MenuButton() {
   return (
-    <Menubar className="shadow-none border-none h-14 w-14 p-0">
+    <Menubar className="shadow-none border-none h-12 w-12 p-0">
       <MenubarMenu>
         <MenubarTrigger asChild>
           <Button
             variant="ghost"
-            className="h-14 w-14 flex items-center justify-center rounded-none"
+            className="h-full w-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground active:bg-primary active:text-primary-foreground"
           >
             <Layers2 />
           </Button>

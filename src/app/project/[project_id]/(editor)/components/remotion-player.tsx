@@ -9,7 +9,7 @@ import { Player } from "@remotion/player";
 import { useCallback, useMemo } from "react";
 import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
 import { Animated } from "remotion-animated";
-import ObjectOverlay from "../../../../../components/object-overlay";
+import ObjectOverlay from "./object-overlay";
 
 function RemotionComponent({ scenes }: { scenes: Scene[] }) {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
@@ -106,8 +106,8 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
                   >
                     {textComponent.text ||
                       (!previewMode && (
-                        <p className="text-zinc-500 whitespace-nowrap">
-                          Enter text here...
+                        <p className="text-zinc-500 font-semibold whitespace-nowrap">
+                          Enter text here
                         </p>
                       ))}
                   </div>

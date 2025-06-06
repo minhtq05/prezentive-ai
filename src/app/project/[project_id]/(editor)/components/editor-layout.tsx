@@ -7,7 +7,7 @@ import ElementHeader from "./element-header";
 import PropertiesPanel from "./properties-panel";
 import RemotionPlayer from "./remotion-player";
 import ScenesSidebar from "./scenes-sidebar";
-import { SeekBar } from "./seek-bar";
+import SeekBar from "./seek-bar";
 
 export default function EditorLayout() {
   return (

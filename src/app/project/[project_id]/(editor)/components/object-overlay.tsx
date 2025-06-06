@@ -12,7 +12,7 @@ import Moveable, {
   OnResize,
   OnResizeEnd,
 } from "react-moveable";
-import { Img, OffthreadVideo } from "remotion";
+import { Img } from "remotion";
 import sanitizeHtml from "sanitize-html";
 
 const moveableConfigs = {
@@ -249,15 +249,28 @@ function MediaOverlay({ mediaObject }: { mediaObject: SceneMedia }) {
         );
       case "video":
         return (
-          <OffthreadVideo
-            src={mediaObject.src}
+          <video
             style={{
-              width: "100%",
+              width: "100$",
               height: "100%",
               objectFit: mediaObject.fit,
             }}
+            src={mediaObject.src}
             muted
+            preload="none"
+            controls
           />
+          // <Suspense fallback={<div>Loading video...</div>}>
+          //   <OffthreadVideo
+          //     src={mediaObject.src}
+          //     style={{
+          //       width: "100%",
+          //       height: "100%",
+          //       objectFit: mediaObject.fit,
+          //     }}
+          //     muted
+          //   />
+          // </Suspense>
         );
       case "audio":
         return (
