@@ -46,6 +46,33 @@
   --color-royal-blue: #305cde;
   --color-cornflower-blue: #6395ee;
   --color-misty-blue: #b5c7eb;
+  --color-steel-blue: #4682b4;
+  --color-true-blue: #2d68c4;
+  --color-cerulean: #007ba7;
+  --color-purple-blue: #6a5acd;
+
+  --color-coral: #ff8559;
+  --color-coral-pink: #f88379;
+  --color-plum: #8e4585;
+  --color-light-purple: #dab1da;
+  --color-dusty-rose: #dca1a1;
+
+  --color-pumpkin: #ff7518;
+  --color-orange: #ffa500;
+  --color-pastel-orange: #ffc067;
+  --color-mimosa: #f2b949;
+  --color-nude: #f7d9bc;
+  --color-antique-white: #faebd7;
+
+  --color-boysenberry: #873260;
+
+  --color-slate-gray: #6d8196;
+
+  --color-emerald: #50c878;
+  --color-mint-green: #adebb3;
+  --color-onyx: #353839;
+
+  --color-opal: #a8c3bc;
 }
 
 :root {
