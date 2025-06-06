@@ -13,6 +13,7 @@ const playerStoreInitialState: PlayerStoreState = {
   totalDuration: 0,
   durationInFrames: 0,
   previewMode: true,
+  containerWidth: 0,
 };
 
 export type PlayerStoreState = {
@@ -30,6 +31,9 @@ export type PlayerStoreState = {
   // Preview mode for animations
   // This is used to enable animations in editing mode
   previewMode: boolean;
+
+  // Container width for the seek bar
+  containerWidth: number;
 };
 
 export type PlayerStoreActions = {
@@ -48,6 +52,10 @@ export type PlayerStoreActions = {
 
   // Enable animations in editing mode
   setPreviewMode: (enable: boolean) => void;
+
+  // Container width setter
+  setContainerWidth: (width: number) => void;
+
   reset: () => void;
 };
 
@@ -122,6 +130,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     set({
       previewMode: enable,
     }),
+
+  setContainerWidth: (width) => set({ containerWidth: width }),
 
   reset: () => set(playerStoreInitialState),
 }));
