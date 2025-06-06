@@ -1,4 +1,3 @@
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -8,15 +7,14 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useUserStateStore } from "@/store/userstate-store";
 import { SignedIn, UserButton } from "@clerk/nextjs";
-import { Search } from "lucide-react";
 import Link from "next/link";
+import SearchForm from "./search-form";
 
 export function DashboardSidebar() {
   const view = useUserStateStore((state) => state.view);
@@ -56,7 +54,6 @@ export function DashboardSidebar() {
                   asChild
                   isActive={view === "Home"}
                   onClick={() => setView("Home")}
-                  variant="navigation"
                 >
                   <Link href="/dashboard">Home</Link>
                 </SidebarMenuButton>
@@ -66,7 +63,6 @@ export function DashboardSidebar() {
                   asChild
                   isActive={view === "All Projects"}
                   onClick={() => setView("All Projects")}
-                  variant="navigation"
                 >
                   <Link href="/dashboard/projects">All Projects</Link>
                 </SidebarMenuButton>
@@ -76,7 +72,6 @@ export function DashboardSidebar() {
                   asChild
                   isActive={view === "Templates"}
                   onClick={() => setView("Templates")}
-                  variant="navigation"
                 >
                   <Link href="/dashboard/templates">Templates</Link>
                 </SidebarMenuButton>
@@ -93,7 +88,6 @@ export function DashboardSidebar() {
                   asChild
                   isActive={view === "Media Vault"}
                   onClick={() => setView("Media Vault")}
-                  variant="navigation"
                 >
                   <Link href="/dashboard/media">Media Vault</Link>
                 </SidebarMenuButton>
@@ -110,7 +104,6 @@ export function DashboardSidebar() {
                   asChild
                   isActive={view === "Settings"}
                   onClick={() => setView("Settings")}
-                  variant="navigation"
                 >
                   <Link href="/dashboard/settings">Settings</Link>
                 </SidebarMenuButton>
@@ -121,28 +114,5 @@ export function DashboardSidebar() {
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>
-  );
-}
-
-function SearchForm({ ...props }: React.ComponentProps<"form">) {
-  return (
-    <form {...props}>
-      <SidebarGroup className="py-0">
-        <SidebarGroupContent className="relative">
-          <Label htmlFor="search" className="sr-only">
-            Search
-          </Label>
-          <SidebarInput
-            id="search"
-            placeholder="Search..."
-            className="pl-9 peer rounded-full h-9"
-          />
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
-          <kbd className="peer-focus:hidden text-xs pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none opacity-50 flex items-center justify-center">
-            Ctrl+K
-          </kbd>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </form>
   );
 }
