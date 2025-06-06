@@ -93,7 +93,7 @@ export function RenderableRemotionComponent({
                   >
                     {textComponent.text ||
                       (!previewMode && (
-                        <p className="text-zinc-500">Enter text here...</p>
+                        <p className="text-zinc-500">Enter text here</p>
                       ))}
                   </div>
                 </AnimationsWrapper>
