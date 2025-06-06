@@ -26,20 +26,18 @@ export function DashboardSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="h-10">
-              <SignedIn>
-                <div className="flex flex-row gap-2 items-center justify-center">
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        avatarBox: "!rounded-sm",
-                      },
-                    }}
-                  />
-                  <div>{username}</div>
-                </div>
-              </SignedIn>
-            </SidebarMenuButton>
+            <SignedIn>
+              <div className="flex gap-2 items-center p-2">
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "!rounded-sm",
+                    },
+                  }}
+                />
+                <p>{username}</p>
+              </div>
+            </SignedIn>
           </SidebarMenuItem>
         </SidebarMenu>
         <SearchForm />
