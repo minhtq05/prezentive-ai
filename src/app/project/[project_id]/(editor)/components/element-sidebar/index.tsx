@@ -14,7 +14,7 @@ export default function ElementSidebar() {
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col items-center gap-1 p-1 bg-white">
+      <div className="flex flex-col items-center gap-1 p-1 bg-background">
         <Tooltip>
           <TooltipTrigger asChild>
             <AddTextButton handleAddText={handleAddText} />

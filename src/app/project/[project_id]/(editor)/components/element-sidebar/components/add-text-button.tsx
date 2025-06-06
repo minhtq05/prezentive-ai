@@ -15,7 +15,7 @@ export default function AddTextButton({ handleAddText }: AddTextButtonProps) {
       size="icon"
       onClick={handleAddText}
       disabled={!selectedSceneId}
-      className="size-12 flex flex-col items-center justify-center gap-0.5"
+      className="size-12 flex flex-col items-center justify-center gap-1"
     >
       <TextIcon />
       <span className="text-xs leading-none">Text</span>

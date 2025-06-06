@@ -8,6 +8,7 @@ import {
   PropertiesPanel,
   RemotionPlayer,
   ScenesSidebar,
+  SceneUpdatingStatus,
   SeekBar,
 } from "./components";
 import { useHandleKeyboardEvent, useProjectUpdateEffect } from "./hooks";
@@ -27,8 +28,10 @@ export default function ProjectEditorPage() {
         <ElementSidebar />
       </div>
       <Separator orientation="vertical" />
-      <div className="flex-auto flex flex-col">
-        <div className="flex flex-row h-14"></div>
+      <div className="flex-auto flex flex-col overflow-auto">
+        <div className="flex flex-row items-center h-14 p-2">
+          <SceneUpdatingStatus />
+        </div>
         <Separator />
         <div className="flex-1 flex flex-row justify-center items-center overflow-hidden">
           <div className="flex-none w-fit h-full">

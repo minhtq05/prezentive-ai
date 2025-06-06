@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/context-menu";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import usePlayerStore from "@/store/player-store";
 import useScenesStore from "@/store/scenes-store";
 import { Scene } from "@/types/scenes";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function ScenesSidebar() {
   const scenes = useScenesStore((state) => state.scenes);
@@ -38,6 +39,13 @@ export default function ScenesSidebar() {
     () => scenes.reduce((acc, scene) => acc + scene.durationInFrames, 0),
     [scenes]
   );
+
+  const seekTo = usePlayerStore((state) => state.seekTo);
+
+  // reset frame when selectedSceneId changes
+  useEffect(() => {
+    seekTo(0);
+  }, [selectedSceneId]);
 
   const [editingScene, setEditingScene] = useState<Scene | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

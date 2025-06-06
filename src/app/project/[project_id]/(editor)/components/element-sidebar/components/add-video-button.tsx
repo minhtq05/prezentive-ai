@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import useScenesStore from "@/store/scenes-store";
-import { Film as VideoIcon } from "lucide-react";
+import { Video as VideoIcon } from "lucide-react";
 import { useState } from "react";
 import AddMediaDialog from "./add-media-dialog";
 
@@ -27,7 +27,7 @@ export default function AddVideoButton({
         size="icon"
         onClick={handleAddVideo}
         disabled={!selectedSceneId}
-        className="size-12 flex flex-col items-center justify-center gap-0.5"
+        className="size-12 flex flex-col items-center justify-center gap-1"
       >
         <VideoIcon />
         <span className="text-xs leading-none">Video</span>

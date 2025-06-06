@@ -234,8 +234,8 @@ export default function RemotionPlayer() {
   );
 
   return (
-    <div className="flex items-center justify-center aspect-video w-full max-h-full">
-      <div className="flex items-center justify-center aspect-video max-w-full h-full border-primary/75 border-1 overflow-hidden">
+    <div className="flex items-center justify-center aspect-video w-full max-h-full p-2">
+      <div className="flex items-center justify-center aspect-video max-w-full h-full border-1 overflow-hidden rounded-lg">
         {durationInFrames > 0 ? (
           <Player
             ref={setPlayerRefElement}

@@ -1,6 +1,5 @@
 import { Size } from "@/hooks/use-element-size";
 import usePlayerStore from "@/store/player-store";
-import useScenesStore from "@/store/scenes-store";
 import { useCallback, useEffect, useState } from "react";
 import { interpolate } from "remotion";
 
@@ -46,13 +45,6 @@ export default function useSeekBar({
   const seekTo = usePlayerStore((state) => state.seekTo);
   const play = usePlayerStore((state) => state.play);
   const pause = usePlayerStore((state) => state.pause);
-
-  const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
-
-  // reset frame when selectedSceneId changes
-  useEffect(() => {
-    seekTo(0);
-  }, [selectedSceneId]);
 
   // local frame update when playerRef mounted
   useEffect(() => {

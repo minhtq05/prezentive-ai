@@ -27,7 +27,7 @@ export default function AddImageButton({
         size="icon"
         onClick={handleAddImage}
         disabled={!selectedSceneId}
-        className="size-12 flex flex-col items-center justify-center gap-0.5"
+        className="size-12 flex flex-col items-center justify-center gap-1.5"
       >
         <ImageIcon />
         <span className="text-xs leading-none">Image</span>
