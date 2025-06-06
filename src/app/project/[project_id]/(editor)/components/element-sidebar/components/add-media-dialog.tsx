@@ -22,7 +22,7 @@ interface AddMediaDialogProps {
   onUpload: (src: string, file?: File) => void;
 }
 
-export function AddMediaDialog({
+export default function AddMediaDialog({
   open,
   onOpenChange,
   mediaType,

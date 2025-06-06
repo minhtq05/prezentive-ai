@@ -6,40 +6,36 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import AddImageButton from "./components/add-image-button";
-import AddTextButton from "./components/add-text-button";
-import AddVideoButton from "./components/add-video-button";
-import MenuButton from "./components/menu-button";
-import { useHandleAddElements } from "./hooks/use-handle-add-elements";
+import { AddImageButton, AddTextButton, AddVideoButton } from "./components";
+import { useHandleAddElements } from "./hooks";
 
-export default function ElementHeader() {
+export default function ElementSidebar() {
   const { handleAddText, handleMediaUpload } = useHandleAddElements();
 
   return (
-    <div className="flex items-center gap-1 p-1">
-      <MenuButton />
-      <TooltipProvider>
+    <TooltipProvider>
+      <div className="flex flex-col items-center gap-1 p-1 bg-white">
         <Tooltip>
           <TooltipTrigger asChild>
             <AddTextButton handleAddText={handleAddText} />
           </TooltipTrigger>
-          <TooltipContent side="bottom">Add Text</TooltipContent>
+          <TooltipContent side="right">Add Text</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <AddImageButton handleMediaUpload={handleMediaUpload} />
           </TooltipTrigger>
-          <TooltipContent side="bottom">Add Image</TooltipContent>
+          <TooltipContent side="right">Add Image</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <AddVideoButton handleMediaUpload={handleMediaUpload} />
           </TooltipTrigger>
-          <TooltipContent side="bottom">
+          <TooltipContent side="right">
             <p>Add Video</p>
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }

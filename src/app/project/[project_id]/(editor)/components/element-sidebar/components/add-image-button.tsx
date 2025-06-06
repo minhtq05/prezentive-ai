@@ -1,21 +1,21 @@
 import { Button } from "@/components/ui/button";
 import useScenesStore from "@/store/scenes-store";
-import { Film as VideoIcon } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { useState } from "react";
-import { AddMediaDialog } from "./add-media-dialog";
+import AddMediaDialog from "./add-media-dialog";
 
-export interface AddVideoButtonProps {
+export interface AddImageButtonProps {
   handleMediaUpload: (mediaType: "image" | "video", src: string) => void;
 }
 
-export default function AddVideoButton({
+export default function AddImageButton({
   handleMediaUpload,
-}: AddVideoButtonProps) {
+}: AddImageButtonProps) {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleAddVideo = () => {
+  const handleAddImage = () => {
     if (!selectedSceneId) return;
     setIsOpen(true);
   };
@@ -25,17 +25,18 @@ export default function AddVideoButton({
       <Button
         variant="ghost"
         size="icon"
-        onClick={handleAddVideo}
+        onClick={handleAddImage}
         disabled={!selectedSceneId}
-        className="h-12 w-12 flex items-center justify-center"
+        className="size-12 flex flex-col items-center justify-center gap-0.5"
       >
-        <VideoIcon />
+        <ImageIcon />
+        <span className="text-xs leading-none">Image</span>
       </Button>
       <AddMediaDialog
         open={isOpen}
         onOpenChange={setIsOpen}
-        mediaType="video"
-        onUpload={(src) => handleMediaUpload("video", src)}
+        mediaType="image"
+        onUpload={(src) => handleMediaUpload("image", src)}
       />
     </>
   );
