@@ -1,5 +1,5 @@
+import { getTime } from "@/lib/time";
 import { Scene, SceneComponent, SceneMedia, SceneText } from "@/types/scenes";
-import { getTime } from "@/utils/time";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import useOverlayStore from "./overlay-store";
