@@ -14,18 +14,13 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { clerkIsLoaded, view } = useDashboardLayoutEffects();
+  const { clerkIsLoaded } = useDashboardLayoutEffects();
 
   return clerkIsLoaded ? (
     <>
       <SidebarProvider>
         <DashboardSidebar />
-        <SidebarInset>
-          <header className="flex flex-row gap-2 items-center h-14 p-4 border-b">
-            <h1>{view}</h1>
-          </header>
-          {children}
-        </SidebarInset>
+        <SidebarInset>{children}</SidebarInset>
         <CommandMenu />
       </SidebarProvider>
     </>
@@ -73,5 +68,5 @@ function useDashboardLayoutEffects() {
     }
   }, [isLoaded, user, signOut]);
 
-  return { clerkIsLoaded, view };
+  return { clerkIsLoaded };
 }
