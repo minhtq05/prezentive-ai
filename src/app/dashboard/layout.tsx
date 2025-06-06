@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { DashboardSidebar } from "@/app/dashboard/components/dashboard-sidebar";
 import Loader from "@/components/loader";
 import { CommandMenu } from "@/components/search-bar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
