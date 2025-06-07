@@ -66,7 +66,9 @@ export default function AddMediaByUploadDialog({
   };
 
   useEffect(() => {
-    handleClickUpload();
+    if (nonce) {
+      handleClickUpload();
+    }
   }, [nonce]);
 
   return (
