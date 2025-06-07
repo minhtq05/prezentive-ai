@@ -1,41 +1,17 @@
 "use client";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { AddImageButton, AddTextButton, AddVideoButton } from "./components";
+import { Menubar } from "@/components/ui/menubar";
+import { AddMediaButton, AddTextButton } from "./components";
 import { useHandleAddElements } from "./hooks";
 
 export default function ElementSidebar() {
   const { handleAddText, handleMediaUpload } = useHandleAddElements();
 
   return (
-    <TooltipProvider>
-      <div className="flex flex-col items-center gap-1 p-1 bg-background">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <AddTextButton handleAddText={handleAddText} />
-          </TooltipTrigger>
-          <TooltipContent side="right">Add Text</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <AddImageButton handleMediaUpload={handleMediaUpload} />
-          </TooltipTrigger>
-          <TooltipContent side="right">Add Image</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <AddVideoButton handleMediaUpload={handleMediaUpload} />
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>Add Video</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
-    </TooltipProvider>
+    <Menubar className="w-full border-none flex-col items-center gap-1 p-1">
+      <AddTextButton handleAddText={handleAddText} />
+      <AddMediaButton mediaType="image" handleMediaUpload={handleMediaUpload} />
+      <AddMediaButton mediaType="video" handleMediaUpload={handleMediaUpload} />
+    </Menubar>
   );
 }

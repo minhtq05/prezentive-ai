@@ -3,6 +3,8 @@ import { SceneMedia, SceneText } from "@/types/scenes";
 import { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+export type MediaType = "image" | "video";
+
 export function useHandleAddElements() {
   const selectedSceneId = useScenesStore((state) => state.selectedSceneId);
   const scenes = useScenesStore((state) => state.scenes);
@@ -45,7 +47,7 @@ export function useHandleAddElements() {
     addComponentToScene(newText);
   };
 
-  const handleMediaUpload = (mediaType: "image" | "video", src: string) => {
+  const handleMediaUpload = (mediaType: MediaType, src: string) => {
     if (!selectedSceneId || !selectedScene) return;
 
     // Create a new media component

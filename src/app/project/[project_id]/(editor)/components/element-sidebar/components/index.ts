@@ -1,6 +1,4 @@
-import AddImageButton from "./add-image-button";
-import AddMediaDialog from "./add-media-dialog";
+import AddMediaButton from "./add-media-button";
 import AddTextButton from "./add-text-button";
-import AddVideoButton from "./add-video-button";
 
-export { AddImageButton, AddMediaDialog, AddTextButton, AddVideoButton };
+export { AddMediaButton, AddTextButton };
