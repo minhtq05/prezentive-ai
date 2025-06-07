@@ -52,6 +52,7 @@ export default function ScenesBackground() {
 
       return (
         <div
+          key={scene.id}
           className="h-full bg-secondary/5 flex flex-col gap-1 box-border border-l-1 border-primary/10"
           style={{
             width: sceneWidth,
