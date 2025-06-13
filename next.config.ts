@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     },
     resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },
-  // output: "standalone",
+  output: "standalone",
 };
 
 export default nextConfig;

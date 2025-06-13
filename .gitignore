@@ -49,3 +49,9 @@ package-lock.json
 
 # disk built files (not important at this moment)
 /dist
+
+# .github copilot instructions
+.github/
+
+# Database related files
+/migrations
