@@ -176,7 +176,8 @@ const syncWithScenesStore = (
     // If the selected scene changed, reset the frame to 0
     const { _seekTo, setPreviewMode } = usePlayerStore.getState();
     _seekTo(0);
-    setPreviewMode(false);
+    if (selectedSceneId === null) setPreviewMode(true);
+    else setPreviewMode(false);
   }
 };
 
