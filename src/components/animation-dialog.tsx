@@ -96,8 +96,12 @@ export default function AnimationDialog({
               className="grid grid-cols-2 gap-2"
             >
               {SCENE_IN_ANIMATIONS.map(
-                (animationInKey: SceneInAnimationKey) => (
-                  <RadioCardsItem value={animationInKey} id={animationInKey}>
+                (animationInKey: SceneInAnimationKey, index) => (
+                  <RadioCardsItem
+                    key={index}
+                    value={animationInKey}
+                    id={animationInKey}
+                  >
                     <Label
                       htmlFor={animationInKey}
                       className="flex items-center"
@@ -126,8 +130,12 @@ export default function AnimationDialog({
               className="grid grid-cols-2 gap-2"
             >
               {SCENE_OUT_ANIMATIONS.map(
-                (animationOutKey: SceneOutAnimationKey) => (
-                  <RadioCardsItem value={animationOutKey} id={animationOutKey}>
+                (animationOutKey: SceneOutAnimationKey, index) => (
+                  <RadioCardsItem
+                    key={index}
+                    value={animationOutKey}
+                    id={animationOutKey}
+                  >
                     <Label
                       htmlFor={animationOutKey}
                       className="flex items-center"

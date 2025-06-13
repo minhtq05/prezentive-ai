@@ -1,7 +1,7 @@
 import { animationsDict } from "@/constants/animations";
 import { useCallback, useMemo } from "react";
 import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
-import { Animated } from "remotion-animated";
+import { Animated, Animation } from "remotion-animated";
 import { rgbaColorToString } from "../lib/colors";
 import { Scene, SceneAnimation } from "../types/scenes";
 
@@ -31,7 +31,7 @@ export function RenderableRemotionComponent({
               ? animations.reduce((acc, animation) => {
                   acc.push(...animationsDict[animation.name](durationInFrames));
                   return acc;
-                }, [] as any[])
+                }, [] as Animation[])
               : []
           }
         >

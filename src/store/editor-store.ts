@@ -2,36 +2,58 @@ import { create } from "zustand";
 import usePlayerStore from "./player-store";
 import useScenesStore from "./scenes-store";
 
-interface EditorState {
+export type ProjectInfo = {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  modified_at: string;
+};
+
+export type EditorStoreState = {
   isFirstRender: boolean;
-  prevProjectId: string | undefined;
+  currentProjectId: string | undefined;
+  currentProjectInfo: ProjectInfo | null;
+};
+
+export type EditorStoreActions = {
   setIsFirstRender: (isFirstRender: boolean) => void;
-  setPrevProjectId: (prevProjectId: string | undefined) => void;
+  setCurrentProjectId: (currentProjectId: string | undefined) => void;
+  setCurrentProjectInfo: (projectInfo: ProjectInfo | null) => void;
   resetNewProjectState: (projectId: string) => void;
-}
+};
+
+export type EditorState = EditorStoreState & EditorStoreActions;
+
+const editorStoreInitialState: EditorStoreState = {
+  isFirstRender: true,
+  currentProjectId: undefined,
+  currentProjectInfo: null,
+};
 
 const useEditorStore = create<EditorState>((set) => ({
-  isFirstRender: true,
-  prevProjectId: undefined,
+  ...editorStoreInitialState,
 
   setIsFirstRender: (isFirstRender) => set({ isFirstRender }),
-  setPrevProjectId: (prevProjectId) => set({ prevProjectId }),
+  setCurrentProjectId: (currentProjectId) => set({ currentProjectId }),
+  setCurrentProjectInfo: (projectInfo) =>
+    set({ currentProjectInfo: projectInfo }),
 
   resetNewProjectState: (projectId) => {
     set((state) => {
       // Only reset if the project ID has changed
       if (
-        state.prevProjectId !== undefined &&
-        state.prevProjectId !== projectId
+        state.currentProjectId !== undefined &&
+        state.currentProjectId !== projectId
       ) {
         useScenesStore.getState().reset();
         usePlayerStore.getState().reset();
         return {
           isFirstRender: true,
-          prevProjectId: projectId,
+          currentProjectId: projectId,
         };
       }
-      return { prevProjectId: projectId };
+      return { currentProjectId: projectId };
     });
   },
 }));

@@ -17,6 +17,9 @@ export default function useProjectUpdateEffect(projectId: string) {
 
   const isFirstRender = useEditorStore((state) => state.isFirstRender);
   const setIsFirstRender = useEditorStore((state) => state.setIsFirstRender);
+  const setCurrentProjectInfo = useEditorStore(
+    (state) => state.setCurrentProjectInfo
+  );
   const resetForNewProject = useEditorStore(
     (state) => state.resetNewProjectState
   );
@@ -32,6 +35,13 @@ export default function useProjectUpdateEffect(projectId: string) {
         console.error("Failed to fetch project data");
         return;
       }
+      setCurrentProjectInfo({
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        created_at: project.created_at,
+        modified_at: project.modified_at,
+      });
       try {
         fillScenes(JSON.parse(project.elements));
       } catch (error) {

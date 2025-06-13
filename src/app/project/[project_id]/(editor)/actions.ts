@@ -2,7 +2,7 @@
 
 import { createClerkSupabaseClientSsr } from "@/utils/supabase/client";
 
-type ProjectData = {
+export type ProjectData = {
   id: string;
   name: string;
   description: string;

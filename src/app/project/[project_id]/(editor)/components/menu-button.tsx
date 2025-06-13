@@ -15,7 +15,7 @@ import Link from "next/link";
 
 export default function MenuButton() {
   return (
-    <Menubar className="size-14 border-none p-1">
+    <Menubar className="size-16 border-none p-1">
       <MenubarMenu>
         <MenubarTrigger asChild>
           <Button variant="ghost" className="size-full">

@@ -5,10 +5,10 @@ import { useParams } from "next/navigation";
 import {
   ElementSidebar,
   MenuButton,
+  ProjectHeader,
   PropertiesPanel,
   RemotionPlayer,
   ScenesSidebar,
-  SceneUpdatingStatus,
   SeekBar,
 } from "./components";
 import { useHandleKeyboardEvent, useProjectUpdateEffect } from "./hooks";
@@ -22,15 +22,15 @@ export default function ProjectEditorPage() {
 
   return (
     <div className="size-full flex">
-      <div className="w-14 gap-[1px]">
+      <div className="w-16 h-full gap-[1px]">
         <MenuButton />
         <Separator />
         <ElementSidebar />
       </div>
       <Separator orientation="vertical" />
       <div className="flex-auto flex flex-col overflow-auto">
-        <div className="flex flex-row items-center h-14 p-2">
-          <SceneUpdatingStatus />
+        <div className="flex-none flex items-center h-16 py-2 px-4">
+          <ProjectHeader />
         </div>
         <Separator />
         <div className="flex-1 flex flex-row justify-center items-center overflow-hidden">
@@ -47,7 +47,7 @@ export default function ProjectEditorPage() {
           </div>
         </div>
         <Separator orientation="horizontal" />
-        <div className="flex flex-col relative h-72 overflow-auto">
+        <div className="flex flex-col relative h-80 overflow-auto">
           <SeekBar />
         </div>
       </div>

@@ -50,7 +50,7 @@ export default function AddMediaButton({
             variant="ghost"
             size="icon"
             disabled={!selectedSceneId}
-            className="size-12 flex flex-col items-center justify-center gap-1"
+            className="size-14 flex flex-col items-center justify-center gap-1"
           >
             {mediaType === "image" ? (
               <>
