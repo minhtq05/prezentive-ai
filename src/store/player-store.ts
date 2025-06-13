@@ -4,18 +4,6 @@ import { createRef, RefObject } from "react";
 import { create } from "zustand";
 import useScenesStore from "./scenes-store";
 
-const playerStoreInitialState: PlayerStoreState = {
-  playing: false,
-  frame: 0,
-  zoom: 1,
-  loop: false,
-  playerRef: createRef<PlayerRef>(),
-  totalDuration: 0,
-  durationInFrames: 0,
-  previewMode: true,
-  containerWidth: 0,
-};
-
 export type PlayerStoreState = {
   // Player state
   playing: boolean;
@@ -48,6 +36,7 @@ export type PlayerStoreActions = {
   play: () => void;
   pause: () => void;
   togglePlayPause: () => void;
+  _seekTo: (frame: number) => void; // Internal use, not for public API
   seekTo: (frame: number) => void;
 
   // Enable animations in editing mode
@@ -60,6 +49,18 @@ export type PlayerStoreActions = {
 };
 
 export type PlayerStore = PlayerStoreState & PlayerStoreActions;
+
+const playerStoreInitialState: PlayerStoreState = {
+  playing: false,
+  frame: 0,
+  zoom: 1,
+  loop: false,
+  playerRef: createRef<PlayerRef>(),
+  totalDuration: 0,
+  durationInFrames: 0,
+  previewMode: false,
+  containerWidth: 0,
+};
 
 const usePlayerStore = create<PlayerStore>((set, get) => ({
   ...playerStoreInitialState,
@@ -117,13 +118,18 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     }
   },
 
-  seekTo: (frame) => {
-    useScenesStore.getState().selectObject(null);
+  _seekTo: (frame: number) => {
     const { playerRef } = get();
     if (playerRef.current) {
       playerRef.current.seekTo(frame);
-      set({ frame, previewMode: true });
+      set({ frame });
     }
+  },
+
+  seekTo: (frame) => {
+    useScenesStore.getState().selectObject(null);
+    get()._seekTo(frame);
+    set({ previewMode: true });
   },
 
   setPreviewMode: (enable: boolean) =>
@@ -136,13 +142,18 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   reset: () => set(playerStoreInitialState),
 }));
 
-const syncWithScenesStore = ({
-  scenes,
-  selectedSceneId,
-}: {
-  scenes: Scene[];
-  selectedSceneId: string | null;
-}) => {
+const syncWithScenesStore = (
+  current: {
+    scenes: Scene[];
+    selectedSceneId: string | null;
+  },
+  previous?: {
+    scenes: Scene[];
+    selectedSceneId: string | null;
+  }
+) => {
+  const { scenes, selectedSceneId } = current;
+
   // Calculate total duration from all scenes
   const totalDuration = scenes.reduce(
     (acc, scene) => acc + scene.durationInFrames,
@@ -160,19 +171,26 @@ const syncWithScenesStore = ({
     totalDuration,
     durationInFrames,
   });
+
+  if (previous?.selectedSceneId !== selectedSceneId) {
+    // If the selected scene changed, reset the frame to 0
+    const { _seekTo, setPreviewMode } = usePlayerStore.getState();
+    _seekTo(0);
+    setPreviewMode(false);
+  }
 };
 
 // Subscribe to scenes store to update duration calculations
 useScenesStore.subscribe(
   (state) => ({ scenes: state.scenes, selectedSceneId: state.selectedSceneId }),
-  (current, _) => {
-    syncWithScenesStore(current);
+  (current, previous) => {
+    syncWithScenesStore(current, previous);
   }
 );
 
 useScenesStore.subscribe(
   (state) => state.selectedObjectId,
-  (selectedObjectId, _) => {
+  (selectedObjectId) => {
     if (selectedObjectId) {
       // If an object is selected, disable preview mode
       const { setPreviewMode, pause } = usePlayerStore.getState();
@@ -184,6 +202,6 @@ useScenesStore.subscribe(
 
 // Immediately calculate durations with initial state
 const { scenes, selectedSceneId } = useScenesStore.getState();
-syncWithScenesStore({ scenes, selectedSceneId });
+syncWithScenesStore({ scenes, selectedSceneId }, undefined);
 
 export default usePlayerStore;
