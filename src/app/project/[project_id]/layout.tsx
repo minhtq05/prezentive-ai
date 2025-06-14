@@ -1,16 +1,27 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
+import { Fragment } from "react";
+import { getProjectById } from "./actions";
 
-export default async function ProjectPageLayout({
+export default async function EditorLayout({
+  params,
   children,
 }: {
+  params: Promise<{ project_id: string }>;
   children: React.ReactNode;
 }) {
   const user = await currentUser();
 
   if (!user) {
-    notFound(); // redirect to not found page
+    redirect("/");
   }
 
-  return <>{children}</>;
+  const project_id = (await params).project_id;
+  const project = await getProjectById(project_id);
+
+  if (!project) {
+    redirect("/dashboard/projects");
+  }
+
+  return <Fragment>{children}</Fragment>;
 }

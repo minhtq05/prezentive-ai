@@ -17,16 +17,17 @@ export default function useProjectUpdateEffect(projectId: string) {
 
   const isFirstRender = useEditorStore((state) => state.isFirstRender);
   const setIsFirstRender = useEditorStore((state) => state.setIsFirstRender);
+  const setCurrentProjectId = useEditorStore(
+    (state) => state.setCurrentProjectId
+  );
   const setCurrentProjectInfo = useEditorStore(
     (state) => state.setCurrentProjectInfo
   );
-  const resetForNewProject = useEditorStore(
-    (state) => state.resetNewProjectState
-  );
+  const reset = useEditorStore((state) => state.reset);
 
   useEffect(() => {
-    // Use the editor store's resetForNewProject function
-    resetForNewProject(projectId);
+    // Use the editor store's reset function
+    setCurrentProjectId(projectId);
 
     // Fetch project data or perform any setup needed for the project
     const fetchProjectById = async () => {
@@ -48,9 +49,11 @@ export default function useProjectUpdateEffect(projectId: string) {
         console.error("Error parsing project elements:", error);
       }
     };
-    if (projectId !== undefined) {
-      fetchProjectById();
-    }
+    fetchProjectById();
+
+    return () => {
+      reset();
+    };
   }, [projectId]);
 
   useEffect(() => {
