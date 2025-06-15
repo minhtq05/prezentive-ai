@@ -16,8 +16,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { animationsNames } from "@/constants/animations";
 import { cn } from "@/lib/utils";
-import useOverlayStore from "@/store/overlay-store";
-import useScenesStore from "@/store/scenes-store";
+import useOverlayStore from "@/store/project/overlay-store";
+import useScenesStore from "@/store/project/scenes-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { RgbaColor } from "react-colorful";
 

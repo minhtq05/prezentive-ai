@@ -1,4 +1,4 @@
-import useScenesStore from "@/store/scenes-store";
+import useScenesStore from "@/store/project/scenes-store";
 
 export default function SceneUpdatingStatus() {
   const scenesIsUpdating = useScenesStore((state) => state.scenesIsUpdating);

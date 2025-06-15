@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/context-menu";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import useScenesStore from "@/store/scenes-store";
+import useScenesStore from "@/store/project/scenes-store";
 import { Scene } from "@/types/scenes";
 import { useMemo, useState } from "react";
 

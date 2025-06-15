@@ -1,4 +1,4 @@
-import useScenesStore from "@/store/scenes-store";
+import useScenesStore from "@/store/project/scenes-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";

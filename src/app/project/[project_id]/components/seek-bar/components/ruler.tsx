@@ -1,4 +1,4 @@
-import usePlayerStore from "@/store/player-store";
+import usePlayerStore from "@/store/project/player-store";
 import { useMemo } from "react";
 import { PLAYHEAD_WIDTH } from "..";
 

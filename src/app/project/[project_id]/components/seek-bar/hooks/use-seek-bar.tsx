@@ -1,5 +1,5 @@
 import { Size } from "@/hooks/use-element-size";
-import usePlayerStore from "@/store/player-store";
+import usePlayerStore from "@/store/project/player-store";
 import { useCallback, useEffect, useState } from "react";
 import { interpolate } from "remotion";
 

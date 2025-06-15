@@ -1,4 +1,4 @@
 import useHandleKeyboardEvent from "./use-handle-keyboard-event";
-import useProjectUpdateEffect from "./use-project-update-effect";
+import useProjectEditor from "./use-project-editor";
 
-export { useHandleKeyboardEvent, useProjectUpdateEffect };
+export { useHandleKeyboardEvent, useProjectEditor as useProjectUpdateEffect };

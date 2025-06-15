@@ -1,7 +1,7 @@
 "use client";
 
 import { rgbaColorToString } from "@/lib/colors";
-import useOverlayStore from "@/store/overlay-store";
+import useOverlayStore from "@/store/project/overlay-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import { useEffect, useRef, useState } from "react";
 import ContentEditable, { ContentEditableEvent } from "react-contenteditable";

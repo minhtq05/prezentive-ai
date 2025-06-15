@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import useScenesStore from "./scenes-store";
 
 export type ProjectInfo = {
   id: string;
@@ -11,14 +10,16 @@ export type ProjectInfo = {
 
 export type EditorStoreState = {
   isFirstRender: boolean;
-  currentProjectId: string | null;
-  currentProjectInfo: ProjectInfo | null;
+  projectId: string | null;
+  projectInfo: ProjectInfo | null;
+  loaded: boolean;
 };
 
 export type EditorStoreActions = {
   setIsFirstRender: (isFirstRender: boolean) => void;
-  setCurrentProjectId: (currentProjectId: string | null) => void;
-  setCurrentProjectInfo: (projectInfo: ProjectInfo | null) => void;
+  setProjectId: (currentProjectId: string | null) => void;
+  setProjectInfo: (projectInfo: ProjectInfo | null) => void;
+  setLoaded: (loaded: boolean) => void;
   reset: () => void;
 };
 
@@ -26,19 +27,19 @@ export type EditorState = EditorStoreState & EditorStoreActions;
 
 const editorStoreInitialState: EditorStoreState = {
   isFirstRender: true,
-  currentProjectId: null,
-  currentProjectInfo: null,
+  projectId: null,
+  projectInfo: null,
+  loaded: false,
 };
 
 const useEditorStore = create<EditorState>((set) => ({
   ...editorStoreInitialState,
 
   setIsFirstRender: (isFirstRender) => set({ isFirstRender }),
-  setCurrentProjectId: (currentProjectId) => set({ currentProjectId }),
-  setCurrentProjectInfo: (projectInfo) =>
-    set({ currentProjectInfo: projectInfo }),
+  setProjectId: (currentProjectId) => set({ projectId: currentProjectId }),
+  setProjectInfo: (projectInfo) => set({ projectInfo: projectInfo }),
+  setLoaded: (loaded) => set({ loaded: loaded }),
   reset: () => {
-    useScenesStore.getState().reset();
     set(editorStoreInitialState);
   },
 }));

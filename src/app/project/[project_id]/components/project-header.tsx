@@ -1,18 +1,16 @@
-import useEditorStore from "@/store/editor-store";
+import useEditorStore from "@/store/project/editor-store";
 import { SceneUpdatingStatus } from ".";
 
 export default function ProjectHeader() {
-  const currentProjectInfo = useEditorStore(
-    (state) => state.currentProjectInfo
-  );
+  const ProjectInfo = useEditorStore((state) => state.projectInfo);
 
   return (
     <div className="flex items-center w-full">
-      {currentProjectInfo && (
+      {ProjectInfo && (
         <div className="flex flex-col">
-          <span className="font-semibold">{currentProjectInfo.name}</span>
+          <span className="font-semibold">{ProjectInfo.name}</span>
           <span className="text-sm text-muted-foreground">
-            {currentProjectInfo.description || "Workspace"}
+            {ProjectInfo.description || "Workspace"}
           </span>
         </div>
       )}

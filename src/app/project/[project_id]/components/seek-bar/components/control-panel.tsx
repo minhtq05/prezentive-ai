@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import usePlayerStore from "@/store/player-store";
+import usePlayerStore from "@/store/project/player-store";
 import {
   Pause,
   Play,

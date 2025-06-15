@@ -2,8 +2,8 @@
 
 import { animationsDict } from "@/constants/animations";
 import { rgbaColorToString } from "@/lib/colors";
-import usePlayerStore from "@/store/player-store";
-import useScenesStore from "@/store/scenes-store";
+import usePlayerStore from "@/store/project/player-store";
+import useScenesStore from "@/store/project/scenes-store";
 import { Scene, SceneAnimation } from "@/types/scenes";
 import { Player } from "@remotion/player";
 import { useCallback, useMemo } from "react";

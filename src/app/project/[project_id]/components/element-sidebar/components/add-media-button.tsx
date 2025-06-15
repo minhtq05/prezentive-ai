@@ -5,7 +5,7 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import useScenesStore from "@/store/scenes-store";
+import useScenesStore from "@/store/project/scenes-store";
 import {
   Image as ImageIcon,
   Link2 as Link,

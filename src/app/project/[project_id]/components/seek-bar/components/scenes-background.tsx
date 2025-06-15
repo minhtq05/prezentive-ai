@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import usePlayerStore from "@/store/player-store";
-import useScenesStore from "@/store/scenes-store";
+import usePlayerStore from "@/store/project/player-store";
+import useScenesStore from "@/store/project/scenes-store";
 import { SceneMedia, SceneText } from "@/types/scenes";
 import {
   Image as ImageIcon,

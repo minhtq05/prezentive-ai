@@ -1,9 +1,11 @@
 import { SceneComponent, SceneMedia, SceneText } from "@/types/scenes";
 import { create } from "zustand";
 
-export interface OverlayStore {
+export type OverlayStoreState = {
   visibleOverlayId: string | null;
   overlayObject: SceneText | SceneMedia | null;
+};
+export type OverlayStoreActions = {
   showOverlay: (object: SceneText | SceneMedia) => void;
   hideOverlay: () => void;
   updateOverlayProperty: <T extends SceneComponent, K extends keyof T>(
@@ -11,11 +13,18 @@ export interface OverlayStore {
     value: T[K]
   ) => void;
   getOverlayData: () => SceneText | SceneMedia | null;
-}
+  reset: () => void;
+};
 
-const useOverlayStore = create<OverlayStore>((set, get) => ({
+export type OverlayStore = OverlayStoreState & OverlayStoreActions;
+
+const initialOverlayState: OverlayStoreState = {
   visibleOverlayId: null,
   overlayObject: null,
+};
+
+const useOverlayStore = create<OverlayStore>((set, get) => ({
+  ...initialOverlayState,
 
   showOverlay: (object) =>
     set({
@@ -55,6 +64,8 @@ const useOverlayStore = create<OverlayStore>((set, get) => ({
   getOverlayData: () => {
     return get().overlayObject;
   },
+
+  reset: () => set(() => ({ visibleOverlayId: null, overlayObject: null })),
 }));
 
 export default useOverlayStore;

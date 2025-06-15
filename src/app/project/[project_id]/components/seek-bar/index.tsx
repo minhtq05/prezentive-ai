@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Separator } from "@/components/ui/separator";
 import { useElementSize } from "@/hooks/use-element-size";
 import { useHoverState } from "@/hooks/use-hover-state";
-import usePlayerStore from "@/store/player-store";
+import usePlayerStore from "@/store/project/player-store";
 import { useMeasure } from "@uidotdev/usehooks";
 import ControlPanel from "./components/control-panel";
 import Ruler from "./components/ruler";
