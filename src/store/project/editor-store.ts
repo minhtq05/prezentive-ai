@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import usePlayerStore from "./player-store";
 import useScenesStore from "./scenes-store";
 
 export type ProjectInfo = {
@@ -12,22 +11,22 @@ export type ProjectInfo = {
 
 export type EditorStoreState = {
   isFirstRender: boolean;
-  currentProjectId: string | undefined;
+  currentProjectId: string | null;
   currentProjectInfo: ProjectInfo | null;
 };
 
 export type EditorStoreActions = {
   setIsFirstRender: (isFirstRender: boolean) => void;
-  setCurrentProjectId: (currentProjectId: string | undefined) => void;
+  setCurrentProjectId: (currentProjectId: string | null) => void;
   setCurrentProjectInfo: (projectInfo: ProjectInfo | null) => void;
-  resetNewProjectState: (projectId: string) => void;
+  reset: () => void;
 };
 
 export type EditorState = EditorStoreState & EditorStoreActions;
 
 const editorStoreInitialState: EditorStoreState = {
   isFirstRender: true,
-  currentProjectId: undefined,
+  currentProjectId: null,
   currentProjectInfo: null,
 };
 
@@ -38,23 +37,9 @@ const useEditorStore = create<EditorState>((set) => ({
   setCurrentProjectId: (currentProjectId) => set({ currentProjectId }),
   setCurrentProjectInfo: (projectInfo) =>
     set({ currentProjectInfo: projectInfo }),
-
-  resetNewProjectState: (projectId) => {
-    set((state) => {
-      // Only reset if the project ID has changed
-      if (
-        state.currentProjectId !== undefined &&
-        state.currentProjectId !== projectId
-      ) {
-        useScenesStore.getState().reset();
-        usePlayerStore.getState().reset();
-        return {
-          isFirstRender: true,
-          currentProjectId: projectId,
-        };
-      }
-      return { currentProjectId: projectId };
-    });
+  reset: () => {
+    useScenesStore.getState().reset();
+    set(editorStoreInitialState);
   },
 }));
 
