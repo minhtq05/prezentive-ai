@@ -1,6 +1,11 @@
 "use client";
 
 import Loader from "@/components/loader";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import useEditorStore from "@/store/project/editor-store";
 import { useParams } from "next/navigation";
@@ -17,8 +22,8 @@ import { useHandleKeyboardEvent, useProjectUpdateEffect } from "./hooks";
 
 export default function ProjectEditorPage() {
   const { project_id: projectId } = useParams<{ project_id: string }>();
-  const projectLoaded = useEditorStore((state) => state.loaded);
 
+  const projectLoaded = useEditorStore((state) => state.loaded);
   // Initialize project data and set up auto-save
   useProjectUpdateEffect(projectId);
   useHandleKeyboardEvent();
@@ -40,23 +45,40 @@ export default function ProjectEditorPage() {
               <ProjectHeader />
             </div>
             <Separator />
-            <div className="flex-1 flex flex-row justify-center items-center overflow-hidden">
-              <div className="flex-none w-fit h-full">
-                <ScenesSidebar />
-              </div>
-              <Separator orientation="vertical" />
-              <div className="flex-1 flex flex-col overflow-y-scroll relative h-full items-center justify-center">
-                <RemotionPlayer />
-              </div>
-              <Separator orientation="vertical" />
-              <div className="flex-none w-80 h-full overflow-y-auto">
-                <PropertiesPanel />
-              </div>
-            </div>
-            <Separator orientation="horizontal" />
-            <div className="flex flex-col relative h-80 overflow-auto">
-              <SeekBar />
-            </div>
+            <ResizablePanelGroup direction="vertical">
+              <ResizablePanel defaultSize={65}>
+                <ResizablePanelGroup direction="horizontal">
+                  <ResizablePanel
+                    defaultSize={14}
+                    minSize={14}
+                    maxSize={20}
+                    className="min-w-50"
+                  >
+                    <PropertiesPanel />
+                  </ResizablePanel>
+                  <ResizableHandle />
+                  <ResizablePanel
+                    defaultSize={60}
+                    className="flex items-center justify-center"
+                  >
+                    <RemotionPlayer />
+                  </ResizablePanel>
+                  <ResizableHandle />
+                  <ResizablePanel
+                    defaultSize={14}
+                    minSize={12}
+                    maxSize={18}
+                    className="min-w-50"
+                  >
+                    <ScenesSidebar />
+                  </ResizablePanel>
+                </ResizablePanelGroup>
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={35} minSize={35} maxSize={40}>
+                <SeekBar />
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </div>
         </>
       )}

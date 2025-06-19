@@ -5,6 +5,7 @@ import {
   Music as MusicIcon,
   Video as VideoIcon,
 } from "lucide-react";
+import ScreenSizeDiv from "./screen-size-div";
 
 export interface ScenePreviewProps {
   scene: Scene;
@@ -13,22 +14,9 @@ export interface ScenePreviewProps {
 // Helper to render a scaled-down template preview
 export const ScenePreview = ({ scene }: ScenePreviewProps) => {
   return (
-    <div
-      className="relative mx-auto aspect-video select-none cursor-pointer"
-      style={{ width: "240px", height: "135px" }}
-    >
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{
-          transform: "scale(0.075)", // Scale from 1920x1080 to 144x81
-          transformOrigin: "top left",
-          width: "1920px",
-          height: "1080px",
-        }}
-      >
-        {renderScenePreview(scene)}
-      </div>
-    </div>
+    <ScreenSizeDiv className="select-none cursor-pointer">
+      {renderScenePreview(scene)}
+    </ScreenSizeDiv>
   );
 };
 

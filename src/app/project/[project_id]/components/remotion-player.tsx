@@ -16,6 +16,7 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
   const selectedObjectId = useScenesStore((state) => state.selectedObjectId);
   const selectObject = useScenesStore((state) => state.selectObject);
   const previewMode = usePlayerStore((state) => state.previewMode);
+  const setPreviewMode = usePlayerStore((state) => state.setPreviewMode);
 
   const AnimationsWrapper = useCallback(
     ({
@@ -198,6 +199,9 @@ function RemotionComponent({ scenes }: { scenes: Scene[] }) {
       onClick={() => {
         if (selectedSceneId) {
           selectObject(null);
+          if (previewMode) {
+            setPreviewMode(false);
+          }
         }
       }}
     >

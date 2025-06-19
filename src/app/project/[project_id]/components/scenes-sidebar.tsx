@@ -70,21 +70,18 @@ export default function ScenesSidebar() {
   };
 
   return (
-    <div className="w-52 h-full flex flex-col gap-2 p-4 pb-0 overflow-hidden">
-      <div className="flex justify-between items-center">
-        <h2 className="text-md font-medium">Scenes</h2>
-        <AddSceneDialog onAddScene={addScene}>
-          <Button variant="ghost" size="sm">
-            Add Scene
-          </Button>
-        </AddSceneDialog>
-      </div>
+    <div className="size-full flex flex-col gap-2 p-4 pb-0 overflow-hidden">
+      <AddSceneDialog onAddScene={addScene}>
+        <Button variant="outline" size="sm">
+          Add Scene
+        </Button>
+      </AddSceneDialog>
       <ScrollArea className="flex-1 overflow-scroll" type="always">
-        <div className="relative space-y-2 h-full pb-2">
+        <div className="relative space-y-2 h-full pb-2 pr-4">
           <CounterWrapper index={0}>
             <div
               className={cn(
-                "w-36 aspect-video rounded-sm cursor-pointer transition-colors hover:duration-0 flex flex-col justify-center items-center gap-1",
+                "w-full aspect-video rounded-sm cursor-pointer transition-colors hover:duration-0 flex flex-col justify-center items-center gap-1",
                 selectedSceneId === null
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary hover:bg-secondary"
@@ -98,10 +95,10 @@ export default function ScenesSidebar() {
           {scenes.map((scene, index) => (
             <CounterWrapper key={scene.id} index={index + 1}>
               <ContextMenu>
-                <ContextMenuTrigger>
+                <ContextMenuTrigger className="w-full">
                   <div
                     className={cn(
-                      "w-36 aspect-video rounded-sm border-2 cursor-pointer transition-colors hover:duration-0 overflow-hidden",
+                      "aspect-video rounded-sm border-2 transition-colors hover:duration-0 overflow-hidden",
                       scene.id === selectedSceneId
                         ? "border-primary"
                         : "border-secondary hover:border-primary/20"

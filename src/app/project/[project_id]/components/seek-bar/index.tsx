@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 
 import { Separator } from "@/components/ui/separator";
 import { useElementSize } from "@/hooks/use-element-size";
@@ -11,6 +11,7 @@ import ControlPanel from "./components/control-panel";
 import Ruler from "./components/ruler";
 import { default as ScenesBackground } from "./components/scenes-background";
 import useSeekBar from "./hooks/use-seek-bar";
+import useUpdateSize from "./hooks/use-update-size";
 
 export const PLAYHEAD_WIDTH = 1; // Width of the playhead indicator
 export const TRACK_HEIGHT = 32; // Height of each track
@@ -31,12 +32,7 @@ const SeekBar: React.FC<{
   const [seekBarRef, { width: seekBarWidth }] = useMeasure();
   const containerWidth = usePlayerStore((state) => state.containerWidth);
 
-  useEffect(() => {
-    // Update container width in player store when size changes
-    if (size?.width) {
-      usePlayerStore.setState({ containerWidth: size.width });
-    }
-  }, [size?.width]);
+  useUpdateSize(size?.width ?? 0);
 
   const { onPointerDown } = useSeekBar({
     containerRef,
