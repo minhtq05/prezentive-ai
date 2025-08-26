@@ -4,7 +4,7 @@ Streamlined Video Production with Generative AI
 
 ## Demo Video
 
-[![Prezentive AI Demo Video](https://www.youtube.com/watch?v=yHguCvgVDWk/0.jpg)](https://www.youtube.com/watch?v=yHguCvgVDWk)
+[![Prezentive AI Demo Video](https://img.youtube.com/vi/yHguCvgVDWk/maxresdefault.jpg)](https://youtu.be/yHguCvgVDWk)
 
 ## Features
 
