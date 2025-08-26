@@ -1,0 +1,33 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": [".env", "tsconfig.json"],
+  "tasks": {
+    "build": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "public/dist/**"],
+      "dependsOn": ["^build"],
+      "env": [
+        "NEXT_PUBLIC_API_URL",
+        "DATABASE_URL",
+        "NEXT_PUBLIC_BETTER_AUTH_URL",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_EMAIL",
+        "RESEND_API_KEY"
+      ]
+    },
+    "test": {
+      "outputs": ["coverage/**"],
+      "dependsOn": []
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}
