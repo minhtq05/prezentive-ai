@@ -1,0 +1,35 @@
+{
+  "name": "@video/db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./drizzle.config": "./drizzle.config.ts"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts src/keys.ts src/schema.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.1",
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "@video/typescript-config": "workspace:*",
+    "dotenv": "^17.2.0",
+    "drizzle-orm": "^0.44.3",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.4",
+    "drizzle-kit": "^0.31.4",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.3"
+  }
+}
