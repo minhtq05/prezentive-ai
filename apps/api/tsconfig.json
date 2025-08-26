@@ -1,0 +1,10 @@
+{
+  "extends": "@video/typescript-config/express.json",
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "jsx": "react-jsx",
+    "rootDir": "."
+  },
+  "exclude": ["node_modules"],
+  "include": ["."]
+}
