@@ -1,0 +1,11 @@
+{
+  "extends": "@video/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": false,
+    "declarationMap": false,
+    "skipLibCheck": true,
+  },
+  "include": ["src"]
+}
