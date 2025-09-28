@@ -1,0 +1,89 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: video
+      POSTGRES_PASSWORD: video
+      POSTGRES_DB: video
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U video"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.dev
+      args:
+        NODE_ENV: "development"
+        DATABASE_URL: ${DATABASE_URL:?error}
+        NEXT_PUBLIC_BETTER_AUTH_URL: ${NEXT_PUBLIC_BETTER_AUTH_URL:?error}
+        BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?error}
+        BETTER_AUTH_EMAIL: ${BETTER_AUTH_EMAIL:?error}
+        RESEND_API_KEY: ${RESEND_API_KEY:?error}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?error}
+        NEXT_PUBLIC_REMOTION_API_URL: ${NEXT_PUBLIC_REMOTION_API_URL:?error}
+    restart: always
+    ports:
+      - 5000:5000
+    networks:
+      - video_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile.dev
+      args:
+        NODE_ENV: "development"
+        DATABASE_URL: ${DATABASE_URL:?error}
+        NEXT_PUBLIC_BETTER_AUTH_URL: ${NEXT_PUBLIC_BETTER_AUTH_URL:?error}
+        BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?error}
+        BETTER_AUTH_EMAIL: ${BETTER_AUTH_EMAIL:?error}
+        RESEND_API_KEY: ${RESEND_API_KEY:?error}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?error}
+        NEXT_PUBLIC_REMOTION_API_URL: ${NEXT_PUBLIC_REMOTION_API_URL:?error}
+    restart: always
+    ports:
+      - 5001:5001
+    networks:
+      - video_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001" # Admin console
+    env_file:
+      - ./packages/storage/.env.local
+    command: server /data --console-address ":9001"
+    volumes:
+      - ${HOME}/minio/data:/data
+    networks:
+      - video_network
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  video_network:
+    driver: bridge
