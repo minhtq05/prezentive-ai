@@ -1,7 +1,7 @@
 {
   "extends": "@video/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "verbatimModuleSyntax": false,
     "rootDir": "src",
     "declaration": false,
     "declarationMap": false
