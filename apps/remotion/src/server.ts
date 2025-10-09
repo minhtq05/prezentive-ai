@@ -2,6 +2,7 @@ import { auth } from "@video/auth";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
+import getMediaServeRouter from "./routes/media-serve";
 import getRendersRouter from "./routes/render";
 
 async function main() {
@@ -26,6 +27,7 @@ async function main() {
   );
 
   app.use("/api/render", await getRendersRouter());
+  app.use("/api/media-serve", await getMediaServeRouter());
 
   app.get("/", (req, res) => {
     res.send("Remotion API Server");

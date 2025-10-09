@@ -12,7 +12,7 @@ import path from "node:path";
 import { authMiddleware } from "../middleware";
 import { getFilesizeInBytes } from "../utils";
 
-const { REMOTION_SERVE_URL } = process.env;
+const { REMOTION_SERVE_URL, NEXT_PUBLIC_API_URL } = process.env;
 
 export default async function getRendersRouter() {
   await ensureBrowser();
@@ -108,8 +108,35 @@ export default async function getRendersRouter() {
         sceneElements: sceneElements.filter((el) => el.sceneId === scene.id),
       }));
 
+      // Process scenes
+      const processedScenes = scenesWithElements.map((scene) => ({
+        ...scene,
+        sceneElements: scene.sceneElements.map((element: any) => {
+          const elementData = element.elementData;
+          if (elementData.type === "image" || elementData.type === "video") {
+            if (
+              elementData.src &&
+              elementData.src.startsWith(NEXT_PUBLIC_API_URL!)
+            ) {
+              // Extract filename from the original src
+              const originalFilename = elementData.src.split("/").pop()!;
+              const newSrc = `http://localhost:3002/api/media-serve/${originalFilename}`;
+
+              return {
+                ...element,
+                elementData: {
+                  ...elementData,
+                  src: newSrc,
+                },
+              };
+            }
+          }
+          return element;
+        }),
+      }));
+
       const inputProps = {
-        scenes: scenesWithElements,
+        scenes: processedScenes,
         orientation: {
           width: orientation.width,
           height: orientation.height,
@@ -132,6 +159,7 @@ export default async function getRendersRouter() {
         codec: "h264",
         outputLocation: `out/${filename}`,
         inputProps,
+        port: 3003,
       });
 
       await minioClient.fPutObject("mediaassets", filename, `out/${filename}`, {
