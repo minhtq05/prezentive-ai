@@ -1,4 +1,7 @@
 {
   "extends": "@video/typescript-config/express.json",
+  "compilerOptions": {
+    "verbatimModuleSyntax": false
+  },
   "include": ["src"]
 }

@@ -2,6 +2,7 @@ import { auth } from "@video/auth";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
+import getHealthRouter from "./routes/heath";
 import getMediaRouter from "./routes/media";
 import getProjectsRouter from "./routes/projects";
 
@@ -28,6 +29,7 @@ async function main() {
 
   app.use("/api/projects", await getProjectsRouter());
   app.use("/api/media", await getMediaRouter());
+  app.use("/api/health", await getHealthRouter());
 
   app.get("/", (req, res) => {
     res.send("Video API Server");

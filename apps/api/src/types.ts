@@ -14,13 +14,31 @@ export interface SceneElement {
   toSecond: number;
 }
 
-export interface SceneElementData {
+export interface SceneTextData {
+  type: "text";
   innerHTML: string;
-  type: string;
   style: CSSProperties;
   enterAnimation: string | null;
   exitAnimation: string | null;
 }
+
+export interface SceneImageData {
+  type: "image";
+  src: string;
+  style: CSSProperties;
+  enterAnimation: string | null;
+  exitAnimation: string | null;
+}
+
+export interface SceneVideoData {
+  type: "video";
+  src: string;
+  style: CSSProperties;
+  enterAnimation: string | null;
+  exitAnimation: string | null;
+}
+
+export type SceneElementData = SceneTextData | SceneImageData | SceneVideoData;
 
 export interface ProjectOrientation {
   id: string;
