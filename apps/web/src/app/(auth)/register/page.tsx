@@ -6,8 +6,9 @@ import { redirect } from "next/navigation";
 import { RegisterForm } from "./form";
 
 const RegisterPage = async () => {
+  const headersList = await headers();
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: headersList,
   });
 
   if (session) {

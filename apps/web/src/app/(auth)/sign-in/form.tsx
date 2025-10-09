@@ -25,7 +25,8 @@ import { redirect } from "next/navigation";
 import { startTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { SignInSchema, SignInValues } from "./validate";
+import type { SignInValues } from "./validate";
+import { SignInSchema } from "./validate";
 
 export function LoginForm({
   className,

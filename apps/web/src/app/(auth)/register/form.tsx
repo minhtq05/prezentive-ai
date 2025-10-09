@@ -25,7 +25,8 @@ import { redirect } from "next/navigation";
 import { startTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { SignUpSchema, SignUpValues } from "./validate";
+import type { SignUpValues } from "./validate";
+import { SignUpSchema } from "./validate";
 
 export function RegisterForm({
   className,
