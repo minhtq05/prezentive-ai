@@ -1,6 +1,12 @@
-import { AbsoluteFill, Series } from "remotion";
+import { AbsoluteFill, Img, OffthreadVideo, Series } from "remotion";
 import { Animated, Animation } from "remotion-animated";
-import { ProjectOrientation, Scene } from "../types";
+import type {
+  ProjectOrientation,
+  Scene,
+  SceneImageData,
+  SceneTextData,
+  SceneVideoData,
+} from "../types";
 import { defaultAnimations } from "./animations";
 
 const RemotionComponent = ({
@@ -25,7 +31,7 @@ const RemotionComponent = ({
                 return null;
               }
               const { id, fromSecond, toSecond } = element;
-              const { style, innerHTML, enterAnimation, exitAnimation } =
+              const { style, type, enterAnimation, exitAnimation } =
                 element.elementData;
               const animations: Animation[] = [];
               if (enterAnimation) {
@@ -55,7 +61,42 @@ const RemotionComponent = ({
                   className="select-none text-wrap wrap-anywhere"
                 >
                   <AnimationsWrapper animations={animations}>
-                    <div dangerouslySetInnerHTML={{ __html: innerHTML }} />
+                    {(() => {
+                      if (type === "text") {
+                        const { innerHTML } =
+                          element.elementData as SceneTextData;
+                        return (
+                          <div
+                            dangerouslySetInnerHTML={{ __html: innerHTML }}
+                          />
+                        );
+                      } else if (type === "image") {
+                        const { src } = element.elementData as SceneImageData;
+                        return (
+                          <Img
+                            src={src}
+                            alt="Scene Image"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                            }}
+                          />
+                        );
+                      } else if (type === "video") {
+                        const { src } = element.elementData as SceneVideoData;
+                        return (
+                          <OffthreadVideo
+                            src={src}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                            }}
+                          />
+                        );
+                      }
+                    })()}
                   </AnimationsWrapper>
                 </div>
               );
