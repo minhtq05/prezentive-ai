@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 const HomePage = () => {
@@ -13,7 +12,7 @@ const HomePage = () => {
   return (
     <div className="p-6 flex flex-col gap-6">
       <h2>Home Page</h2>
-      <div className="flex flex-col gap-8 items-center justify-center p-16">
+      {/* <div className="flex flex-col gap-8 items-center justify-center p-16">
         <p className="text-4xl font-semibold text-center">
           Welcome to Prezentive AI Video Editor. Start creating your masterpiece
           now.
@@ -26,7 +25,7 @@ const HomePage = () => {
         <video autoPlay muted loop className="w-3/4 rounded-lg">
           <source src="/home-page-video.mp4" type="video/mp4" />
         </video>
-      </div>
+      </div> */}
     </div>
   );
 };

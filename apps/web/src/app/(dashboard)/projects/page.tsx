@@ -40,7 +40,7 @@ const ProjectsPage = () => {
   };
 
   return (
-    <div className="p-6 flex flex-col gap-4">
+    <div className="p-8 flex flex-col gap-4">
       <h2>Projects</h2>
       <p className="text-muted-foreground">
         Manage and organize your projects ({projectCount} total)
