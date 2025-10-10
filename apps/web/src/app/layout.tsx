@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { EB_Garamond, Geist, Geist_Mono, Lato } from "next/font/google";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,6 +13,17 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const lato = Lato({
+  variable: "--font-lato",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  variable: "--font-eb-garamond",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +39,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${ebGaramond.variable} font-geist-sans antialiased h-screen w-screen`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
